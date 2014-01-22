@@ -1,0 +1,25 @@
+/* global */
+body.Canvasloth_focus { -webkit-touch-callout:none; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
+
+/* Canvasloth container */
+.Canvasloth        { position:relative; overflow:hidden; }
+.Canvasloth.active { box-shadow:0 0 5px rgba(128, 128, 255, 0.7); }
+
+/* <canvas> itself */
+.Canvasloth canvas { position:relative; }
+
+/* pages */
+.Canvasloth > .page    {
+	position:absolute; z-index:1; width:100%; height:100%; background:rgba(0,0,0,0.8);
+	opacity:0; top:-50px; margin-left:100%;
+}
+.Canvasloth > .cross {
+	position:absolute; z-index:1; top:5px; right:5px; width:16px; height:16px; background:center no-repeat url(cross.png); opacity:0.66;
+	top:-16px;
+}
+.Canvasloth > .cross:hover { opacity:1; }
+
+/* domIntIncrease */
+.DomIntIncrease        { font-family:monospace; }
+.DomIntIncrease .zeros { opacity:0.33; }
+.DomIntIncrease .value { font-weight:bold; }
