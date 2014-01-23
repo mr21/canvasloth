@@ -79,7 +79,7 @@ Canvasloth.prototype = {
 				{css:'opacity',     val:'1',   dur:250},
 				{css:'top',         val:'0px', mov:'easeIn'}
 			];
-			if (!page._hasClass('nocross'))
+			if (!page._hasClass('canvasloth-nocross'))
 				obj.push({elm:this.domA_cross, css:'top', val:'5px', del:250});
 			this.page_animId = page._cssAnim.apply(page, obj);
 			this.pageCurr = page;
