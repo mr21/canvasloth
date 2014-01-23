@@ -18,7 +18,7 @@ function Canvasloth(container, images, fns) {
 	this.pageCurr = null;
 	this.domA_cross = document.createElement('a');
 	this.domA_cross.href      = '#';
-	this.domA_cross.className = 'cross';
+	this.domA_cross.className = 'canvasloth-cross';
 	this.domA_cross.onclick   = function() { return self.closePage(true), false };
 	container.insertBefore(this.domA_cross, this.canvas);
 }
@@ -57,16 +57,16 @@ Canvasloth.prototype = {
 			event.stopPropagation();
 		if (this.active !== true) {
 			this.active = true;
-			this.body._addClass('Canvasloth_focus');
-			this.container._addClass('active');
+			this.body._addClass('canvasloth-focus');
+			this.container._addClass('canvasloth-active');
 			this.time.update();
 		}
 	},
 	blur: function() {
 		if (this.active === true) {
 			this.active = false;
-			this.body._delClass('Canvasloth_focus');
-			this.container._delClass('active');
+			this.body._delClass('canvasloth-focus');
+			this.container._delClass('canvasloth-active');
 			this.resetKeyboard();
 		}
 	},
