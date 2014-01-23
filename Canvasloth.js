@@ -16,6 +16,7 @@ function Canvasloth(container, images, fns) {
 	this.focus(); // tmp
 	// create DOM pages
 	this.pageCurr = null;
+	this.pageCurrNoCross = null;
 	this.domA_cross = document.createElement('a');
 	this.domA_cross.href      = '#';
 	this.domA_cross.className = 'canvasloth-cross';
@@ -81,12 +82,14 @@ Canvasloth.prototype = {
 			];
 			if (!page._hasClass('canvasloth-nocross'))
 				obj.push({elm:this.domA_cross, css:'top', val:'5px', del:250});
+			else
+				this.pageCurrNoCross = page;
 			this.page_animId = page._cssAnim.apply(page, obj);
 			this.pageCurr = page;
 			this.blur();
 		}
 	},
-	closePage: function(focus) {
+	closePage: function(byCross) {
 		if (this.pageCurr !== null) {
 			document._cssAnimPause(this.page_animId);
 			this.page_animId = this.pageCurr._cssAnim(
@@ -96,8 +99,14 @@ Canvasloth.prototype = {
 				{elm:this.domA_cross, css:'top', val:'-16px', dur:250, del:0}
 			);
 			this.pageCurr = null;
-			if (focus)
-				this.focus();
+			if (byCross === undefined) {
+				this.pageCurrNoCross = null;
+			} else if (byCross === true) {
+				if (this.pageCurrNoCross === null)
+					this.focus();
+				else
+					this.openPage(this.pageCurrNoCross);
+			}
 		}
 	},
 	loop: function() {
