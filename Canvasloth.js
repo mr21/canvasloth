@@ -96,7 +96,7 @@ Canvasloth.prototype = {
 				{css:'opacity',     val:'0',     dur:250},
 				{css:'top',         val:'-50px', mov:'easeIn'},
 				{css:'margin-left', val:'100%',  dur:0, del:250},
-				{elm:this.domA_cross, css:'top', val:'-16px', dur:250, del:0}
+				{elm:this.domA_cross, css:'top', val:'-32px', dur:250, del:0}
 			);
 			this.pageCurr = null;
 			if (byCross === undefined) {
