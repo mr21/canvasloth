@@ -23,6 +23,7 @@ function Canvasloth(container, images, fns) {
 	this.domA_cross.onclick   = function() { return self.closePage(true), false };
 	container.insertBefore(this.domA_cross, this.canvas);
 }
+
 Canvasloth.prototype = {
 	launch: function() {
 		var self = this;
@@ -41,6 +42,8 @@ Canvasloth.prototype = {
 			self.loop();
 		}, 1000 / 40);
 	},
+	width:  function() { return this.canvas.width  },
+	height: function() { return this.canvas.height },
 	debug: function(state) {
 		this.assets.debug(state);
 	},
@@ -114,7 +117,7 @@ Canvasloth.prototype = {
 			var ctx = this.ctx;
 			this.time.update();
 			this.fns.update(this.time);
-			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			ctx.clearRect(0, 0, this.width(), this.height());
 			ctx.save();
 				ctx.translate(this.vectView.x, this.vectView.y);
 					this.fns.render(ctx);
