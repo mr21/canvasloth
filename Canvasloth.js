@@ -48,6 +48,7 @@ Canvasloth.prototype = {
 			self.loop();
 		}, 1000 / 40);
 	},
+	cursor: function(c) { this.catchMouse.style.cursor = c; },
 	width:  function() { return this.canvas.width  },
 	height: function() { return this.canvas.height },
 	updateResolution: function() {
