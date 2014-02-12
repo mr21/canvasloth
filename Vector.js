@@ -1,6 +1,11 @@
 function Vector2D(v, y) {
-	this.x = v.x || v;
-	this.y = v.y || y;
+	if (y === undefined) {
+		this.x = v.x;
+		this.y = v.y;
+	} else {
+		this.x = v;
+		this.y = y;
+	}
 }
 Vector2D.prototype = {
 	setXY:   function(x, y) { this.x  =   x; this.y  =   y; },
