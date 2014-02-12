@@ -1,14 +1,7 @@
 /* global */
 body.canvasloth-focus { -webkit-touch-callout:none; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
-
-/* Canvasloth container */
 .canvasloth        { position:relative; overflow:hidden; }
-.canvasloth-active { box-shadow:0 0 5px rgba(128,128,255, 0.7); }
-
-/* <canvas> itself */
 .canvasloth canvas { position:relative; }
-
-/* pages */
 .canvasloth-page         { position:absolute; z-index:1; width:100%; height:100%; opacity:0; top:-50px; margin-left:100%; }
 .canvasloth-cross        { opacity:0.66; position:absolute; z-index:1; top:-32px; right:5px; text-decoration:none; font-size:24px; font-weight:bold; }
 .canvasloth-cross:hover  { opacity:1.00; }
@@ -21,6 +14,8 @@ body.canvasloth-focus { -webkit-touch-callout:none; -webkit-user-select:none; -k
 .DomIntIncrease .value { font-weight:bold; }
 
 /* Design */
+.canvasloth-dark.canvasloth-active  { box-shadow:0 0 10px rgba(255,255,255, 0.2); }
+.canvasloth-light.canvasloth-active { box-shadow:0 0 10px rgba(  0,  0,  0, 0.8); }
 .canvasloth-dark,  .canvasloth-dark  .canvasloth-cross { color:#ddd; }
 .canvasloth-light, .canvasloth-light .canvasloth-cross { color:#222; }
 .canvasloth-dark  .canvasloth-page { background:rgba(  0,  0,  0, 0.7); }
