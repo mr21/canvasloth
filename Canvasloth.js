@@ -1,8 +1,10 @@
 function Canvasloth(container, images, fns) {
-	var self       = this;
-	this.container = container;
-	this.canvas    = document.createElement('canvas');
+	this.canvas = document.createElement('canvas');
 	container.appendChild(this.canvas);
+	this.catchMouse = document.createElement('div');
+	this.catchMouse.className = 'canvasloth-mouse';
+	container.appendChild(this.catchMouse);
+	this.container = container;
 	this.ctx       = this.canvas.getContext('2d');
 	this.fns       = fns;
 	this.time      = new Time();
@@ -10,6 +12,7 @@ function Canvasloth(container, images, fns) {
 	this.vectView  = new Vector2D(0, 0);
 	this.keyBool   = [];
 	// active/inactive
+	var self = this;
 	this.active = false;
 	window  ._addEvent('blur',      function() { self.blur() });
 	document._addEvent('mousedown', function() { self.blur() });
@@ -34,9 +37,9 @@ Canvasloth.prototype = {
 		if (fns.keydown) document._addEvent('keydown', function(e) { if (self.active && !self.keyBool[e.keyCode]) { e.preventDefault(); self.keyBool[e = e.keyCode] = 1; fns.keydown(e) }});
 		if (fns.keyup)   document._addEvent('keyup',   function(e) { if (self.active &&  self.keyBool[e.keyCode]) { e.preventDefault(); self.keyBool[e = e.keyCode] = 0; fns.keyup  (e) }});
 		// -- mouse
-		if (fns.mousedown) this.canvas._addEvent('mousedown', function(e) { if (self.active) fns.mousedown(e.layerX - self.vectView.x, e.layerY - self.vectView.y); self.focus(e); });
-		if (fns.mouseup)   this.canvas._addEvent('mouseup',   function(e) { if (self.active) fns.mouseup  (e.layerX - self.vectView.x, e.layerY - self.vectView.y); });
-		if (fns.mousemove) this.canvas._addEvent('mousemove', function(e) { if (self.active) fns.mousemove(e.layerX - self.vectView.x, e.layerY - self.vectView.y, offsetMouse.xRel, offsetMouse.yRel) });
+		if (fns.mousedown) this.catchMouse._addEvent('mousedown', function(e) { if (self.active) fns.mousedown(e.layerX - self.vectView.x, e.layerY - self.vectView.y); self.focus(e); });
+		if (fns.mouseup)   this.catchMouse._addEvent('mouseup',   function(e) { if (self.active) fns.mouseup  (e.layerX - self.vectView.x, e.layerY - self.vectView.y); });
+		if (fns.mousemove) this.catchMouse._addEvent('mousemove', function(e) { if (self.active) fns.mousemove(e.layerX - self.vectView.x, e.layerY - self.vectView.y, offsetMouse.xRel, offsetMouse.yRel) });
 		// -- resize
 		window._addEvent('resize', function() { self.updateResolution() });
 		this.updateResolution();
@@ -57,13 +60,11 @@ Canvasloth.prototype = {
 		this.assets.debug(state);
 	},
 	resetKeyboard: function() {
-		for (var i in this.keyBool) {
-			i = parseInt(i);
-			if (this.keyBool[i]) {
+		for (var i in this.keyBool)
+			if (this.keyBool[i = parseInt(i)]) {
 				this.fns.keyup(i);
 				this.keyBool[i] = 0;
 			}
-		}
 	},
 	focus: function(event) {
 		if (event)
