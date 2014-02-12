@@ -28,7 +28,7 @@ Canvasloth.prototype = {
 	launch: function() {
 		var self = this;
 		var fns  = this.fns;
-		this.fns.load();
+		fns.load();
 		// Events
 		// -- keyboard
 		if (fns.keydown) document._addEvent('keydown', function(e) { if (self.active && !self.keyBool[e.keyCode]) { e.preventDefault(); self.keyBool[e = e.keyCode] = 1; fns.keydown(e) }});
@@ -37,6 +37,9 @@ Canvasloth.prototype = {
 		if (fns.mousedown) this.canvas._addEvent('mousedown', function(e) { if (self.active) fns.mousedown(e.layerX - self.vectView.x, e.layerY - self.vectView.y); self.focus(e); });
 		if (fns.mouseup)   this.canvas._addEvent('mouseup',   function(e) { if (self.active) fns.mouseup  (e.layerX - self.vectView.x, e.layerY - self.vectView.y); });
 		if (fns.mousemove) this.canvas._addEvent('mousemove', function(e) { if (self.active) fns.mousemove(e.layerX - self.vectView.x, e.layerY - self.vectView.y, offsetMouse.xRel, offsetMouse.yRel) });
+		// -- resize
+		window._addEvent('resize', function() { self.updateResolution() });
+		this.updateResolution();
 		this.time.reset();
 		this.intervId = window.setInterval(function() {
 			self.loop();
@@ -44,6 +47,12 @@ Canvasloth.prototype = {
 	},
 	width:  function() { return this.canvas.width  },
 	height: function() { return this.canvas.height },
+	updateResolution: function() {
+		this.canvas.width  = this.container.clientWidth;
+		this.canvas.height = this.container.clientHeight;
+		if (!this.active)
+			this.render();
+	},
 	debug: function(state) {
 		this.assets.debug(state);
 	},
@@ -112,16 +121,19 @@ Canvasloth.prototype = {
 			}
 		}
 	},
+	render: function() {
+		var ctx = this.ctx;
+		ctx.clearRect(0, 0, this.width(), this.height());
+		ctx.save();
+			ctx.translate(this.vectView.x, this.vectView.y);
+				this.fns.render(ctx);
+		ctx.restore();
+	},
 	loop: function() {
 		if (this.active) {
-			var ctx = this.ctx;
 			this.time.update();
 			this.fns.update(this.time);
-			ctx.clearRect(0, 0, this.width(), this.height());
-			ctx.save();
-				ctx.translate(this.vectView.x, this.vectView.y);
-					this.fns.render(ctx);
-			ctx.restore();
+			this.render();
 		}
 	},
 	stop: function() {
