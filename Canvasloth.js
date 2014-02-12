@@ -16,7 +16,6 @@ function Canvasloth(container, images, fns) {
 	this.active = false;
 	window  ._addEvent('blur',      function() { self.blur() });
 	document._addEvent('mousedown', function() { self.blur() });
-	this.focus(); // tmp
 	// create DOM pages
 	this.pageCurr = null;
 	this.pageCurrNoCross = null;
@@ -31,7 +30,6 @@ Canvasloth.prototype = {
 	launch: function() {
 		var self = this;
 		var fns  = this.fns;
-		fns.load();
 		// Events
 		// -- keyboard
 		if (fns.keydown) document._addEvent('keydown', function(e) { if (self.active && !self.keyBool[e.keyCode]) { e.preventDefault(); self.keyBool[e = e.keyCode] = 1; fns.keydown(e) }});
@@ -41,8 +39,10 @@ Canvasloth.prototype = {
 		if (fns.mouseup)   this.catchMouse._addEvent('mouseup',   function(e) { if (self.active) fns.mouseup  (e.layerX - self.vectView.x, e.layerY - self.vectView.y); });
 		if (fns.mousemove) this.catchMouse._addEvent('mousemove', function(e) { if (self.active) fns.mousemove(e.layerX - self.vectView.x, e.layerY - self.vectView.y, offsetMouse.xRel, offsetMouse.yRel) });
 		// -- resize
-		window._addEvent('resize', function() { self.updateResolution() });
+		window._addEvent('resize', function() { self.updateResolution(); self.render(); });
 		this.updateResolution();
+		fns.load();
+		this.focus();
 		this.time.reset();
 		this.intervId = window.setInterval(function() {
 			self.loop();
@@ -54,8 +54,6 @@ Canvasloth.prototype = {
 	updateResolution: function() {
 		this.canvas.width  = this.container.clientWidth;
 		this.canvas.height = this.container.clientHeight;
-		if (!this.active)
-			this.render();
 	},
 	debug: function(state) {
 		this.assets.debug(state);
