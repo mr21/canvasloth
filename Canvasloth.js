@@ -10,7 +10,6 @@ function Canvasloth(container, images, fns) {
 	this.vectView  = new Vector2D(0, 0);
 	this.keyBool   = [];
 	// active/inactive
-	this.body = document.getElementsByTagName('body')[0];
 	this.active = false;
 	window  ._addEvent('blur',      function() { self.blur() });
 	document._addEvent('mousedown', function() { self.blur() });
@@ -71,7 +70,7 @@ Canvasloth.prototype = {
 			event.stopPropagation();
 		if (this.active !== true) {
 			this.active = true;
-			this.body._addClass('canvasloth-focus');
+			document.body._addClass('canvasloth-focus');
 			this.container._addClass('canvasloth-active');
 			this.time.update();
 		}
@@ -79,7 +78,7 @@ Canvasloth.prototype = {
 	blur: function() {
 		if (this.active === true) {
 			this.active = false;
-			this.body._delClass('canvasloth-focus');
+			document.body._delClass('canvasloth-focus');
 			this.container._delClass('canvasloth-active');
 			this.resetKeyboard();
 		}
