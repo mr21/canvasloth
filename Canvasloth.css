@@ -3,21 +3,27 @@ body.canvasloth-focus { -webkit-touch-callout:none; -webkit-user-select:none; -k
 
 /* Canvasloth container */
 .canvasloth        { position:relative; overflow:hidden; }
-.canvasloth-active { box-shadow:0 0 5px rgba(128, 128, 255, 0.7); }
+.canvasloth-active { box-shadow:0 0 5px rgba(128,128,255, 0.7); }
 
 /* <canvas> itself */
 .canvasloth canvas { position:relative; }
 
 /* pages */
-.canvasloth-page    {
-	position:absolute; z-index:1; width:100%; height:100%; background:rgba(0,0,0,0.8);
-	opacity:0; top:-50px; margin-left:100%;
-}
-.canvasloth-cross       { position:absolute; z-index:1; top:-32px; right:5px; opacity:0.66; text-decoration:none; }
-.canvasloth-cross:after { content:"✕"; color:#fff; font-weight:bold; font-size:24px; }
-.canvasloth-cross:hover { opacity:1; }
+.canvasloth-page         { position:absolute; z-index:1; width:100%; height:100%; opacity:0; top:-50px; margin-left:100%; }
+.canvasloth-cross        { opacity:0.66; position:absolute; z-index:1; top:-32px; right:5px; text-decoration:none; font-size:24px; font-weight:bold; }
+.canvasloth-cross:hover  { opacity:1.00; }
+.canvasloth-cross:active { padding-top:2px; }
+.canvasloth-cross:after  { content:"✕"; }
 
-/* domIntIncrease */
+/* HUD */
 .DomIntIncrease        { font-family:monospace; }
 .DomIntIncrease .zeros { opacity:0.33; }
 .DomIntIncrease .value { font-weight:bold; }
+
+/* Design */
+.canvasloth-dark,  .canvasloth-dark  .canvasloth-cross { color:#ddd; }
+.canvasloth-light, .canvasloth-light .canvasloth-cross { color:#222; }
+.canvasloth-dark  .canvasloth-page { background:rgba(  0,  0,  0, 0.7); }
+.canvasloth-light .canvasloth-page { background:rgba(255,255,255, 0.7); }
+.canvasloth-dark  a { color:#99f; }
+.canvasloth-light a { color:#33a; }
