@@ -1,7 +1,8 @@
 function Canvasloth(container, images, fns) {
 	var self       = this;
 	this.container = container;
-	this.canvas    = container.getElementsByTagName('canvas')[0];
+	this.canvas    = document.createElement('canvas');
+	container.appendChild(this.canvas);
 	this.ctx       = this.canvas.getContext('2d');
 	this.fns       = fns;
 	this.time      = new Time();
