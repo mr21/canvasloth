@@ -14,8 +14,8 @@ function Canvasloth(container, images, fns) {
 	// active/inactive
 	var self = this;
 	this.active = false;
-	window  ._addEvent('blur',      function() { self.blur() });
-	document._addEvent('mousedown', function() { self.blur() });
+	window  ._addEvent('blur',      function() { self.unfocus() });
+	document._addEvent('mousedown', function() { self.unfocus() });
 	// create DOM pages
 	this.pageCurr = null;
 	this.pageCurrNoCross = null;
@@ -48,7 +48,7 @@ Canvasloth.prototype = {
 			self.loop();
 		}, 1000 / 40);
 	},
-	cursor: function(c) { this.catchMouse.style.cursor = c; },
+	cursor: function(c) { this.catchMouse.style.cursor = c },
 	width:  function() { return this.canvas.width  },
 	height: function() { return this.canvas.height },
 	updateResolution: function() {
@@ -75,7 +75,7 @@ Canvasloth.prototype = {
 			this.time.update();
 		}
 	},
-	blur: function() {
+	unfocus: function() {
 		if (this.active === true) {
 			this.active = false;
 			document.body._delClass('canvasloth-focus');
@@ -98,7 +98,7 @@ Canvasloth.prototype = {
 				this.pageCurrNoCross = page;
 			this.page_animId = page._cssAnim.apply(page, obj);
 			this.pageCurr = page;
-			this.blur();
+			this.unfocus();
 		}
 	},
 	closePage: function(byCross) {
