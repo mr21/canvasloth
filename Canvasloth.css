@@ -3,8 +3,8 @@ body.canvasloth-focus { -webkit-touch-callout:none; -webkit-user-select:none; -k
 .canvasloth        { position:relative; overflow:hidden; }
 .canvasloth canvas { position:relative; width:100%; height:100%; filter:blur(3px); -webkit-filter:blur(3px); }
 .canvasloth.canvasloth-active canvas { filter:blur(0); -webkit-filter:blur(0); }
-.canvasloth-page         { position:absolute; width:100%; height:100%; z-index:3; opacity:0; top:-50px; margin-left:100%; }
-.canvasloth-cross        { opacity:0.66; position:absolute; z-index:3; top:-32px; right:5px; text-decoration:none; font-size:24px; font-weight:bold; }
+.canvasloth-page         { position:absolute; width:100%; height:100%; z-index:4; opacity:0; top:-50px; margin-left:100%; }
+.canvasloth-cross        { opacity:0.66; position:absolute; z-index:4; top:-32px; right:5px; text-decoration:none; font-size:24px; font-weight:bold; }
 .canvasloth-cross:hover  { opacity:1.00; }
 .canvasloth-cross:active { padding-top:2px; }
 .canvasloth-cross:after  { content:"✕"; }
@@ -12,6 +12,7 @@ body.canvasloth-focus { -webkit-touch-callout:none; -webkit-user-select:none; -k
 
 /* HUD */
 .canvasloth-hud-passive { position:absolute; width:100%; height:100%; top:0; z-index:1; }
+.canvasloth-hud-active > * { position:absolute; z-index:3; }
 .DomIntIncrease        { font-family:monospace; }
 .DomIntIncrease .zeros { opacity:0.33; }
 .DomIntIncrease .value { font-weight:bold; }
