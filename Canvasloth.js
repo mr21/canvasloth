@@ -9,7 +9,6 @@ function Canvasloth(container, images, fns) {
 	this.ctx       = this.canvas.getContext('2d');
 	this.fns       = fns;
 	this.time      = new Time();
-	this.assets    = new Assets(this.ctx, this.time, images, function() { self.launch() });
 	this.vectView  = new Vector2D(0, 0);
 	this.keyBool   = [];
 	// active/inactive
@@ -24,6 +23,9 @@ function Canvasloth(container, images, fns) {
 	this.domA_cross.className = 'canvasloth-cross';
 	this.domA_cross.onclick   = function() { return self.closePage(true), false };
 	container.insertBefore(this.domA_cross, this.canvas);
+	// load assets
+	this.assets = new Assets(this.ctx, this.time);
+	this.assets.loadImages(images, function() { self.launch() });
 }
 
 Canvasloth.prototype = {

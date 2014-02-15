@@ -1,24 +1,26 @@
 // Assets ####################################
-function Assets(ctx, time, images, callback) {
+function Assets(ctx, time) {
 	this.ctx           = ctx;
 	this.time          = time;
 	this.images        = [];
-	var self           = this;
-	var nbImagesToLoad = images.length;
-	for (var i = 0, imgSrc; imgSrc = images[i]; ++i) {
-		var img = new Image();
-		img.src = imgSrc;
-		img.onload = function() {
-			self.images.push(this);
-			if (--nbImagesToLoad === 0 && callback)
-				callback();
-		};
-	}
 	this.debug(false);
 }
 
 Assets.prototype = {
 	// public
+	loadImages: function(imgs, callback) {
+		var i = 0, img, self = this,
+			nbImagesToLoad = imgs.length;
+		for (; i < imgs.length; ++i) {
+			img = new Image();
+			img.src = imgs[i];
+			img.onload = function() {
+				self.images.push(this);
+				if (--nbImagesToLoad === 0 && callback)
+					callback();
+			};
+		}
+	},
 	debug: function(state) {
 		this.debugging = state;
 	},
