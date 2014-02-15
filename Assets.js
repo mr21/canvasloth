@@ -1,9 +1,8 @@
 // Assets ####################################
 function Assets(ctx, time) {
-	this.ctx           = ctx;
-	this.time          = time;
-	this.images        = [];
-	this.debug(false);
+	this.ctx = ctx;
+	this.time = time;
+	this.images = [];
 }
 
 Assets.prototype = {
@@ -20,9 +19,6 @@ Assets.prototype = {
 					callback();
 			};
 		}
-	},
-	debug: function(state) {
-		this.debugging = state;
 	},
 	sprite: function(x, y, w, h, imgPath) {
 		return new Assets.assetSprite(this, arguments);
@@ -54,7 +50,7 @@ Assets.assetSprite = function(assets, args) {
 };
 Assets.assetSprite.prototype = {
 	// public
-	draw: function(x, y) {
+	draw: function(x, y, debug) {
 		this.assets.ctx.drawImage(
 			this.src,
 			this.x, this.y,
@@ -62,8 +58,8 @@ Assets.assetSprite.prototype = {
 			x,      y,
 			this.w, this.h
 		);
-		if (this.assets.debugging) {
-			this.assets.ctx.strokeStyle = 'rgba(255, 255, 50, 1)';
+		if (debug) {
+			this.assets.ctx.strokeStyle = 'rgba(255, 255, 50, 0.75)';
 			this.assets.ctx.strokeRect(x, y, this.w, this.h);
 		}
 	}
@@ -84,9 +80,9 @@ Assets.assetAnim = function(assets, args) {
 };
 Assets.assetAnim.prototype = {
 	// public
-	draw: function(x, y) {
+	draw: function(x, y, debug) {
 		if (this.frame > -1) {
-			this.sprite.draw(x, y);
+			this.sprite.draw(x, y, debug);
 			this.update(this.sprite.assets.time);
 		}
 	},

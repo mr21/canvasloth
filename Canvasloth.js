@@ -57,9 +57,6 @@ Canvasloth.prototype = {
 		this.canvas.width  = this.container.clientWidth;
 		this.canvas.height = this.container.clientHeight;
 	},
-	debug: function(state) {
-		this.assets.debug(state);
-	},
 	resetKeyboard: function() {
 		for (var i in this.keyBool)
 			if (this.keyBool[i = parseInt(i)]) {
