@@ -1,7 +1,7 @@
 // Assets ####################################
-function Assets(canvasloth, images) {
-	this.ctx           = canvasloth.ctx;
-	this.time          = canvasloth.time;
+function Assets(ctx, time, images, callback) {
+	this.ctx           = ctx;
+	this.time          = time;
 	this.images        = [];
 	var self           = this;
 	var nbImagesToLoad = images.length;
@@ -10,12 +10,13 @@ function Assets(canvasloth, images) {
 		img.src = imgSrc;
 		img.onload = function() {
 			self.images.push(this);
-			if (--nbImagesToLoad === 0)
-				canvasloth.launch();
+			if (--nbImagesToLoad === 0 && callback)
+				callback();
 		};
 	}
 	this.debug(false);
 }
+
 Assets.prototype = {
 	// public
 	debug: function(state) {

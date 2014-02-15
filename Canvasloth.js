@@ -1,4 +1,5 @@
 function Canvasloth(container, images, fns) {
+	var self = this;
 	this.canvas = document.createElement('canvas');
 	container.appendChild(this.canvas);
 	this.catchMouse = document.createElement('div');
@@ -8,11 +9,10 @@ function Canvasloth(container, images, fns) {
 	this.ctx       = this.canvas.getContext('2d');
 	this.fns       = fns;
 	this.time      = new Time();
-	this.assets    = new Assets(this, images);
+	this.assets    = new Assets(this.ctx, this.time, images, function() { self.launch() });
 	this.vectView  = new Vector2D(0, 0);
 	this.keyBool   = [];
 	// active/inactive
-	var self = this;
 	this.active = false;
 	window  ._addEvent('blur',      function() { self.unfocus() });
 	document._addEvent('mousedown', function() { self.unfocus() });
