@@ -25,7 +25,7 @@ function Canvasloth(container, images, fns) {
 	container.insertBefore(this.domA_cross, this.canvas);
 	// load assets
 	this.assets = new Assets(this.ctx, this.time);
-	this.assets.loadImages(images, function() { self.launch() });
+	this.assets.images.load(images, function() { self.launch() });
 }
 
 Canvasloth.prototype = {

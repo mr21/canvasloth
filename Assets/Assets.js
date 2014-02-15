@@ -2,46 +2,21 @@
 function Assets(ctx, time) {
 	this.ctx = ctx;
 	this.time = time;
-	this.images = [];
+	this.images = new this.Images();
 }
 
 Assets.prototype = {
-	// public
-	loadImages: function(imgs, callback) {
-		var i = 0, img, self = this,
-			nbImagesToLoad = imgs.length;
-		for (; i < imgs.length; ++i) {
-			img = new Image();
-			img.src = imgs[i];
-			img.onload = function() {
-				self.images.push(this);
-				if (--nbImagesToLoad === 0 && callback)
-					callback();
-			};
-		}
-	},
 	sprite: function(x, y, w, h, imgPath) {
 		return new Assets.assetSprite(this, arguments);
 	},
 	anim: function(x, y, w, h, nbFrames, returnTo, loop, delay, imgPath) {
 		return new Assets.assetAnim(this, arguments);
-	},
-	// private
-	findImg: function(imgPath) {
-		var img, ind;
-		if (imgPath === undefined)
-			img = this.images[0];
-		else if (!isNaN(ind = parseInt(imgPath)))
-			img = this.images[ind];
-		else
-			for (var i = 0; (img = this.images[i]) && img.src.indexOf(imgPath) === -1; ++i) {}
-		return img || null;
 	}
 };
 
 // assetSprite ####################################
 Assets.assetSprite = function(assets, args) {
-	this.src    = assets.findImg(args[4]);
+	this.src    = assets.images.find(args[4]);
 	this.assets = assets;
 	this.x      = args[0];
 	this.y      = args[1];
