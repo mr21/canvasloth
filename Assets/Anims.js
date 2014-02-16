@@ -1,11 +1,11 @@
-Assets.prototype.Anims = function(time, sprites) {
+Canvasloth.Assets.Anims = function(time, sprites) {
 	this.time = time;
 	this.sprites = sprites;
 };
 
-Assets.prototype.Anims.prototype = {
+Canvasloth.Assets.Anims.prototype = {
 	create: function(imgPath, x, y, w, h, nbFrames, returnTo, loop, delay) {
-		var an = new this.Anim();
+		var an = new Canvasloth.Assets.Anims.Anim();
 		an.time = this.time;
 		an.sprite = this.sprites.create(imgPath, x, y, w, h);
 		an.framesAxeX = nbFrames > 0;
@@ -20,8 +20,8 @@ Assets.prototype.Anims.prototype = {
 	}
 };
 
-Assets.prototype.Anims.prototype.Anim = function() {};
-Assets.prototype.Anims.prototype.Anim.prototype = {
+Canvasloth.Assets.Anims.Anim = function() {};
+Canvasloth.Assets.Anims.Anim.prototype = {
 	draw: function(x, y, debug) {
 		if (this.frame > -1) {
 			this.sprite.draw(x, y, debug);

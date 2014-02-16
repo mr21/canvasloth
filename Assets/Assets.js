@@ -1,7 +1,7 @@
-function Assets(ctx, time) {
+Canvasloth.Assets = function(ctx, time) {
 	this.ctx = ctx;
 	this.time = time;
-	this.images = new this.Images();
-	this.sprites = new this.Sprites(ctx, this.images);
-	this.anims = new this.Anims(this.time, this.sprites);
+	this.images = new Canvasloth.Assets.Images();
+	this.sprites = new Canvasloth.Assets.Sprites(ctx, this.images);
+	this.anims = new Canvasloth.Assets.Anims(this.time, this.sprites);
 }

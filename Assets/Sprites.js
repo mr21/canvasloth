@@ -1,11 +1,11 @@
-Assets.prototype.Sprites = function(ctx, images) {
+Canvasloth.Assets.Sprites = function(ctx, images) {
 	this.ctx = ctx;
 	this.images = images;
 };
 
-Assets.prototype.Sprites.prototype = {
+Canvasloth.Assets.Sprites.prototype = {
 	create: function(imgPath, x, y, w, h) {
-		var sp = new this.Sprite();
+		var sp = new Canvasloth.Assets.Sprites.Sprite();
 		sp.ctx = this.ctx;
 		sp.src = this.images.find(imgPath);
 		sp.x = x || 0;
@@ -16,8 +16,8 @@ Assets.prototype.Sprites.prototype = {
 	}
 };
 
-Assets.prototype.Sprites.prototype.Sprite = function() {};
-Assets.prototype.Sprites.prototype.Sprite.prototype = {
+Canvasloth.Assets.Sprites.Sprite = function() {};
+Canvasloth.Assets.Sprites.Sprite.prototype = {
 	draw: function(x, y, debug) {
 		this.ctx.drawImage(
 			this.src,

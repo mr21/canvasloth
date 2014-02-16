@@ -1,8 +1,8 @@
-Assets.prototype.Images = function() {
+Canvasloth.Assets.Images = function() {
 	this.array = [];
 };
 
-Assets.prototype.Images.prototype = {
+Canvasloth.Assets.Images.prototype = {
 	load: function(imgs, callback) {
 		var i = 0, img, self = this,
 			nbImagesToLoad = imgs.length;
