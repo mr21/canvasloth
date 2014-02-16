@@ -5,20 +5,18 @@ Assets.prototype.Sprites = function(ctx, images) {
 
 Assets.prototype.Sprites.prototype = {
 	create: function(imgPath, x, y, w, h) {
-		var sp = new this.Sprite(this.ctx, x, y, w, h);
+		var sp = new this.Sprite();
+		sp.ctx = this.ctx;
 		sp.src = this.images.find(imgPath);
+		sp.x = x || 0;
+		sp.y = y || 0;
+		sp.w = w || sp.src.width  - sp.x;
+		sp.h = h || sp.src.height - sp.y;
 		return sp;
 	}
 };
 
-Assets.prototype.Sprites.prototype.Sprite = function(ctx, x, y, w, h) {
-	this.ctx = ctx;
-	this.x = x || 0;
-	this.y = y || 0;
-	this.w = w || this.src.width  - this.x;
-	this.h = h || this.src.height - this.y;
-};
-
+Assets.prototype.Sprites.prototype.Sprite = function() {};
 Assets.prototype.Sprites.prototype.Sprite.prototype = {
 	draw: function(x, y, debug) {
 		this.ctx.drawImage(
