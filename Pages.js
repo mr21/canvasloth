@@ -7,7 +7,7 @@ Canvasloth.Pages = function(canvasloth) {
 	this.cross.className = 'canvasloth-cross';
 	this.cross.onclick = function() { return self.close(true), false };
 	canvasloth.container.insertBefore(this.cross, canvasloth.canvas);
-}
+};
 
 Canvasloth.Pages.prototype = {
 	current: function() { return this.pageCurr },
