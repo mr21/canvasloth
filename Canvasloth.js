@@ -11,19 +11,10 @@ function Canvasloth(container, images, fns) {
 	this.time      = new Time();
 	this.vectView  = new Vector2D(0, 0);
 	this.keyBool   = [];
-	// active/inactive
 	this.active = false;
 	window  ._addEvent('blur',      function() { self.unfocus() });
 	document._addEvent('mousedown', function() { self.unfocus() });
-	// create DOM pages
-	this.pageCurr = null;
-	this.pageCurrNoCross = null;
-	this.domA_cross = document.createElement('a');
-	this.domA_cross.href      = '#';
-	this.domA_cross.className = 'canvasloth-cross';
-	this.domA_cross.onclick   = function() { return self.closePage(true), false };
-	container.insertBefore(this.domA_cross, this.canvas);
-	// load assets
+	this.pages = new Canvasloth.Pages(this);
 	this.assets = new Canvasloth.Assets(this.ctx, this.time);
 	this.assets.images.load(images, function() { self.launch() });
 }
@@ -80,44 +71,6 @@ Canvasloth.prototype = {
 			document.body._delClass('canvasloth-focus');
 			this.container._delClass('canvasloth-active');
 			this.resetKeyboard();
-		}
-	},
-	getPageCurrent: function() { return this.pageCurr },
-	openPage: function(page) {
-		if (page !== this.pageCurr) {
-			this.closePage(false);
-			var obj = [
-				{css:'margin-left', val:'0%'},
-				{css:'opacity',     val:'1',   dur:250},
-				{css:'top',         val:'0px', mov:'easeIn'}
-			];
-			if (!page._hasClass('canvasloth-nocross'))
-				obj.push({elm:this.domA_cross, css:'top', val:'5px', del:250});
-			else
-				this.pageCurrNoCross = page;
-			this.page_animId = page._cssAnim.apply(page, obj);
-			this.pageCurr = page;
-			this.unfocus();
-		}
-	},
-	closePage: function(byCross) {
-		if (this.pageCurr !== null) {
-			document._cssAnimPause(this.page_animId);
-			this.page_animId = this.pageCurr._cssAnim(
-				{css:'opacity',     val:'0',     dur:250},
-				{css:'top',         val:'-50px', mov:'easeIn'},
-				{css:'margin-left', val:'100%',  dur:0, del:250},
-				{elm:this.domA_cross, css:'top', val:'-32px', dur:250, del:0}
-			);
-			this.pageCurr = null;
-			if (byCross === undefined) {
-				this.pageCurrNoCross = null;
-			} else if (byCross === true) {
-				if (this.pageCurrNoCross === null)
-					this.focus();
-				else
-					this.openPage(this.pageCurrNoCross);
-			}
 		}
 	},
 	render: function() {
