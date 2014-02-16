@@ -3,53 +3,25 @@ function Assets(ctx, time) {
 	this.ctx = ctx;
 	this.time = time;
 	this.images = new this.Images();
+	this.sprites = new this.Sprites(ctx, this.images);
 }
 
 Assets.prototype = {
-	sprite: function(x, y, w, h, imgPath) {
-		return new Assets.assetSprite(this, arguments);
-	},
 	anim: function(x, y, w, h, nbFrames, returnTo, loop, delay, imgPath) {
-		return new Assets.assetAnim(this, arguments);
-	}
-};
-
-// assetSprite ####################################
-Assets.assetSprite = function(assets, args) {
-	this.src    = assets.images.find(args[4]);
-	this.assets = assets;
-	this.x      = args[0];
-	this.y      = args[1];
-	this.w      = args[2] || this.src.width  - this.x;
-	this.h      = args[3] || this.src.height - this.y;
-};
-Assets.assetSprite.prototype = {
-	// public
-	draw: function(x, y, debug) {
-		this.assets.ctx.drawImage(
-			this.src,
-			this.x, this.y,
-			this.w, this.h,
-			x,      y,
-			this.w, this.h
-		);
-		if (debug) {
-			this.assets.ctx.strokeStyle = 'rgba(255, 255, 50, 0.75)';
-			this.assets.ctx.strokeRect(x, y, this.w, this.h);
-		}
+		return new Assets.assetAnim(this, x, y, w, h, nbFrames, returnTo, loop, delay, imgPath);
 	}
 };
 
 // assetAnim ####################################
-Assets.assetAnim = function(assets, args) {
-	this.framesAxeX = args[4] > 0;
-	this.nbFrames   = Math.abs(args[4]);
-	this.returnTo   = args[5];
-	this.loop       = args[6];
-	this.delay      = args[7] / this.nbFrames;
+Assets.assetAnim = function(assets, x, y, w, h, nbFrames, returnTo, loop, delay, imgPath) {
+	this.time = assets.time;
+	this.framesAxeX = nbFrames > 0;
+	this.nbFrames   = Math.abs(nbFrames);
+	this.returnTo   = returnTo;
+	this.loop       = loop;
+	this.delay      = delay / this.nbFrames;
 	this.frame      = this.returnTo === -1 ? -1 : 0;
-	args[4]         = args[8];
-	this.sprite     = new Assets.assetSprite(assets, args);
+	this.sprite     = assets.sprites.create(imgPath, x, y, w, h);
 	this.timePrev   = assets.time.realTime;
 	this.pause();
 };
@@ -58,7 +30,7 @@ Assets.assetAnim.prototype = {
 	draw: function(x, y, debug) {
 		if (this.frame > -1) {
 			this.sprite.draw(x, y, debug);
-			this.update(this.sprite.assets.time);
+			this.update(this.time);
 		}
 	},
 	play: function() {
