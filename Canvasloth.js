@@ -7,6 +7,7 @@ function Canvasloth(container, app, images) {
 	this.catchMouse.className = 'canvasloth-mouse';
 	container.appendChild(this.catchMouse);
 	this.ctx = this.canvas.getContext('2d');
+	this.fps = 40;
 	this.container = container;
 	this.keyBool = [];
 	this.active = false;
@@ -14,7 +15,7 @@ function Canvasloth(container, app, images) {
 	this.time = new Time();
 	this.pages = new Canvasloth.Pages(this);
 	this.assets = new Canvasloth.Assets(this.ctx, this.time);
-	this.assets.images.load(images, function() { self.launch() });
+	this.assets.images.load(images, function() { self.ready() });
 }
 
 Canvasloth.prototype = {
@@ -77,17 +78,14 @@ Canvasloth.prototype = {
 					);
 			});
 	},
-	launch: function() {
+	ready: function() {
 		var self = this;
 		this.setEvents();
 		this.updateResolution();
 		if (this.app.ready)
 			this.app.ready();
-		this.focus();
 		this.time.reset();
-		this.intervId = window.setInterval(function() {
-			self.loop();
-		}, 1000 / 40);
+		this.focus();
 	},
 	cursor: function(c) { this.catchMouse.style.cursor = c },
 	width:  function() { return this.canvas.width  },
@@ -112,6 +110,7 @@ Canvasloth.prototype = {
 			document.body._addClass('canvasloth-focus');
 			this.container._addClass('canvasloth-active');
 			this.time.update();
+			this.loop();
 		}
 	},
 	unfocus: function() {
@@ -120,6 +119,7 @@ Canvasloth.prototype = {
 			document.body._delClass('canvasloth-focus');
 			this.container._delClass('canvasloth-active');
 			this.resetKeyboard();
+			this.stop();
 		}
 	},
 	render: function() {
@@ -131,14 +131,17 @@ Canvasloth.prototype = {
 		ctx.restore();
 	},
 	loop: function() {
-		if (this.active) {
-			this.time.update();
-			this.app.update(this.time);
-			this.render();
-		}
+		var self = this;
+		this.intervId = setInterval(function() {
+			if (self.active) {
+				self.time.update();
+				self.app.update(self.time);
+				self.render();
+			}
+		}, 1000 / this.fps);
 	},
 	stop: function() {
-		window.clearInterval(this.intervId);
+		clearInterval(this.intervId);
 	},
 	getView: function()     { return this.vectView      },
 	setView: function(x, y) { this.vectView.setXY(x, y) }
