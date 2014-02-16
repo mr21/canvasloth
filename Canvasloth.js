@@ -10,8 +10,6 @@ function Canvasloth(container, app, images) {
 	this.container = container;
 	this.keyBool = [];
 	this.active = false;
-	window._addEvent('blur', function() { self.unfocus() });
-	document._addEvent('mousedown', function() { self.unfocus() });
 	this.vectView = new Vector2D(0, 0);
 	this.time = new Time();
 	this.pages = new Canvasloth.Pages(this);
@@ -23,6 +21,12 @@ Canvasloth.prototype = {
 	setEvents: function() {
 		var self = this;
 		// Window
+		document._addEvent('mousedown', function() {
+			self.unfocus();
+		});
+		window._addEvent('blur', function() {
+			self.unfocus();
+		});
 		window._addEvent('resize', function() {
 			self.updateResolution();
 			self.render();
