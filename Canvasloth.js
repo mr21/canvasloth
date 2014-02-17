@@ -1,4 +1,4 @@
-function Canvasloth(container, app, images) {
+function Canvasloth(ctx, container, app, images) {
 	var self = this;
 	this.app = app;
 	this.canvas = document.createElement('canvas');
@@ -6,7 +6,10 @@ function Canvasloth(container, app, images) {
 	this.catchMouse = document.createElement('div');
 	this.catchMouse.className = 'canvasloth-mouse';
 	container.appendChild(this.catchMouse);
-	this.ctx = this.canvas.getContext('2d');
+	this.ctxType = ctx.toLowerCase();
+	this.ctx = this.ctxType === '3d'
+		? this.canvas.getContext('webgl') || this.canvas.getContext("experimental-webgl")
+		: this.canvas.getContext(ctx);
 	this.fps = 40;
 	this.container = container;
 	this.keyBool = [];
@@ -93,6 +96,8 @@ Canvasloth.prototype = {
 	updateResolution: function() {
 		this.canvas.width  = this.container.clientWidth;
 		this.canvas.height = this.container.clientHeight;
+		if (this.ctxType === '3d')
+			this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 	},
 	resetKeyboard: function() {
 		for (var i in this.keyBool)
