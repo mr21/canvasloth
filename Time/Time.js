@@ -2,7 +2,7 @@ Canvasloth.Time = function() {
 	this.reset();
 	this.realTime  = this.startTime;
 	this.frameTime = 0;
-}
+};
 
 Canvasloth.Time.prototype = {
 	update: function() {
