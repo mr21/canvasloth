@@ -1,9 +1,10 @@
-function Time() {
+Canvasloth.Time = function() {
 	this.reset();
 	this.realTime  = this.startTime;
 	this.frameTime = 0;
 }
-Time.prototype = {
+
+Canvasloth.Time.prototype = {
 	update: function() {
 		var d = new Date().getTime() / 1000;
 		this.frameTime = d - this.realTime;

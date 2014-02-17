@@ -15,7 +15,7 @@ function Canvasloth(ctx, container, app, images) {
 	this.keyBool = [];
 	this.active = false;
 	this.vectView = new Vector2D(0, 0);
-	this.time = new Time();
+	this.time = new Canvasloth.Time();
 	this.pages = new Canvasloth.Pages(this);
 	this.assets = new Canvasloth.Assets(this.ctx, this.time);
 	this.assets.images.load(images, function() { self.ready() });
