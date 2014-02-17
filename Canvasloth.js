@@ -14,7 +14,7 @@ function Canvasloth(ctx, container, app, images) {
 	this.container = container;
 	this.keyBool = [];
 	this.active = false;
-	this.vectView = new Vector2D(0, 0);
+	this.vectView = new Canvasloth.Math.V2(0, 0);
 	this.time = new Canvasloth.Time();
 	this.pages = new Canvasloth.Pages(this);
 	this.assets = new Canvasloth.Assets(this.ctx, this.time);
@@ -151,5 +151,5 @@ Canvasloth.prototype = {
 		clearInterval(this.intervId);
 	},
 	getView: function()     { return this.vectView      },
-	setView: function(x, y) { this.vectView.setXY(x, y) }
+	setView: function(x, y) { this.vectView.setF(x, y) }
 };
