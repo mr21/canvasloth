@@ -18,6 +18,8 @@ function Canvasloth(ctx, container, app, images) {
 	this.time = new Canvasloth.Time();
 	this.pages = new Canvasloth.Pages(this);
 	this.assets = new Canvasloth.Assets(this.ctx, this.time);
+	if (this.ctxType === '3d')
+		this.webgl = new Canvasloth.WebGL(container, this.ctx);
 	this.assets.images.load(images, function() { self.ready() });
 }
 
