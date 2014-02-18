@@ -131,7 +131,7 @@ Canvasloth.prototype = {
 		}
 	},
 	clearScreen: function(state) {
-		var t = this, c = this.ctx;
+		var t = this, c = t.ctx;
 		t.clearScreenFn = !state
 			? function() {}
 			: t.ctxType === '2d'
@@ -147,15 +147,16 @@ Canvasloth.prototype = {
 				this.app.render(ctx);
 		ctx.restore();
 	},
+	update: function() {
+		this.time.update();
+		this.app.update(this.time);
+	},
 	loop: function() {
-		var self = this;
-		this.intervId = setInterval(function() {
-			if (self.active) {
-				self.time.update();
-				self.app.update(self.time);
-				self.render();
-			}
-		}, 1000 / this.fps);
+		var t = this;
+		t.intervId = setInterval(function() {
+			t.update();
+			t.render();
+		}, 1000 / t.fps);
 	},
 	stop: function() {
 		clearInterval(this.intervId);
