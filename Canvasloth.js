@@ -86,6 +86,7 @@ Canvasloth.prototype = {
 	ready: function() {
 		var self = this;
 		this.setEvents();
+		this.clearScreen(true);
 		this.updateResolution();
 		if (this.app.ready)
 			this.app.ready();
@@ -129,9 +130,18 @@ Canvasloth.prototype = {
 			this.stop();
 		}
 	},
+	clearScreen: function(state) {
+		var self = this;
+		this.clearScreenFn = !state
+			? function() {}
+			: this.ctxType === '2d'
+				? function() { self.ctx.clearRect(0, 0, self.width(), self.height()); }
+				: function() { /*...*/ }
+		;
+	},
 	render: function() {
 		var ctx = this.ctx;
-		ctx.clearRect(0, 0, this.width(), this.height());
+		this.clearScreenFn();
 		ctx.save();
 			ctx.translate(this.vectView.x, this.vectView.y);
 				this.app.render(ctx);
@@ -150,6 +160,6 @@ Canvasloth.prototype = {
 	stop: function() {
 		clearInterval(this.intervId);
 	},
-	getView: function()     { return this.vectView      },
+	getView: function()     { return this.vectView     },
 	setView: function(x, y) { this.vectView.setF(x, y) }
 };
