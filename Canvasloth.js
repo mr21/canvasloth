@@ -131,12 +131,12 @@ Canvasloth.prototype = {
 		}
 	},
 	clearScreen: function(state) {
-		var self = this;
-		this.clearScreenFn = !state
+		var t = this, c = this.ctx;
+		t.clearScreenFn = !state
 			? function() {}
-			: this.ctxType === '2d'
-				? function() { self.ctx.clearRect(0, 0, self.width(), self.height()); }
-				: function() { /*...*/ }
+			: t.ctxType === '2d'
+				? function() { c.clearRect(0, 0, t.width(), t.height()); }
+				: function() { c.clear(c.COLOR_BUFFER_BIT | c.DEPTH_BUFFER_BIT | c.STENCIL_BUFFER_BIT); }
 		;
 	},
 	render: function() {
