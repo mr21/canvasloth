@@ -20,71 +20,63 @@ function Canvasloth(ctx, container, app, images) {
 	this.assets = new Canvasloth.Assets(this.ctx, this.time);
 	if (this.ctxType === '3d')
 		this.webgl = new Canvasloth.WebGL(container, this.ctx);
-	this.assets.images.load(images, function() { self.ready() });
+	this.assets.images.load(images, function() { self.ready(); });
 }
 
 Canvasloth.prototype = {
 	setEvents: function() {
-		var self = this;
+		var t = this;
 		// Window
-		document._addEvent('mousedown', function() {
-			self.unfocus();
-		});
-		window._addEvent('blur', function() {
-			self.unfocus();
-		});
-		window._addEvent('resize', function() {
-			self.updateResolution();
-			self.render();
-		});
+		document._addEvent('mousedown', function() { t.unfocus(); });
+		window._addEvent('blur', function() { t.unfocus(); });
+		window._addEvent('resize', function() { t.updateResolution(); t.render(); });
 		// Keyboard
-		if (this.app.keydown)
+		if (t.app.keydown)
 			document._addEvent('keydown', function(e) {
-				if (self.active && !self.keyBool[e.keyCode]) {
+				if (t.active && !t.keyBool[e.keyCode]) {
 					e.preventDefault();
-					self.keyBool[e = e.keyCode] = 1;
-					self.app.keydown.call(self.app, e);
+					t.keyBool[e = e.keyCode] = 1;
+					t.app.keydown.call(t.app, e);
 				}
 			});
-		if (this.app.keyup)
+		if (t.app.keyup)
 			document._addEvent('keyup', function(e) {
-				if (self.active &&  self.keyBool[e.keyCode]) {
+				if (t.active &&  t.keyBool[e.keyCode]) {
 					e.preventDefault();
-					self.keyBool[e = e.keyCode] = 0;
-					self.app.keyup.call(self.app, e);
+					t.keyBool[e = e.keyCode] = 0;
+					t.app.keyup.call(t.app, e);
 				}
 			});
 		// Mouse
-		if (this.app.mousedown)
-			this.catchMouse._addEvent('mousedown', function(e) {
-				if (self.active)
-					self.app.mousedown.call(self.app,
-						e.layerX - self.vectView.x,
-						e.layerY - self.vectView.y
+		if (t.app.mousedown)
+			t.catchMouse._addEvent('mousedown', function(e) {
+				if (t.active)
+					t.app.mousedown.call(t.app,
+						e.layerX - t.vectView.x,
+						e.layerY - t.vectView.y
 					);
-				self.focus(e);
+				t.focus(e);
 			});
-		if (this.app.mouseup)
-			this.catchMouse._addEvent('mouseup', function(e) {
-				if (self.active)
-					self.app.mouseup.call(self.app,
-						e.layerX - self.vectView.x,
-						e.layerY - self.vectView.y
+		if (t.app.mouseup)
+			t.catchMouse._addEvent('mouseup', function(e) {
+				if (t.active)
+					t.app.mouseup.call(t.app,
+						e.layerX - t.vectView.x,
+						e.layerY - t.vectView.y
 					);
 			});
-		if (this.app.mousemove)
-			this.catchMouse._addEvent('mousemove', function(e) {
-				if (self.active)
-					self.app.mousemove.call(self.app,
-						e.layerX - self.vectView.x,
-						e.layerY - self.vectView.y,
+		if (t.app.mousemove)
+			t.catchMouse._addEvent('mousemove', function(e) {
+				if (t.active)
+					t.app.mousemove.call(t.app,
+						e.layerX - t.vectView.x,
+						e.layerY - t.vectView.y,
 						offsetMouse.xRel,
 						offsetMouse.yRel
 					);
 			});
 	},
 	ready: function() {
-		var self = this;
 		this.setEvents();
 		this.clearScreen(true);
 		this.updateResolution();
@@ -158,9 +150,7 @@ Canvasloth.prototype = {
 			t.render();
 		}, 1000 / t.fps);
 	},
-	stop: function() {
-		clearInterval(this.intervId);
-	},
-	getView: function()     { return this.vectView     },
-	setView: function(x, y) { this.vectView.setF(x, y) }
+	stop: function() { clearInterval(this.intervId); },
+	getView: function() { return this.vectView; },
+	setView: function(x, y) { this.vectView.setF(x, y); }
 };
