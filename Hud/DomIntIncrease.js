@@ -35,6 +35,9 @@ DomIntIncrease.prototype = {
 	add: function(val, duration) {
 		this.set(this.value + val, duration);
 	},
+	get: function() {
+		return Math.floor(this.value);
+	},
 	set: function(val, duration) {
 		if (val > this.valueMax)
 			val = this.valueMax;
