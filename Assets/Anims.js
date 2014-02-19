@@ -22,6 +22,9 @@ Canvasloth.Assets.Anims.prototype = {
 
 Canvasloth.Assets.Anims.Anim = function() {};
 Canvasloth.Assets.Anims.Anim.prototype = {
+	opacity: function(a) {
+		return this.sprite.opacity(a);
+	},
 	draw: function(x, y, debug) {
 		if (this.frame > -1) {
 			this.sprite.draw(x, y, debug);
