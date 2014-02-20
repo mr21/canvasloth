@@ -7,6 +7,8 @@ Canvasloth.Math.V2 = function(v, y) {
 
 Canvasloth.Math.V2.prototype = {
 	copy: function() { return new Canvasloth.Math.V2(this); },
+	distSquare: function(v) { return (this.x-v.x)*(this.x-v.x) + (this.y-v.y)*(this.y-v.y); },
+	dist: function(v) { return Math.sqrt(this.distSquare(v)); },
 	normSquare: function() { return this.x*this.x + this.y*this.y; },
 	norm: function() { return Math.sqrt(this.normSquare()); },
 	    normalize: function() { return this.    divS(this.norm() || 1); },
@@ -44,6 +46,8 @@ Canvasloth.Math.V3 = function(v, y, z) {
 
 Canvasloth.Math.V3.prototype = {
 	copy: function() { return new Canvasloth.Math.V3(this); },
+	distSquare: function(v) { return (this.x-v.x)*(this.x-v.x) + (this.y-v.y)*(this.y-v.y) + (this.z-v.z)*(this.z-v.z); },
+	dist: function(v) { return Math.sqrt(this.distSquare(v)); },
 	normSquare: function() { return this.x*this.x + this.y*this.y + this.z*this.z; },
 	norm: function() { return Math.sqrt(this.normSquare()); },
 	    normalize: function() { return this.    divS(this.norm() || 1); },
