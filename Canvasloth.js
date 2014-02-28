@@ -78,16 +78,17 @@ Canvasloth.prototype = {
 	},
 	ready: function() {
 		this.setEvents();
-		this.clearScreen(true);
 		this.updateResolution();
+		this.clearScreen(true);
+		this.renderScreen(true);
 		if (this.app.ready)
 			this.app.ready();
 		this.time.reset();
 		this.focus();
 	},
-	cursor: function(c) { this.catchMouse.style.cursor = c },
-	width:  function() { return this.canvas.width  },
-	height: function() { return this.canvas.height },
+	cursor: function(c) { this.catchMouse.style.cursor = c; },
+	width:  function() { return this.canvas.width;  },
+	height: function() { return this.canvas.height; },
 	updateResolution: function() {
 		this.canvas.width  = this.container.clientWidth;
 		this.canvas.height = this.container.clientHeight;
@@ -131,13 +132,24 @@ Canvasloth.prototype = {
 				: function() { c.clear(c.COLOR_BUFFER_BIT | c.DEPTH_BUFFER_BIT | c.STENCIL_BUFFER_BIT); }
 		;
 	},
+	renderScreen: function(state) {
+		var t = this, c = t.ctx;
+		t.renderScreenFn = !state
+			? function() {}
+			: t.ctxType === '3d'
+				? function() { t.app.render(c); }
+				: function() {
+					c.save();
+						c.translate(t.vectView.x, t.vectView.y);
+							t.app.render(c);
+					c.restore();
+				}
+		;
+	},
 	render: function() {
 		var ctx = this.ctx;
 		this.clearScreenFn();
-		ctx.save();
-			ctx.translate(this.vectView.x, this.vectView.y);
-				this.app.render(ctx);
-		ctx.restore();
+		this.renderScreenFn();
 	},
 	update: function() {
 		this.time.update();
