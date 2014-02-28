@@ -1,10 +1,10 @@
-Canvasloth.WebGL.Shaders = function(container, ctx) {
+Canvasloth.Ctx3D.Shaders = function(container, ctx) {
 	this.container = container;
 	this.ctx = ctx;
 	this.loadShaders();
 };
 
-Canvasloth.WebGL.Shaders.prototype = {
+Canvasloth.Ctx3D.Shaders.prototype = {
 	loadShaders: function() {
 		var shaders = this.compileShaders();
 		if (shaders.length) {
