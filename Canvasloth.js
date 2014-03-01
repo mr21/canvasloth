@@ -1,12 +1,12 @@
 function Canvasloth(ctxType, container, app, images) {
 	this.app = app;
+	this.container = container;
 	this.canvas = new Canvasloth.Canvas(container);
-	this.ctx = new Canvasloth['Ctx' + ctxType.toUpperCase()](this.canvas);
+	this.ctx = new Canvasloth['Ctx' + ctxType.toUpperCase()](this.canvas, container);
 	this.catchMouse = document.createElement('div');
 	this.catchMouse.className = 'canvasloth-mouse';
 	container.appendChild(this.catchMouse);
 	this.fps = 40;
-	this.container = container;
 	this.keyBool = [];
 	this.active = false;
 	this.time = new Canvasloth.Time();
