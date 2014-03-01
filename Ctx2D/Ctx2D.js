@@ -1,27 +1,24 @@
 Canvasloth.Ctx2D = function(canvas) {
 	this.canvas = canvas;
 	this.ctx = canvas.getContext('2d');
-	this.cam = new Canvasloth.Math.V2(0, 0);
+	this.camV2 = new Canvasloth.Math.V2(0, 0);
 };
 
 Canvasloth.Ctx2D.prototype = {
 	resize: function() {
 		this.canvas.resize();
 	},
-	getCam: function() {
-		return this.cam;
-	},
-	setCam: function(x, y) {
+	lookAt: function(x, y) {
 		if (y === undefined)
-			this.cam.setV(x);
+			this.camV2.setV(x);
 		else
-			this.cam.setF(x, y);
+			this.camV2.setF(x, y);
 	},
 	render: function(userApp) {
 		var c = this.ctx;
 		c.clearRect(0, 0, this.canvas.width(), this.canvas.height());
 		c.save();
-			c.translate(this.cam.x, this.cam.y);
+			c.translate(this.camV2.x, this.camV2.y);
 				userApp.render(c);
 		c.restore();
 	}
