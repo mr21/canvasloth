@@ -11,8 +11,11 @@ Canvasloth.Ctx2D.prototype = {
 	getCam: function() {
 		return this.cam;
 	},
-	setCam: function(v) {
-		this.cam.setF(v);
+	setCam: function(x, y) {
+		if (y === undefined)
+			this.cam.setV(x);
+		else
+			this.cam.setF(x, y);
 	},
 	render: function(userApp) {
 		var c = this.ctx;
