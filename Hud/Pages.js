@@ -5,12 +5,14 @@ Canvasloth.Pages = function(canvasloth) {
 	this.cross = document.createElement('a');
 	this.cross.href = '#';
 	this.cross.className = 'canvasloth-cross';
-	this.cross.onclick = function() { return self.close(true), false };
-	canvasloth.container.insertBefore(this.cross, canvasloth.canvas);
+	this.cross.onclick = function() { return self.close(true), false; };
+	canvasloth.container.insertBefore(this.cross, canvasloth.canvas.canvas);
 };
 
 Canvasloth.Pages.prototype = {
-	current: function() { return this.pageCurr },
+	current: function() {
+		return this.pageCurr;
+	},
 	open: function(page) {
 		if (page !== this.pageCurr) {
 			this.close(false);
