@@ -3,6 +3,10 @@ Canvasloth.Ctx3D.Shaders = function(container, ctx) {
 	this.ctx = ctx;
 	this.attribs = ['vNormal', 'vColor', 'vPosition'];
 	this.program = this.loadShaders();
+	var gl = this.ctx;
+	if (this.program) {
+		gl.uniform3f(gl.getUniformLocation(this.program, "lightDir"), 0, 0, 1); // TMP Set up a uniform variable for the shaders
+	}
 };
 
 Canvasloth.Ctx3D.Shaders.prototype = {
@@ -13,19 +17,19 @@ Canvasloth.Ctx3D.Shaders.prototype = {
 		var program = null,
 		    shaders = this.compileShaders();
 		if (shaders.length) {
-			var gl = this.ctx, i, s;
+			var gl = this.ctx;
 			program = gl.createProgram();
-			for (i = 0; s = shaders[i]; ++i)
+			for (var i = 0, s; s = shaders[i]; ++i)
 				gl.attachShader(program, s);
-			for (i = 0; s = this.attribs[i]; ++i)
-				gl.bindAttribLocation(program, i, s);
+			for (var i = 0, a; a = this.attribs[i]; ++i)
+				gl.bindAttribLocation(program, i, a);
 			gl.linkProgram(program);
 			if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
 				gl.useProgram(program);
 			} else {
 				console.log('Shaders: Unable to initialize the shader program');
 				console.log(gl.getProgramInfoLog(program));
-				for (i = 0; s = shaders[i]; ++i)
+				for (var i = 0, s; s = shaders[i]; ++i)
 					gl.deleteProgram(s);
 				gl.deleteProgram(program);
 			}
