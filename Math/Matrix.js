@@ -34,7 +34,7 @@ Canvasloth.Math.M4.prototype = {
 	},
 	translate: function(x, y, z) {
 		if (y === undefined) { z = x.z; y = x.y; x = x.x; }
-		return this.multiply(new Canvasloth.Math.M4().setArray(
+		return this.multiplyM(new Canvasloth.Math.M4().setArray(
 			1, 0, 0, x,
 			0, 1, 0, y,
 			0, 0, 1, z,
@@ -43,7 +43,7 @@ Canvasloth.Math.M4.prototype = {
 	},
 	scale: function(x, y, z) {
 		if (y === undefined) { z = x.z; y = x.y; x = x.x; }
-		return this.multiply(new Canvasloth.Math.M4().setArray(
+		return this.multiplyM(new Canvasloth.Math.M4().setArray(
 			x, 0, 0, 0,
 			0, y, 0, 0,
 			0, 0, z, 0,
@@ -58,7 +58,7 @@ Canvasloth.Math.M4.prototype = {
 		    xs=x*s, xx=x*x, xy=x*y, xz=x*z,
 		    ys=y*s, yy=y*y, yz=y*z,
 		    zs=z*s, zz=z*z;
-		return this.multiply(new Canvasloth.Math.M4().setArray(
+		return this.multiplyM(new Canvasloth.Math.M4().setArray(
 			xx+(1-xx)*c,   xy*c1-zs,      xz*c1+ys,      0,
 			xy*c1+zs,      yy+(1-yy)*c,   yz*c1-xs,      0,
 			xz*c1-ys,      yz*c1+xs,      zz+(1-zz)*c,   0,
