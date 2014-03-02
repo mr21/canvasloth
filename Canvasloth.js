@@ -34,7 +34,7 @@ Canvasloth.prototype = {
 			});
 		if (t.app.keyup)
 			document._addEvent('keyup', function(e) {
-				if (t.active &&  t.keyBool[e.keyCode]) {
+				if (t.active && t.keyBool[e.keyCode]) {
 					e.preventDefault();
 					t.keyBool[e = e.keyCode] = 0;
 					t.app.keyup.call(t.app, e);
@@ -79,7 +79,7 @@ Canvasloth.prototype = {
 		this.setEvents();
 		this.ctx.resize();
 		if (this.app.ready)
-			this.app.ready();
+			this.app.ready(this);
 		this.time.reset();
 		this.focus();
 	},
