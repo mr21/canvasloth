@@ -1,26 +1,55 @@
 Canvasloth.Ctx3D = function(canvas, container) {
 	this.canvas = canvas;
-	this.ctx = canvas.getContext('webgl') || canvas.getContext("experimental-webgl");
-	this.fovy = 30;
-	this.near = 1;
-	this.far = 10000;
+	// init
+	this.ctx = canvas.getContext('webgl') || canvas.getContext("experimental-webgl");	
+	this.setFovy(30);
+	this.setNear(1);
+	this.setFar(10000);
+	this.setClearColor(0, 0, 0, 1);
+	var gl = this.ctx;
+	gl.enable(gl.DEPTH_TEST);
+	gl.enable(gl.BLEND);
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+	//
 	this.shaders = new Canvasloth.Ctx3D.Shaders(container, this.ctx);
-	this.M4perspective = new Canvasloth.Math.M4();
-	this.M4cam = new Canvasloth.Math.M4().identity();
-	this.vertexTriangles = [];
+	this.M4perspective = new J3DIMatrix4();
+	this.M4cam = new J3DIMatrix4();
+	this.vertexTriangles = this.ctx.createBuffer();
 };
 
 Canvasloth.Ctx3D.prototype = {
+	setClearColor: function(r, g, b, a) {
+		this.ctx.clearColor(r, g, b, a);
+	},
+	setFovy: function(fovy) {
+		this.fovy = fovy;
+	},
+	setNear: function(near) {
+		this.near = near;
+	},
+	setFar: function(far) {
+		this.far = far;
+		this.ctx.clearDepth(far);
+	},
 	resize: function() {
 		this.canvas.resize();
 		var w = this.canvas.width(),
 		    h = this.canvas.height();
 		this.ctx.viewport(0, 0, w, h);
-		this.M4perspective.perspective(this.fovy, w / h, this.near, this.far);
 	},
 	// camera
 	lookAt: function(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ) {
-		this.M4perspective.lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+		this.M4perspective.makeIdentity();
+		this.M4perspective.perspective(
+			this.fovy,
+			this.canvas.width() / this.canvas.height(),
+			this.near, this.far
+		);
+		this.M4perspective.lookat(
+			eyeX,    eyeY,    eyeZ,
+			centerX, centerY, centerZ,
+			upX,     upY,     upZ
+		);
 	},
 	// transform
 	translate: function(   x, y, z) { this.M4cam.translate(x, y, z); return this; },
@@ -33,11 +62,10 @@ Canvasloth.Ctx3D.prototype = {
 	render: function(userApp) {
 		var gl = this.ctx;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
-		this.M4cam.identity();
 
 		userApp.render(this);
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexTriangles);
-		gl.drawElements(gl.TRIANGLES, this.vertexTriangles.length, gl.FLOAT, 0);
+		/*gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexTriangles);
+		gl.drawElements(gl.TRIANGLES, this.vertexTriangles.length, gl.FLOAT, 0);*/
 	}
 };
