@@ -1,23 +1,28 @@
 Canvasloth.Ctx3D = function(canvas, container) {
 	this.canvas = canvas;
 	// init
-	this.ctx = canvas.getContext('webgl') || canvas.getContext("experimental-webgl");	
+	this.ctx = canvas.getContext('webgl') || canvas.getContext("experimental-webgl");
 	this.setFovy(30);
 	this.setNear(1);
 	this.setFar(10000);
 	this.setClearColor(0, 0, 0, 1);
+	this.shaders = new Canvasloth.Ctx3D.Shaders(container, this.ctx);
 	var gl = this.ctx;
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-	//
-	this.shaders = new Canvasloth.Ctx3D.Shaders(container, this.ctx);
+	// Matrix
+	this.vertexTriangles = this.ctx.createBuffer();
 	this.M4cam = new J3DIMatrix4();
 	this.M4obj = new J3DIMatrix4();
-	this.vertexTriangles = this.ctx.createBuffer();
+	this.M4nrm = new J3DIMatrix4();
+	this.M4mvp = new J3DIMatrix4();
+	this.M4nrmLoc = gl.getUniformLocation(this.shaders.program, 'u_normalMatrix');
+	this.M4mdlVLoc = gl.getUniformLocation(this.shaders.program, 'u_modelViewProjMatrix');
 };
 
 Canvasloth.Ctx3D.prototype = {
+	// initialisation
 	setClearColor: function(r, g, b, a) {
 		this.ctx.clearColor(r, g, b, a);
 	},
@@ -56,8 +61,20 @@ Canvasloth.Ctx3D.prototype = {
 	scale:     function(   x, y, z) { this.M4obj.scale    (x, y, z); return this; },
 	rotate:    function(a, x, y, z) { this.M4obj.rotate(a, x, y, z); return this; },
 	// render
-	pushTriangle: function(arr) {
-		this.vertexTriangles.concat(arr);
+	setUniform: function() {
+		// Construct the normal matrix from the model-view matrix and pass it in
+		this.M4nrm.load(this.M4obj);
+		this.M4nrm.invert();
+		this.M4nrm.transpose();
+		this.M4nrm.setUniform(this.ctx, this.M4nrmLoc, false);
+		// Construct the model-view * projection matrix and pass it in
+		this.M4mvp.load(this.M4cam);
+		this.M4mvp.multiply(this.M4obj);
+		this.M4mvp.setUniform(this.ctx, this.M4mdlVLoc, false);
+	},
+	drawElements: function(mode, count, type, indices) {
+		this.setUniform();
+		this.ctx.drawElements(mode, count, type, indices);
 	},
 	render: function(userApp) {
 		var gl = this.ctx;
