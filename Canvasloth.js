@@ -41,17 +41,16 @@ Canvasloth.prototype = {
 				}
 			});
 		// Mouse
-		if (t.app.mousedown)
-			t.catchMouse._addEvent('mousedown', function(e) {
-				if (t.active) {
-					var cam = t.ctx.camV2; // tmp
-					t.app.mousedown.call(t.app,
-						e.layerX - cam.x,
-						e.layerY - cam.y
-					);
-				}
-				t.focus(e);
-			});
+		t.catchMouse._addEvent('mousedown', function(e) {
+			if (t.app.mousedown && t.active) {
+				var cam = t.ctx.camV2; // tmp
+				t.app.mousedown.call(t.app,
+					e.layerX - cam.x,
+					e.layerY - cam.y
+				);
+			}
+			t.focus(e);
+		});
 		if (t.app.mouseup)
 			t.catchMouse._addEvent('mouseup', function(e) {
 				if (t.active) {
