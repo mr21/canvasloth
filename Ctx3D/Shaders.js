@@ -1,27 +1,40 @@
 Canvasloth.Ctx3D.Shaders = function(container, ctx) {
 	this.container = container;
 	this.ctx = ctx;
-	this.loadShaders();
+	this.attribs = ['vNormal', 'vColor', 'vPosition'];
+	this.program = this.loadShaders();
 };
 
 Canvasloth.Ctx3D.Shaders.prototype = {
+	getProgram: function() {
+		return this.program;
+	},
 	loadShaders: function() {
-		var shaders = this.compileShaders();
+		var program = null,
+		    shaders = this.compileShaders();
 		if (shaders.length) {
-			var gl = this.ctx;
-			this.shaderProgram = gl.createProgram();
-			for (var i = 0; i < shaders.length; ++i)
-				gl.attachShader(this.shaderProgram, shaders[i]);
-			gl.linkProgram(this.shaderProgram);
-			if (!gl.getProgramParameter(this.shaderProgram, gl.LINK_STATUS))
+			var gl = this.ctx, i, s;
+			program = gl.createProgram();
+			for (i = 0; s = shaders[i]; ++i)
+				gl.attachShader(program, s);
+			for (i = 0; s = this.attribs[i]; ++i)
+				gl.bindAttribLocation(program, i, s);
+			gl.linkProgram(program);
+			if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+				gl.useProgram(program);
+			} else {
 				console.log('Shaders: Unable to initialize the shader program');
-			else
-				gl.useProgram(this.shaderProgram);
+				console.log(gl.getProgramInfoLog(program));
+				for (i = 0; s = shaders[i]; ++i)
+					gl.deleteProgram(s);
+				gl.deleteProgram(program);
+			}
 		}
+		return program;
 	},
 	compileShaders: function() {
 		var i = 0, script, shader, shaders = [],
-			scripts = this.container.getElementsByTagName('script');
+		    scripts = this.container.getElementsByTagName('script');
 		for (; script = scripts[i]; ++i)
 			if (shader = this.compileShader(script))
 				shaders.push(shader);
