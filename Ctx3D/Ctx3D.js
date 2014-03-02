@@ -12,8 +12,8 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 	//
 	this.shaders = new Canvasloth.Ctx3D.Shaders(container, this.ctx);
-	this.M4perspective = new J3DIMatrix4();
 	this.M4cam = new J3DIMatrix4();
+	this.M4obj = new J3DIMatrix4();
 	this.vertexTriangles = this.ctx.createBuffer();
 };
 
@@ -39,22 +39,22 @@ Canvasloth.Ctx3D.prototype = {
 	},
 	// camera
 	lookAt: function(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ) {
-		this.M4perspective.makeIdentity();
-		this.M4perspective.perspective(
+		this.M4cam.makeIdentity();
+		this.M4cam.perspective(
 			this.fovy,
 			this.canvas.width() / this.canvas.height(),
 			this.near, this.far
 		);
-		this.M4perspective.lookat(
+		this.M4cam.lookat(
 			eyeX,    eyeY,    eyeZ,
 			centerX, centerY, centerZ,
 			upX,     upY,     upZ
 		);
 	},
 	// transform
-	translate: function(   x, y, z) { this.M4cam.translate(x, y, z); return this; },
-	scale:     function(   x, y, z) { this.M4cam.scale    (x, y, z); return this; },
-	rotate:    function(a, x, y, z) { this.M4cam.rotate(a, x, y, z); return this; },
+	translate: function(   x, y, z) { this.M4obj.translate(x, y, z); return this; },
+	scale:     function(   x, y, z) { this.M4obj.scale    (x, y, z); return this; },
+	rotate:    function(a, x, y, z) { this.M4obj.rotate(a, x, y, z); return this; },
 	// render
 	pushTriangle: function(arr) {
 		this.vertexTriangles.concat(arr);
@@ -62,6 +62,7 @@ Canvasloth.Ctx3D.prototype = {
 	render: function(userApp) {
 		var gl = this.ctx;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+		this.M4obj.makeIdentity();
 
 		userApp.render(this);
 
