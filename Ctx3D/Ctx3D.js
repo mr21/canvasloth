@@ -62,7 +62,7 @@ Canvasloth.Ctx3D.prototype = {
 	scale:     function(   x, y, z) { this.M4obj.scale    (x, y, z); return this; },
 	rotate:    function(a, x, y, z) { this.M4obj.rotate(a, x, y, z); return this; },
 	pushMatrix: function() { this.M4stack.push(new J3DIMatrix4(this.M4obj)); return this; },
-	popMatrix : function() { this.M4stack.pop(); return this; },
+	popMatrix : function() { this.M4obj = this.M4stack.pop(); return this; },
 	// render
 	setUniform: function() {
 		// Construct the normal matrix from the model-view matrix and pass it in
