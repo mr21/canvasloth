@@ -13,6 +13,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 	// Matrix
 	this.vertexTriangles = this.ctx.createBuffer();
+	this.M4stack = [];
 	this.M4cam = new J3DIMatrix4();
 	this.M4obj = new J3DIMatrix4();
 	this.M4nrm = new J3DIMatrix4();
@@ -60,6 +61,8 @@ Canvasloth.Ctx3D.prototype = {
 	translate: function(   x, y, z) { this.M4obj.translate(x, y, z); return this; },
 	scale:     function(   x, y, z) { this.M4obj.scale    (x, y, z); return this; },
 	rotate:    function(a, x, y, z) { this.M4obj.rotate(a, x, y, z); return this; },
+	pushMatrix: function() { this.M4stack.push(new J3DIMatrix4(this.M4obj)); return this; },
+	popMatrix : function() { this.M4stack.pop(); return this; },
 	// render
 	setUniform: function() {
 		// Construct the normal matrix from the model-view matrix and pass it in
