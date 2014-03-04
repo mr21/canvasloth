@@ -14,6 +14,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl._M4mvp = new J3DIMatrix4();
 	gl._M4nrmLoc  = gl.getUniformLocation(gl._shaders.program, 'u_normalMatrix');
 	gl._M4mdlVLoc = gl.getUniformLocation(gl._shaders.program, 'u_modelViewProjMatrix');
+	gl.uniform3f(gl.getUniformLocation(gl._shaders.program, "lightDir"), 1, 1, 1); // tmp
 	// * Matrices
 	gl._translate = function(   x, y, z) { gl._M4obj.translate(x, y, z); return this; };
 	gl._scale     = function(   x, y, z) { gl._M4obj.scale    (x, y, z); return this; };
@@ -58,7 +59,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-	gl._fovy(30);
+	gl._fovy(90);
 	gl._near(1);
 	gl._far(10000);
 };
