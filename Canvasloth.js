@@ -16,6 +16,11 @@ function Canvasloth(ctxType, container, app, images) {
 	this.assets.images.load(images, function() { self.ready(); });
 }
 
+// Defines
+Canvasloth.LEFT_BUTTON   = 0;
+Canvasloth.MIDDLE_BUTTON = 1;
+Canvasloth.RIGHT_BUTTON  = 2;
+
 Canvasloth.prototype = {
 	setEvents: function() {
 		var t = this;
