@@ -55,7 +55,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 		this.drawElements(mode, count, type, indices);
 	};
 	// Initialiser le context
-	gl.clearColor(0, 0, 0, 1);
+	gl.clearColor(0.07, 0.07, 0.07, 1);
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
