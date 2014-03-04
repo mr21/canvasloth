@@ -1,11 +1,8 @@
 function Canvasloth(ctxType, container, app, images) {
 	this.app = app;
 	this.container = container;
-	this.canvas = new Canvasloth.Canvas(container);
+	this.canvas = new Canvasloth.Canvas(this, container);
 	this.ctx = new Canvasloth['Ctx' + ctxType.toUpperCase()](this.canvas, container);
-	this.catchMouse = document.createElement('div');
-	this.catchMouse.className = 'canvasloth-mouse';
-	container.appendChild(this.catchMouse);
 	this.fps = 40;
 	this.keyBool = [];
 	this.active = false;
@@ -28,7 +25,6 @@ Canvasloth.prototype = {
 		document._addEvent('mousedown', function() { t.unfocus(); });
 		window._addEvent('blur', function() { t.unfocus(); });
 		window._addEvent('resize', function() { t.ctx.resize(); t.render(); });
-		t.catchMouse.oncontextmenu = function() { return false; };
 		// Keyboard
 		if (t.app.keydown)
 			document._addEvent('keydown', function(e) {
@@ -46,40 +42,6 @@ Canvasloth.prototype = {
 					t.app.keyup.call(t.app, e);
 				}
 			});
-		// Mouse
-		t.catchMouse._addEvent('mousedown', function(e) {
-			if (t.app.mousedown && t.active) {
-				var cam = t.getCtx()._V2cam; // tmp
-				t.app.mousedown.call(t.app,
-					e.button,
-					e.layerX - cam.x,
-					e.layerY - cam.y
-				);
-			}
-			t.focus(e);
-		});
-		if (t.app.mouseup)
-			t.catchMouse._addEvent('mouseup', function(e) {
-				if (t.active) {
-					var cam = t.getCtx()._V2cam; // tmp
-					t.app.mouseup.call(t.app,
-						e.layerX - cam.x,
-						e.layerY - cam.y
-					);
-				}
-			});
-		if (t.app.mousemove)
-			t.catchMouse._addEvent('mousemove', function(e) {
-				if (t.active) {
-					var cam = t.getCtx()._V2cam; // tmp
-					t.app.mousemove.call(t.app,
-						e.layerX - cam.x,
-						e.layerY - cam.y,
-						offsetMouse.xRel,
-						offsetMouse.yRel
-					);
-				}
-			});
 	},
 	ready: function() {
 		this.setEvents();
@@ -89,9 +51,8 @@ Canvasloth.prototype = {
 		this.time.reset();
 		this.focus();
 	},
-	lookAt: function() { this.ctx.lookAt.apply(this.ctx, arguments); },
 	getCtx: function() { return this.ctx.ctx; },
-	cursor: function(c) { this.catchMouse.style.cursor = c; },
+	cursor: function(c) { this.canvas.cursor(c); },
 	width:  function() { return this.canvas.width();  },
 	height: function() { return this.canvas.height(); },
 	resetKeyboard: function() {
