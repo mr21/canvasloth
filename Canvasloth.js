@@ -16,6 +16,11 @@ function Canvasloth(ctxType, container, app, images) {
 	this.assets.images.load(images, function() { self.ready(); });
 }
 
+// Defines
+Canvasloth.LEFT_BUTTON   = 0;
+Canvasloth.MIDDLE_BUTTON = 1;
+Canvasloth.RIGHT_BUTTON  = 2;
+
 Canvasloth.prototype = {
 	setEvents: function() {
 		var t = this;
@@ -23,6 +28,7 @@ Canvasloth.prototype = {
 		document._addEvent('mousedown', function() { t.unfocus(); });
 		window._addEvent('blur', function() { t.unfocus(); });
 		window._addEvent('resize', function() { t.ctx.resize(); t.render(); });
+		t.catchMouse.oncontextmenu = function() { return false; };
 		// Keyboard
 		if (t.app.keydown)
 			document._addEvent('keydown', function(e) {
@@ -45,6 +51,7 @@ Canvasloth.prototype = {
 			if (t.app.mousedown && t.active) {
 				var cam = t.ctx.camV2; // tmp
 				t.app.mousedown.call(t.app,
+					e.button,
 					e.layerX - cam.x,
 					e.layerY - cam.y
 				);
