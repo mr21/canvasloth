@@ -49,7 +49,7 @@ Canvasloth.prototype = {
 		// Mouse
 		t.catchMouse._addEvent('mousedown', function(e) {
 			if (t.app.mousedown && t.active) {
-				var cam = t.ctx.camV2; // tmp
+				var cam = t.getCtx()._V2cam; // tmp
 				t.app.mousedown.call(t.app,
 					e.button,
 					e.layerX - cam.x,
@@ -61,7 +61,7 @@ Canvasloth.prototype = {
 		if (t.app.mouseup)
 			t.catchMouse._addEvent('mouseup', function(e) {
 				if (t.active) {
-					var cam = t.ctx.camV2; // tmp
+					var cam = t.getCtx()._V2cam; // tmp
 					t.app.mouseup.call(t.app,
 						e.layerX - cam.x,
 						e.layerY - cam.y
@@ -71,7 +71,7 @@ Canvasloth.prototype = {
 		if (t.app.mousemove)
 			t.catchMouse._addEvent('mousemove', function(e) {
 				if (t.active) {
-					var cam = t.ctx.camV2; // tmp
+					var cam = t.getCtx()._V2cam; // tmp
 					t.app.mousemove.call(t.app,
 						e.layerX - cam.x,
 						e.layerY - cam.y,
