@@ -1,4 +1,5 @@
 Canvasloth.Canvas = function(canvasloth, container) {
+	this.canvasloth = canvasloth;
 	this.container = container;
 	// <canvas>
 	this.canvas = document.createElement('canvas');
@@ -9,40 +10,10 @@ Canvasloth.Canvas = function(canvasloth, container) {
 	container.appendChild(this.catchMouse);
 	this.catchMouse.oncontextmenu = function() { return false; };
 	// Events
-	var c = canvasloth;
-	this.catchMouse._addEvent('mousedown', function(e) {
-		if (c.app.mousedown && c.active) {
-			var cam = c.getCtx()._V2cam; // tmp
-			c.app.mousedown.call(c.app,
-				e.button,
-				e.layerX - cam.x,
-				e.layerY - cam.y
-			);
-		}
-		c.focus(e);
-	});
-	if (c.app.mouseup)
-		this.catchMouse._addEvent('mouseup', function(e) {
-			if (c.active) {
-				var cam = c.getCtx()._V2cam; // tmp
-				c.app.mouseup.call(c.app,
-					e.layerX - cam.x,
-					e.layerY - cam.y
-				);
-			}
-		});
-	if (c.app.mousemove)
-		this.catchMouse._addEvent('mousemove', function(e) {
-			if (c.active) {
-				var cam = c.getCtx()._V2cam; // tmp
-				c.app.mousemove.call(c.app,
-					e.layerX - cam.x,
-					e.layerY - cam.y,
-					offsetMouse.xRel,
-					offsetMouse.yRel
-				);
-			}
-		});
+	this.addEvent('mousedown', canvasloth, canvasloth.focus);
+	if (canvasloth.app.mousedown) this.addEvent('mousedown', this, this.mouseDown);
+	if (canvasloth.app.mouseup)   this.addEvent('mouseup',   this, this.mouseUp);
+	if (canvasloth.app.mousemove) this.addEvent('mousemove', this, this.mouseMove);
 };
 
 Canvasloth.Canvas.prototype = {
@@ -53,5 +24,47 @@ Canvasloth.Canvas.prototype = {
 	resize: function() {
 		this.canvas.width  = this.container.clientWidth;
 		this.canvas.height = this.container.clientHeight;
+	},
+	addEvent: function(event, obj, fn) {
+		var cb = function(e) { fn.call(obj, e); }
+		this.catchMouse._addEvent(event, cb);
+		return cb;
+	},
+	delEvent: function(event, cb) {
+		this.catchMouse._delEvent(event, cb);
+	},
+	mouseDown: function(e) {
+		var c = this.canvasloth;
+		if (c.active) {
+			var cam = c.getCtx()._V2cam; // tmp
+			c.app.mousedown.call(c.app,
+				e.button,
+				e.layerX - cam.x,
+				e.layerY - cam.y
+			);
+		}
+		c.focus(e);
+	},
+	mouseUp: function(e) {
+		var c = this.canvasloth;
+		if (c.active) {
+			var cam = c.getCtx()._V2cam; // tmp
+			c.app.mouseup.call(c.app,
+				e.layerX - cam.x,
+				e.layerY - cam.y
+			);
+		}
+	},
+	mouseMove: function(e) {
+		var c = this.canvasloth;
+		if (c.active) {
+			var cam = c.getCtx()._V2cam; // tmp
+			c.app.mousemove.call(c.app,
+				e.layerX - cam.x,
+				e.layerY - cam.y,
+				offsetMouse.xRel,
+				offsetMouse.yRel
+			);
+		}
 	}
 };
