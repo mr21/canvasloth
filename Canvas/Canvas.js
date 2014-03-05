@@ -10,7 +10,7 @@ Canvasloth.Canvas = function(canvasloth, container) {
 	container.appendChild(this.catchMouse);
 	this.catchMouse.oncontextmenu = function() { return false; };
 	// Events
-	this.addEvent('mousedown', canvasloth, canvasloth.focus);
+	this.catchMouse._addEvent('mousedown', function(e) { canvasloth.focus(e); });
 	if (canvasloth.app.mousedown) this.addEvent('mousedown', this, this.mouseDown);
 	if (canvasloth.app.mouseup)   this.addEvent('mouseup',   this, this.mouseUp);
 	if (canvasloth.app.mousemove) this.addEvent('mousemove', this, this.mouseMove);
@@ -26,7 +26,11 @@ Canvasloth.Canvas.prototype = {
 		this.canvas.height = this.container.clientHeight;
 	},
 	addEvent: function(event, obj, fn) {
-		var cb = function(e) { fn.call(obj, e); }
+		var c = this.canvasloth;
+		var cb = function(e) {
+			if (c.active)
+				fn.call(obj, e);
+		};
 		this.catchMouse._addEvent(event, cb);
 		return cb;
 	},
