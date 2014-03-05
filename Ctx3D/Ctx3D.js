@@ -17,7 +17,8 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl.uniform3f(gl.getUniformLocation(gl._shaders.program, "lightDir"), 1, 1, 1); // tmp
 	gl._camera_eyX = 5; gl._camera_eyY = 5; gl._camera_eyZ = 5;
 	gl._camera_ctX = 0; gl._camera_ctY = 0; gl._camera_ctZ = 0;
-	gl._camera_upX = 0; gl._camera_upY = 1; gl._camera_upZ = 0;
+	gl._camera_upX = 0; gl._camera_upY = 0; gl._camera_upZ = 1;
+	gl._camera_zoomRatio = 1.2;
 	// * Matrices
 	gl._translate = function(   x, y, z) { this._M4obj.translate(x, y, z); return this; };
 	gl._scale     = function(   x, y, z) { this._M4obj.scale    (x, y, z); return this; };
@@ -25,43 +26,91 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl._pushMatrix = function() { this._M4stack.push(new J3DIMatrix4(this._M4obj)); return this; };
 	gl._popMatrix  = function() { this._M4obj = this._M4stack.pop(); return this; };
 	// * Camera
-	gl._fovy = function(f) { this._fovy = f; };
-	gl._near = function(z) { this._near = z; };
-	gl._far  = function(z) { this._far  = z; };
-	gl._camera = function(a) {
-		this._camera_auto_active = a;
-		if (a) {
+	gl._camera_setFovy = function(f) { this._fovy = f; };
+	gl._camera_setNear = function(z) { this._near = z; };
+	gl._camera_setFar  = function(z) { this._far  = z; };
+	gl._camera_auto = function() {
+		if (!this._camera_auto_active) {
+			this._camera_auto_active = true;
 			this._camera_eventMD = canvas.addEvent('mousedown', this, this._camera_mouseDown);
 			this._camera_eventMU = canvas.addEvent('mouseup',   this, this._camera_mouseUp);
 			this._camera_eventMM = canvas.addEvent('mousemove', this, this._camera_mouseMove);
-		} else {
+			this._camera_eventMS = canvas.addEvent('wheel',     this, this._camera_mouseWheel);
+		}
+	};
+	gl._camera_manuel = function() {
+		if (this._camera_auto_active) {
+			this._camera_auto_active = false;
 			canvas.delEvent('mousedown', this._camera_eventMD);
 			canvas.delEvent('mouseup',   this._camera_eventMU);
 			canvas.delEvent('mousemove', this._camera_eventMM);
+			canvas.delEvent('wheel',     this._camera_eventMS);
 		}
 	};
-	gl._camera_mouseDown = function() {
-		this._camera_moving = true;
+	gl._camera_spherique = function(a) {
+		if (!a) {
+			this._camera_manuel();
+		} else {
+			var x = gl._camera_eyX,
+			    y = gl._camera_eyY,
+			    z = gl._camera_eyZ,
+			    xxyy = x*x + y*y;
+			this._camera_ray = Math.sqrt(xxyy + z*z);
+			this._camera_the = Math.acos(z / this._camera_ray);
+			this._camera_phy = y >= 0
+				?               Math.acos(x / Math.sqrt(xxyy))
+				: 2 * Math.PI - Math.acos(x / Math.sqrt(xxyy));
+		}
 	};
-	gl._camera_mouseUp = function() {
-		this._camera_moving = false;
+	gl._camera_setRadius     = function(n) { this._camera_ray = n; };
+	gl._camera_setLongitude  = function(n) { this._camera_phy = n; };
+	gl._camera_setLatitude   = function(n) { this._camera_the = n; };
+	gl._camera_getRadius     = function() { return this._camera_ray; };
+	gl._camera_getLongitude  = function() { return this._camera_phy; };
+	gl._camera_getLatitude   = function() { return this._camera_the; };
+	gl._camera_mouseDown = function() { this._camera_moving = true;  };
+	gl._camera_mouseUp   = function() { this._camera_moving = false; };
+	gl._camera_mouseWheel = function(e) {
+		this._camera_ray *= e.deltaY > 0
+			? this._camera_zoomRatio
+			: (1 / this._camera_zoomRatio);
 	};
-	gl._camera_mouseMove = function() {
+	gl._camera_mouseMove = function(e) {
 		if (this._camera_moving) {
-			//...
+			var x = e.layerX - canvas.width()  / 2,
+			    y = e.layerY - canvas.height() / 2;
+			gl._camera_phy -= offsetMouse.xRel / 120;
+			gl._camera_the -= offsetMouse.yRel / 120;
 		}
 	};
-	gl._lookAt = function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
+	gl._setPerspective = function() {
 		this._M4cam.makeIdentity();
 		this._M4cam.perspective(
 			this._fovy,
 			canvas.width() / canvas.height(),
 			this._near, this._far
 		);
+	};
+	gl._lookAt_auto = function() {
+		// Eye (coordonnees spheriques -> cartesiens)
+		var sinTheta = Math.sin(this._camera_the);
+		this._camera_eyX = this._camera_ray * Math.cos(this._camera_phy) * sinTheta;
+		this._camera_eyY = this._camera_ray * Math.sin(this._camera_phy) * sinTheta;
+		this._camera_eyZ = this._camera_ray * Math.cos(this._camera_the);
+		// lookAt
+		this._setPerspective();
 		this._M4cam.lookat(
-			eyX, eyY, eyZ,
-			ctX, ctY, ctZ,
-			upX, upY, upZ
+			this._camera_eyX,   this._camera_eyY,   this._camera_eyZ,
+			this._camera_ctX,   this._camera_ctY,   this._camera_ctZ,
+			this._camera_upX,   this._camera_upY,   this._camera_upZ
+		);
+	};
+	gl._lookAt = function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
+		this._setPerspective();
+		this._M4cam.lookat(
+			this._camera_eyX=eyX,   this._camera_eyY=eyY,   this._camera_eyZ=eyZ,
+			this._camera_ctX=ctX,   this._camera_ctY=ctY,   this._camera_ctZ=ctZ,
+			this._camera_upX=upX,   this._camera_upY=upY,   this._camera_upZ=upZ
 		);
 	};
 	// * Render
@@ -85,9 +134,9 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-	gl._fovy(90);
-	gl._near(1);
-	gl._far(10000);
+	gl._camera_setFovy(90);
+	gl._camera_setNear(1);
+	gl._camera_setFar(10000);
 };
 
 Canvasloth.Ctx3D.prototype = {
@@ -102,13 +151,8 @@ Canvasloth.Ctx3D.prototype = {
 		var gl = this.ctx;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 		gl._M4obj.makeIdentity();
-		if (gl._camera_auto_active === true) {
-			gl._lookAt(
-				gl._camera_eyX, gl._camera_eyY, gl._camera_eyZ,
-				gl._camera_ctX, gl._camera_ctY, gl._camera_ctZ,
-				gl._camera_upX, gl._camera_upY, gl._camera_upZ
-			);
-		}
+		if (gl._camera_auto_active === true)
+			gl._lookAt_auto();
 		userApp.render(gl);
 	}
 };
