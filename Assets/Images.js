@@ -4,12 +4,12 @@ Canvasloth.Assets.Images = function() {
 
 Canvasloth.Assets.Images.prototype = {
 	load: function(imgs, callback) {
-		var i = 0, img, self = this,
-			nbImagesToLoad = imgs.length;
-		if (imgs.length === 0)
+		if (!imgs || imgs.length === 0) {
 			callback();
-		else
-			for (; i < imgs.length; ++i) {
+		} else {
+			var self = this,
+				nbImagesToLoad = imgs.length;
+			for (var i = 0, img; i < imgs.length; ++i) {
 				img = new Image();
 				img.src = imgs[i];
 				img.onload = function() {
@@ -18,6 +18,7 @@ Canvasloth.Assets.Images.prototype = {
 						callback();
 				};
 			}
+		}
 	},
 	find: function(path) {
 		var i, img;
