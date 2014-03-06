@@ -47,93 +47,12 @@ window.onload = function() {
 var WebGL_Editor = {
 	ready: function(canvasloth) {
 		this.canvasloth = canvasloth;
-		this.currentAngle = 0;
+
+		canvasloth.addEvent('update', this.update);
+		canvasloth.addEvent('render', this.render);
+
 		var gl = canvasloth.getCtx();
 		this.program = gl._shaders.getProgram();
-		
-		/*var vertices = [
-			// Front face
-			-1.0, -1.0,  1.0,
-			 1.0, -1.0,  1.0,
-			 1.0,  1.0,  1.0,
-			-1.0,  1.0,  1.0,
-
-			// Back face
-			-1.0, -1.0, -1.0,
-			-1.0,  1.0, -1.0,
-			 1.0,  1.0, -1.0,
-			 1.0, -1.0, -1.0,
-
-			// Top face
-			-1.0,  1.0, -1.0,
-			-1.0,  1.0,  1.0,
-			 1.0,  1.0,  1.0,
-			 1.0,  1.0, -1.0,
-
-			// Bottom face
-			-1.0, -1.0, -1.0,
-			 1.0, -1.0, -1.0,
-			 1.0, -1.0,  1.0,
-			-1.0, -1.0,  1.0,
-
-			// Right face
-			 1.0, -1.0, -1.0,
-			 1.0,  1.0, -1.0,
-			 1.0,  1.0,  1.0,
-			 1.0, -1.0,  1.0,
-
-			// Left face
-			-1.0, -1.0, -1.0,
-			-1.0, -1.0,  1.0,
-			-1.0,  1.0,  1.0,
-			-1.0,  1.0, -1.0
-		];
-
-		var colors = [
-			[1.0,  1.0,  1.0,  1.0],    // Front face: white
-			[1.0,  0.0,  0.0,  1.0],    // Back face: red
-			[0.0,  1.0,  0.0,  1.0],    // Top face: green
-			[0.0,  0.0,  1.0,  1.0],    // Bottom face: blue
-			[1.0,  1.0,  0.0,  1.0],    // Right face: yellow
-			[1.0,  0.0,  1.0,  1.0]     // Left face: purple
-		];
-
-		var generatedColors = [];
-
-		for (j = 0; j < 6; ++j) {
-			var c = colors[j];
-			for (var i = 0; i < 4; ++i) {
-				generatedColors = generatedColors.concat(c);
-			}
-		}
-
-		this.cubeVerticesColorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.cubeVerticesColorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(generatedColors), gl.STATIC_DRAW);
-
-		this.cubeVerticesIndexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
-
-		// This array defines each face as two triangles, using the
-		// indices into the vertex array to specify each triangle's
-		// position.
-		var cubeVertexIndices = [
-			0,  1,  2,      0,  2,  3,    // front
-			4,  5,  6,      4,  6,  7,    // back
-			8,  9,  10,     8,  10, 11,   // top
-			12, 13, 14,     12, 14, 15,   // bottom
-			16, 17, 18,     16, 18, 19,   // right
-			20, 21, 22,     20, 22, 23    // left
-		];
-  
-		// Now send the element array to GL
-		gl.bufferData(
-			gl.ELEMENT_ARRAY_BUFFER,
-			new Uint16Array(cubeVertexIndices),
-			gl.STATIC_DRAW
-		);*/
-		
-
 		
 		// Create a box. On return 'gl' contains a 'box' property with
 		// the BufferObjects containing the arrays for vertices, normals, texture coords, and indices.
@@ -168,8 +87,6 @@ var WebGL_Editor = {
 		gl._camera_auto();
 	},
 	update: function(time) {
-		if ((this.currentAngle += 2.0) > 360)
-			this.currentAngle -= 360;
 	},
 	render: function(gl) {
 		/*gl._lookAt(
@@ -181,21 +98,25 @@ var WebGL_Editor = {
 		//gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
 		//gl._drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
 
-		gl._pushMatrix();
-			//gl._rotate(20, 1,0,0);
-			//gl._rotate(this.currentAngle, 0,1,0);
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.box.indexObject);
-			gl._drawElements(gl.TRIANGLES, this.box.numIndices, gl.UNSIGNED_BYTE, 0);
-		gl._popMatrix();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.box.indexObject);
+
+		var n = 1;
+		for (var x = -n; x <= n; ++x) {
+			for (var y = -n; y <= n; ++y) {
+				gl._pushMatrix();
+					gl._translate(x * 5, y * 5, 0);
+						gl._drawElements(gl.TRIANGLES, this.box.numIndices, gl.UNSIGNED_BYTE, 0);
+				gl._popMatrix();
+			}
+		}
 	}
 };
 
-var canvasloth = new Canvasloth(
-	'3d',
-	document._domSelector('.canvasloth')[0],
-	WebGL_Editor,
-	[]
-);
+var canvasloth = new Canvasloth({
+	type : '3d',
+	node : document._domSelector('.canvasloth')[0],
+	app  : WebGL_Editor
+});
 
 };
 </script>
