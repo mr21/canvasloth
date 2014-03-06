@@ -41,6 +41,7 @@ Canvasloth.Canvas.prototype = {
 		var c = this.canvasloth;
 		if (c.active) {
 			var cam = c.getCtx()._V2cam; // tmp
+			c.btnBool[e.button] = true;
 			c.app.mousedown.call(c.app,
 				e.button,
 				e.layerX - cam.x,
@@ -53,7 +54,9 @@ Canvasloth.Canvas.prototype = {
 		var c = this.canvasloth;
 		if (c.active) {
 			var cam = c.getCtx()._V2cam; // tmp
+			c.btnBool[e.button] = false;
 			c.app.mouseup.call(c.app,
+				e.button,
 				e.layerX - cam.x,
 				e.layerY - cam.y
 			);

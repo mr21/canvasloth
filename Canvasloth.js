@@ -5,6 +5,7 @@ function Canvasloth(ctxType, container, app, images) {
 	this.ctx = new Canvasloth['Ctx' + ctxType.toUpperCase()](this.canvas, container);
 	this.fps = 40;
 	this.keyBool = [];
+	this.btnBool = [];
 	this.active = false;
 	this.time = new Canvasloth.Time();
 	this.pages = new Canvasloth.Pages(this);
@@ -30,7 +31,7 @@ Canvasloth.prototype = {
 			document._addEvent('keydown', function(e) {
 				if (t.active && !t.keyBool[e.keyCode]) {
 					e.preventDefault();
-					t.keyBool[e = e.keyCode] = 1;
+					t.keyBool[e = e.keyCode] = true;
 					t.app.keydown.call(t.app, e);
 				}
 			});
@@ -38,10 +39,16 @@ Canvasloth.prototype = {
 			document._addEvent('keyup', function(e) {
 				if (t.active && t.keyBool[e.keyCode]) {
 					e.preventDefault();
-					t.keyBool[e = e.keyCode] = 0;
+					t.keyBool[e = e.keyCode] = false;
 					t.app.keyup.call(t.app, e);
 				}
 			});
+		document._addEvent('mouseup', function(e) {
+			if (t.active && t.btnBool[e.button]) {
+				t.btnBool[e.button] = false;
+				t.app.mouseup.call(t.app, e.button, 0, 0);
+			}
+		});
 	},
 	ready: function() {
 		this.setEvents();
@@ -60,7 +67,13 @@ Canvasloth.prototype = {
 			if (this.keyBool[i = parseInt(i)]) {
 				if (this.app.keyup)
 					this.app.keyup.call(this.app, i);
-				this.keyBool[i] = 0;
+				this.keyBool[i] = false;
+			}
+		for (var i in this.btnBool)
+			if (this.btnBool[i = parseInt(i)]) {
+				if (this.app.mouseup)
+					this.app.mouseup.call(this.app, i, 0, 0);
+				this.btnBool[i] = false;
 			}
 	},
 	focus: function(event) {
