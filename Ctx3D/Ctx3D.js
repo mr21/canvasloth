@@ -143,7 +143,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-	gl._camera_setFovy(90);
+	gl._camera_setFovy(60);
 	gl._camera_setNear(1);
 	gl._camera_setFar(10000);
 };
