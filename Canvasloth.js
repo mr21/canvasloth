@@ -1,8 +1,8 @@
-function Canvasloth(ctxType, container, app, images) {
-	this.app = app;
-	this.container = container;
-	this.canvas = new Canvasloth.Canvas(this, container);
-	this.ctx = new Canvasloth['Ctx' + ctxType.toUpperCase()](this.canvas, container);
+function Canvasloth(p) {
+	this.app = p.app;
+	this.container = p.node;
+	this.canvas = new Canvasloth.Canvas(this, p.node);
+	this.ctx = new Canvasloth['Ctx' + p.type.toUpperCase()](this.canvas, p.node);
 	this.fps = 40;
 	this.keyBool = [];
 	this.btnBool = [];
@@ -11,7 +11,7 @@ function Canvasloth(ctxType, container, app, images) {
 	this.pages = new Canvasloth.Pages(this);
 	this.assets = new Canvasloth.Assets(this.getCtx(), this.time);
 	var self = this;
-	this.assets.images.load(images, function() { self.ready(); });
+	this.assets.images.load(p.images, function() { self.ready(); });
 }
 
 // Defines
