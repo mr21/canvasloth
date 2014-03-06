@@ -56,6 +56,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 			    z = gl._camera_eyZ,
 			    xxyy = x*x + y*y;
 			this._camera_ray = Math.sqrt(xxyy + z*z);
+			this._camera_th2 =
 			this._camera_the = Math.acos(z / this._camera_ray);
 			this._camera_phy = y >= 0
 				?               Math.acos(x / Math.sqrt(xxyy))
@@ -77,10 +78,18 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	};
 	gl._camera_mouseMove = function(e) {
 		if (this._camera_moving) {
-			var x = e.layerX - canvas.width()  / 2,
-			    y = e.layerY - canvas.height() / 2;
-			gl._camera_phy -= offsetMouse.xRel / 120;
-			gl._camera_the -= offsetMouse.yRel / 120;
+			this._camera_phy -= offsetMouse.xRel / 120;
+			this._camera_the -= offsetMouse.yRel / 120;
+			this._camera_the %= 2 * Math.PI;
+			if (this._camera_the > 0        !== this._camera_th2 > 0
+			||  this._camera_the < +Math.PI !== this._camera_th2 < +Math.PI
+			||  this._camera_the < -Math.PI !== this._camera_th2 < -Math.PI)
+			{
+				this._camera_upX = -this._camera_upX;
+				this._camera_upY = -this._camera_upY;
+				this._camera_upZ = -this._camera_upZ;
+			}
+			this._camera_th2 = this._camera_the;
 		}
 	};
 	gl._setPerspective = function() {
