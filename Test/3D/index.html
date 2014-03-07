@@ -22,6 +22,7 @@
 <!-- JS.Canvasloth -->
 <script type="text/javascript" src="../../Canvasloth.js"></script>
 <script type="text/javascript" src="../../Canvas/Canvas.js"></script>
+<script type="text/javascript" src="../../Events/Events.js"></script>
 <script type="text/javascript" src="../../Hud/Pages.js"></script>
 <script type="text/javascript" src="../../Hud/DomIntIncrease.js"></script>
 <script type="text/javascript" src="../../Assets/Assets.js"></script>
@@ -47,10 +48,6 @@ window.onload = function() {
 var WebGL_Editor = {
 	ready: function(canvasloth) {
 		this.canvasloth = canvasloth;
-
-		canvasloth.addEvent('update', this.update);
-		canvasloth.addEvent('render', this.render);
-
 		var gl = canvasloth.getCtx();
 		this.program = gl._shaders.getProgram();
 		
@@ -115,7 +112,12 @@ var WebGL_Editor = {
 var canvasloth = new Canvasloth({
 	type : '3d',
 	node : document._domSelector('.canvasloth')[0],
-	app  : WebGL_Editor
+	app  : WebGL_Editor,
+	fn   : {
+		'ready'  : WebGL_Editor.ready,
+		'update' : WebGL_Editor.update,
+		'render' : WebGL_Editor.render
+	}
 });
 
 };
