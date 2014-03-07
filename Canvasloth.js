@@ -1,8 +1,10 @@
 function Canvasloth(p) {
 	this.app = p.app;
 	this.container = p.node;
+	this.events = new Canvasloth.Events(this);
 	this.canvas = new Canvasloth.Canvas(this, p.node);
-	this.ctx = new Canvasloth['Ctx' + p.type.toUpperCase()](this.canvas, p.node);
+	this.ctx = new Canvasloth['Ctx' + p.type.toUpperCase()](this, p.node);
+	this.events.init(p.fn);
 	this.fps = 40;
 	this.keyBool = [];
 	this.btnBool = [];
@@ -20,41 +22,9 @@ Canvasloth.MIDDLE_BUTTON = 1;
 Canvasloth.RIGHT_BUTTON  = 2;
 
 Canvasloth.prototype = {
-	setEvents: function() {
-		var t = this;
-		// Window
-		document._addEvent('mousedown', function() { t.unfocus(); });
-		window._addEvent('blur', function() { t.unfocus(); });
-		window._addEvent('resize', function() { t.ctx.resize(); t.render(); });
-		// Keyboard
-		if (t.app.keydown)
-			document._addEvent('keydown', function(e) {
-				if (t.active && !t.keyBool[e.keyCode]) {
-					e.preventDefault();
-					t.keyBool[e = e.keyCode] = true;
-					t.app.keydown.call(t.app, e);
-				}
-			});
-		if (t.app.keyup)
-			document._addEvent('keyup', function(e) {
-				if (t.active && t.keyBool[e.keyCode]) {
-					e.preventDefault();
-					t.keyBool[e = e.keyCode] = false;
-					t.app.keyup.call(t.app, e);
-				}
-			});
-		document._addEvent('mouseup', function(e) {
-			if (t.active && t.btnBool[e.button]) {
-				t.btnBool[e.button] = false;
-				t.app.mouseup.call(t.app, e.button, 0, 0);
-			}
-		});
-	},
 	ready: function() {
-		this.setEvents();
 		this.ctx.resize();
-		if (this.app.ready)
-			this.app.ready(this);
+		this.events.call('ready', this);
 		this.time.reset();
 		this.focus();
 	},
@@ -101,7 +71,7 @@ Canvasloth.prototype = {
 	},
 	update: function() {
 		this.time.update();
-		this.app.update(this.time);
+		this.events.call('update', this.time);
 	},
 	loop: function() {
 		var t = this;

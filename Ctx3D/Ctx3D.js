@@ -1,9 +1,11 @@
-Canvasloth.Ctx3D = function(canvas, container) {
+Canvasloth.Ctx3D = function(canvasloth, container) {
 	// Creation du context
-	this.canvas = canvas;
+	this.canvasloth = canvasloth;
+	this.canvas = canvasloth.canvas;
+	this.events = canvasloth.events;
 	var gl = this.ctx =
-		canvas.getContext('webgl') ||
-		canvas.getContext("experimental-webgl");
+		this.canvas.getContext('webgl') ||
+		this.canvas.getContext('experimental-webgl');
 	// Fonctionnalites additionnelles
 	// * Attributs
 	gl._shaders = new Canvasloth.Ctx3D.Shaders(container, gl);
@@ -31,20 +33,22 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl._camera_setFar  = function(z) { this._far  = z; };
 	gl._camera_auto = function() {
 		if (!this._camera_auto_active) {
+			var c = canvasloth;
 			this._camera_auto_active = true;
-			this._camera_eventMD = canvas.addEvent('mousedown', this, this._camera_mouseDown);
-			this._camera_eventMU = canvas.addEvent('mouseup',   this, this._camera_mouseUp);
-			this._camera_eventMM = canvas.addEvent('mousemove', this, this._camera_mouseMove);
-			this._camera_eventMS = canvas.addEvent('wheel',     this, this._camera_mouseWheel);
+			this._camera_eventMD = c.events.add('mousedown',  this, this._camera_mouseDown);
+			this._camera_eventMU = c.events.add('mouseup',    this, this._camera_mouseUp);
+			this._camera_eventMM = c.events.add('mousemove',  this, this._camera_mouseMove);
+			this._camera_eventMS = c.events.add('mousewheel', this, this._camera_mouseWheel);
 		}
 	};
 	gl._camera_manuel = function() {
 		if (this._camera_auto_active) {
+			var c = canvasloth;
 			this._camera_auto_active = false;
-			canvas.delEvent('mousedown', this._camera_eventMD);
-			canvas.delEvent('mouseup',   this._camera_eventMU);
-			canvas.delEvent('mousemove', this._camera_eventMM);
-			canvas.delEvent('wheel',     this._camera_eventMS);
+			c.events.del('mousedown',  this._camera_eventMD);
+			c.events.del('mouseup',    this._camera_eventMU);
+			c.events.del('mousemove',  this._camera_eventMM);
+			c.events.del('mousewheel', this._camera_eventMS);
 		}
 	};
 	gl._camera_spherique = function(a) {
@@ -71,8 +75,8 @@ Canvasloth.Ctx3D = function(canvas, container) {
 	gl._camera_getLatitude   = function() { return this._camera_the; };
 	gl._camera_mouseDown = function() { this._camera_moving = true;  };
 	gl._camera_mouseUp   = function() { this._camera_moving = false; };
-	gl._camera_mouseWheel = function(e) {
-		this._camera_ray *= e.deltaY > 0
+	gl._camera_mouseWheel = function(y) {
+		this._camera_ray *= y > 0
 			? this._camera_zoomRatio
 			: (1 / this._camera_zoomRatio);
 	};
@@ -96,7 +100,7 @@ Canvasloth.Ctx3D = function(canvas, container) {
 		this._M4cam.makeIdentity();
 		this._M4cam.perspective(
 			this._fovy,
-			canvas.width() / canvas.height(),
+			canvasloth.canvas.width() / canvasloth.canvas.height(),
 			this._near, this._far
 		);
 	};
@@ -162,6 +166,6 @@ Canvasloth.Ctx3D.prototype = {
 		gl._M4obj.makeIdentity();
 		if (gl._camera_auto_active === true)
 			gl._lookAt_auto();
-		userApp.render(gl);
+		this.events.call('render', gl);
 	}
 };

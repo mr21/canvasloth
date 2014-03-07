@@ -1,6 +1,7 @@
-Canvasloth.Ctx2D = function(canvas) {
-	this.canvas = canvas;
-	var ctx = this.ctx = canvas.getContext('2d');
+Canvasloth.Ctx2D = function(canvasloth) {
+	this.canvas = canvasloth.canvas;
+	this.events = canvasloth.events;
+	var ctx = this.ctx = this.canvas.getContext('2d');
 	// Fonctionnalites additionnelles
 	// * Attributs
 	ctx._V2cam = new Canvasloth.Math.V2(0, 0);
@@ -22,7 +23,7 @@ Canvasloth.Ctx2D.prototype = {
 		c.clearRect(0, 0, this.canvas.width(), this.canvas.height());
 		c.save();
 			c.translate(c._V2cam.x, c._V2cam.y);
-				userApp.render(c);
+				this.events.call('render', c);
 		c.restore();
 	}
 };
