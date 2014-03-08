@@ -24,7 +24,7 @@ Les fonctionnalités du framework se rangent dans plusieurs catégories:
 
 Par la suite, à l'université Laval, nous avons eu a faire un projet 3D en infographie avec *OpenGL* étant donné que nous sommes curieux de ce qui peut se faire de nouveau en **Web** nous avons voulu le faire en *WebGL*. Nous avons eu envie de découvrir l'envers du décors qui se cache derrière *three.js*.  
 
-C'est pourquoi avec **Mélanie (Misty) Ducani** on a rajouté une nouvelle une nouvelle feature au framework (et pas la moindre) celle de rendre le *context 3D* autant user-friendly que celui en 2D.
+C'est pourquoi avec **Mélanie (Misty) Ducani** on a rajouté une nouvelle feature au framework (et pas la moindre) celle de rendre le *context 3D* autant user-friendly que celui en 2D.
 
 Pour rappel, *WebGL* vient sans aucune fonction pour gérer la camera, il y a un nombre incroyable de calculs matriciels à faire...  
 En 2D il existe les fonctions `.translate()`, `.scale()` et `.rotate()` pour manipuler les objets dans l'espace.  
@@ -71,11 +71,18 @@ Le framework permet de **faire des sprites et des animations 2D**.
 
 Le Temps
 --------
+L'objet qui s'occupe du temps dans le framework est `canvasloth.time`. Cet objet est envoyé à l'utilisateur lors des `update` pour qu'il puisse faire un programme qui **ne dépend pas du framerate**.
+Un peu comme ceci:
 
+    update: function(time) {
+        personnage.x += 50 * time.frametime;
+    }
 
 Head-up display (HUD)
 ---------------------
-
+Plus haut est écrit que Canvasloth s'occupe de lui-même de créer l'élément `<canvas>`, pourquoi?  
+Car finalement il ne fera pas que ça. Il laisse à l'utilisateur **la possibilité de créer son propre HUD** dans un `<div>` directement en HTML/CSS (c'est d'ailleurs dans cet élément que ce range par exemple l'affichage des FPS).  
+Cette technique donne la possibilité au joueur de pouvoir cliquer sur les éléments du HUD sans pour autant que le HUD s'accapare l'événement pour lui mais le redirige naturellement vers le `<canvas>`.
 
 Le système de page
 ------------------
