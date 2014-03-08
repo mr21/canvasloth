@@ -142,6 +142,100 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this._setUniform();
 		this.drawElements(mode, count, type, indices);
 	};
+    gl._createObj = function(gl, name, type, vertices, normals, texCoords, faces, colors) {
+        var obj = {
+        	name : name,
+        	type : type,
+            vertices: {
+                buffer: gl.createBuffer(),
+                itemNumber: vertices.length / 3,
+                itemSize: 3,
+                active: true
+            },
+            normals: {
+                buffer: gl.createBuffer(),
+                itemNumber: normals.length / 3,
+                itemSize: 3,
+                active: true
+            },
+            faces: {
+                buffer: gl.createBuffer(),
+                itemNumber: faces.length,
+                itemSize: 1,
+                active: true
+            },
+            texCoords: {
+                buffer: gl.createBuffer(),
+                itemNumber: texCoords.length / 2,
+                itemSize: 2,
+                active: true
+            },
+            colors: {
+                buffer: gl.createBuffer(),
+                itemNumber: colors.length / 4,
+                itemSize: 4,
+                active: true
+            }
+        };
+
+        // Vertex des positions
+        if (vertices !== undefined) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.vertices.buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        } else
+            obj.vertices.active = false;
+
+        // Vertex des normales
+        if (normals !== undefined) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.normals.buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+        } else
+            obj.normals.active = false;
+
+        // Vertex des textures
+        if (texCoords !== undefined) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.texCoords.buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
+        } else
+            obj.textCoords.active = false;
+
+        // Vertex des index
+        if (faces !== undefined) {
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, obj.faces.buffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(faces), gl.STATIC_DRAW);
+        } else
+            obj.faces.active = false;
+
+        // Set up the vertex buffer for the colors
+        if (colors !== undefined) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.colors.buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(colors), gl.STATIC_DRAW);
+        } else
+            obj.colors.active = false;
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        return obj;
+    };
+    gl._bindObjects = function(obj) {
+        if (gl._currentObj !== obj) {
+        	gl._currentObj = obj;
+            if (obj.vertices.active == true) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, obj.vertices.buffer);
+                gl.vertexAttribPointer(2, obj.vertices.itemSize, gl.FLOAT, false, 0, 0);
+            }
+            if (obj.normals.active == true) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, obj.normals.buffer);
+                gl.vertexAttribPointer(0, obj.normals.itemSize, gl.FLOAT, false, 0, 0);
+            }
+            if (obj.faces.active == true) {
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, obj.faces.buffer);
+            }
+            if (obj.colors.active == true) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, obj.colors.buffer);
+                gl.vertexAttribPointer(1, obj.colors.itemSize, gl.UNSIGNED_BYTE, false, 0, 0);
+            }
+        }
+    };
 	// Initialiser le context
 	gl.clearColor(0.07, 0.07, 0.07, 1);
 	gl.enable(gl.DEPTH_TEST);
