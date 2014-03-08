@@ -17,7 +17,7 @@ Les fonctionnalités du framework se rangent dans plusieurs catégories:
 * [Les assets graphiques](#assets-graphiques).
 * [Le temps](#le-temps).
 * [Le HUD (en HTML)](#head-up-display-hud).
-* [Un système de page (en HTML)](#le-syst%C3%A8me-de-page).
+* [Un système de pages (en HTML)](#un-syst%C3%A8me-de-pages).
 * [Les outils mathématiques](#les-outils-math%C3%A9matiques).
 * [La surcharge du context 3D](#la-surcharge-du-context-3d).
 * [La gestion des caméras](#les-cam%C3%A9ras).
@@ -84,13 +84,13 @@ Plus haut est écrit que Canvasloth s'occupe de lui-même de créer l'élément 
 Car finalement il ne fera pas que ça. Il laisse à l'utilisateur **la possibilité de créer son propre HUD** dans un `<div>` directement en HTML/CSS (c'est d'ailleurs dans cet élément que ce range par exemple l'affichage des FPS).  
 Cette technique donne la possibilité au joueur de pouvoir cliquer sur les éléments du HUD sans pour autant que le HUD s'accapare l'événement pour lui mais le redirige naturellement vers le `<canvas>`.
 
-Le système de page
-------------------
-
+Un système de pages
+-------------------
+Il n'est pas pratique d'écrire du texte avec une certaine mise en page, etc. avec uniquement un context de dessin. C'est pourquoi le framework propose un système de pages HTML/CSS qui peuvent venir s'afficher par dessus l'application.
 
 Les outils mathématiques
 ------------------------
-
+*Canvasloth* propose différents outils mathématiques comme les vecteurs à 2 ou 3 dimensions et les matrices (qui sont naturellement utilisés pour gérer toute la partie `frustum de vision`, `lookAt`, etc.
 
 La surcharge du context 3D
 --------------------------
