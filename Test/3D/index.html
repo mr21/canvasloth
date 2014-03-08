@@ -99,7 +99,7 @@ var WebGL_Editor = {
 			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1  // v4-v7-v6-v5 back   
 		];
 
-		this.cube1 = gl._createObj(gl, 'cube1', 'cube', vertices, normals, texCoords, indices, colors);
+		this.cube1 = gl._createObject('cube', vertices, normals, texCoords, indices, colors);
 
 		vertices = [
 			 2, 2, 2,  -2, 2, 2,  -2,-2, 2,   2,-2, 2, // v0-v2-v2-v3 front
@@ -119,7 +119,7 @@ var WebGL_Editor = {
 			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1  // v4-v7-v6-v5 back   
 		];
 
-		this.cube2 = gl._createObj(gl, 'cube2', 'cube', vertices, normals, texCoords, indices, colors);
+		this.cube2 = gl._createObject('cube', vertices, normals, texCoords, indices, colors);
 
 		// Enable all of the vertex attribute arrays.
 		gl.enableVertexAttribArray(0);
@@ -132,11 +132,11 @@ var WebGL_Editor = {
 	update: function(time) {
 	},
 	render: function(gl) {
-		gl._bindObjects(this.cube1);
+		gl._bindObject(this.cube1);
 		gl._drawElements(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_BYTE, 0);
 
 		gl._translate(5, 5, 0);
-		gl._bindObjects(this.cube2);
+		gl._bindObject(this.cube2);
 		gl._drawElements(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_BYTE, 0);
 	}
 };
