@@ -71,7 +71,7 @@ Le framework permet de **faire des sprites et des animations 2D**.
 
 Le Temps
 --------
-L'objet qui s'occupe du temps dans le framework est `canvasloth.time`. Cet objet est envoyé à l'utilisateur lors des `update` pour qu'il puisse faire un programme qui **ne dépend pas du framerate**.
+L'objet qui s'occupe du temps dans le framework est `canvasloth.time`. Cet objet est envoyé à l'utilisateur lors des `update` pour qu'il puisse faire un programme qui **ne dépend pas du framerate**./
 Un peu comme ceci:
 
     update: function(time) {
@@ -94,10 +94,21 @@ Les outils mathématiques
 
 La surcharge du context 3D
 --------------------------
+Plus haut était mentionné le fait que le context 3D n'a aucune fonction pour gérer les transformations ou la caméra.  
+C'est pourquoi nous avons rajoutés:
+
+* `ctx.lookAt()` pour gérer la caméra.
+* `ctx.save()`, `ctx.restore()` permet de modifier ou restaurer la matrice de transformation.
+* `ctx.translate()`, `ctx.scale()`, `ctx.rotate()` permet de modifier la matrice de transformation.
 
 
 Les caméras
 -----------
+Il était nécessaire d'avoir **une gestion de caméra commune entre le context 2D et 3D**.
+Comme dit précédemment nous avons surchargés d'une fonction `lookAt` le context 3D, nous avons choisi de faire la même chose pour la 2D, cela simule le principe de **view 2D** que l'on retrouve avec la *SFML* par exemple.  
+De plus pour la 3D il est possible d'activer une **caméra spherique**.  
 
-
-
+    ctx.cameraSpherique(true);
+    ctx.cameraAuto();
+    
+`.cameraAuto()` permet de binder plusieurs événements par default pour déplacer la caméra automatiquement avec la souris.
