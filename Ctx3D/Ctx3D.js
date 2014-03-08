@@ -16,22 +16,22 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl._M4mvp = new J3DIMatrix4();
 	gl._M4nrmLoc  = gl.getUniformLocation(gl._shaders.program, 'u_normalMatrix');
 	gl._M4mdlVLoc = gl.getUniformLocation(gl._shaders.program, 'u_modelViewProjMatrix');
-	gl.uniform3f(gl.getUniformLocation(gl._shaders.program, "lightDir"), 1, 1, 1); // tmp
+	gl.uniform3f(gl.getUniformLocation(gl._shaders.program, 'lightDir'), 1, 1, 1); // tmp
 	gl._camera_eyX = 5; gl._camera_eyY = 5; gl._camera_eyZ = 5;
 	gl._camera_ctX = 0; gl._camera_ctY = 0; gl._camera_ctZ = 0;
 	gl._camera_upX = 0; gl._camera_upY = 0; gl._camera_upZ = 1;
 	gl._camera_zoomRatio = 1.2;
 	// * Matrices
-	gl._translate = function(   x, y, z) { this._M4obj.translate(x, y, z); return this; };
-	gl._scale     = function(   x, y, z) { this._M4obj.scale    (x, y, z); return this; };
-	gl._rotate    = function(a, x, y, z) { this._M4obj.rotate(a, x, y, z); return this; };
-	gl._pushMatrix = function() { this._M4stack.push(new J3DIMatrix4(this._M4obj)); return this; };
-	gl._popMatrix  = function() { this._M4obj = this._M4stack.pop(); return this; };
+	gl.translate = function(   x, y, z) { this._M4obj.translate(x, y, z); return this; };
+	gl.scale     = function(   x, y, z) { this._M4obj.scale    (x, y, z); return this; };
+	gl.rotate    = function(a, x, y, z) { this._M4obj.rotate(a, x, y, z); return this; };
+	gl.save    = function() { this._M4stack.push(new J3DIMatrix4(this._M4obj)); return this; };
+	gl.restore = function() { this._M4obj = this._M4stack.pop(); return this; };
 	// * Camera
-	gl._camera_setFovy = function(f) { this._fovy = f; };
-	gl._camera_setNear = function(z) { this._near = z; };
-	gl._camera_setFar  = function(z) { this._far  = z; };
-	gl._camera_auto = function() {
+	gl.cameraFovy = function(z) { if (z !== undefined) this._fovy = z; return this._fovy; };
+	gl.cameraNear = function(z) { if (z !== undefined) this._near = z; return this._near; };
+	gl.cameraFar  = function(z) { if (z !== undefined) this._far  = z; return this._far;  };
+	gl.cameraAuto = function() {
 		if (!this._camera_auto_active) {
 			var c = canvasloth;
 			this._camera_auto_active = true;
@@ -41,7 +41,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 			this._camera_eventMS = c.events.add('mousewheel', this, this._camera_mouseWheel);
 		}
 	};
-	gl._camera_manuel = function() {
+	gl.cameraManuel = function() {
 		if (this._camera_auto_active) {
 			var c = canvasloth;
 			this._camera_auto_active = false;
@@ -51,9 +51,9 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 			c.events.del('mousewheel', this._camera_eventMS);
 		}
 	};
-	gl._camera_spherique = function(a) {
+	gl.cameraSpherique = function(a) {
 		if (!a) {
-			this._camera_manuel();
+			this.cameraManuel();
 		} else {
 			var x = gl._camera_eyX,
 			    y = gl._camera_eyY,
@@ -67,12 +67,9 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 				: 2 * Math.PI - Math.acos(x / Math.sqrt(xxyy));
 		}
 	};
-	gl._camera_setRadius     = function(n) { this._camera_ray = n; };
-	gl._camera_setLongitude  = function(n) { this._camera_phy = n; };
-	gl._camera_setLatitude   = function(n) { this._camera_the = n; };
-	gl._camera_getRadius     = function() { return this._camera_ray; };
-	gl._camera_getLongitude  = function() { return this._camera_phy; };
-	gl._camera_getLatitude   = function() { return this._camera_the; };
+	gl.cameraRadius     = function(n) { if (n !== undefined) this._camera_ray = n; return this._camera_ray; };
+	gl.cameraLongitude  = function(n) { if (n !== undefined) this._camera_phy = n; return this._camera_phy; };
+	gl.cameraLatitude   = function(n) { if (n !== undefined) this._camera_the = n; return this._camera_the; };
 	gl._camera_mouseDown = function() { this._camera_moving = true;  };
 	gl._camera_mouseUp   = function() { this._camera_moving = false; };
 	gl._camera_mouseWheel = function(y) {
@@ -104,7 +101,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 			this._near, this._far
 		);
 	};
-	gl._lookAt_auto = function() {
+	gl._auto_lookAt = function() {
 		// Eye (coordonnees spheriques -> cartesiens)
 		var sinTheta = Math.sin(this._camera_the);
 		this._camera_eyX = this._camera_ray * Math.cos(this._camera_phy) * sinTheta;
@@ -118,7 +115,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 			this._camera_upX,   this._camera_upY,   this._camera_upZ
 		);
 	};
-	gl._lookAt = function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
+	gl.lookAt = function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
 		this._setPerspective();
 		this._M4cam.lookat(
 			this._camera_eyX=eyX,   this._camera_eyY=eyY,   this._camera_eyZ=eyZ,
@@ -138,11 +135,11 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this._M4mvp.multiply(this._M4obj);
 		this._M4mvp.setUniform(this, this._M4mdlVLoc, false);
 	};
-	gl._drawElements = function(mode, count, type, indices) {
+	gl.drawObject = function(mode, count, type, indices) {
 		this._setUniform();
 		this.drawElements(mode, count, type, indices);
 	};
-	gl._createObject = function(type, vertices, normals, texCoords, faces, colors) {
+	gl.createObject = function(type, vertices, normals, texCoords, faces, colors) {
 		var obj = {
 			type : type,
 			vertices: {
@@ -215,7 +212,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
 		return obj;
 	};
-	gl._bindObject = function(obj) {
+	gl.bindObject = function(obj) {
 		if (this._currentObj !== obj) {
 			this._currentObj = obj;
 			if (obj.vertices.active) {
@@ -240,9 +237,9 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-	gl._camera_setFovy(60);
-	gl._camera_setNear(1);
-	gl._camera_setFar(10000);
+	gl.cameraFovy(60);
+	gl.cameraNear(1);
+	gl.cameraFar(10000);
 };
 
 Canvasloth.Ctx3D.prototype = {
@@ -258,7 +255,7 @@ Canvasloth.Ctx3D.prototype = {
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 		gl._M4obj.makeIdentity();
 		if (gl._camera_auto_active === true)
-			gl._lookAt_auto();
+			gl._auto_lookAt();
 		this.events.call('render', gl);
 	}
 };

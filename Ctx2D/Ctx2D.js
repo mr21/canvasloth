@@ -6,7 +6,7 @@ Canvasloth.Ctx2D = function(canvasloth) {
 	// * Attributs
 	ctx._V2cam = new Canvasloth.Math.V2(0, 0);
 	// * Camera
-	ctx._lookAt = function(x, y) {
+	ctx.lookAt = function(x, y) {
 		if (y === undefined)
 			this._V2cam.setV(x);
 		else
