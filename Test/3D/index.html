@@ -33,10 +33,11 @@
 <script type="text/javascript" src="../../Math/Math.js"></script>
 <script type="text/javascript" src="../../Math/Matrix.js"></script>
 <script type="text/javascript" src="../../Math/Vector.js"></script>
-<script type="text/javascript" src="../../Math/J3DIMath.js"></script>
+<script type="text/javascript" src="../../Math/J3DIMath.js"></script> <!-- tmp -->
 <script type="text/javascript" src="../../Ctx3D/Ctx3D.js"></script>
 <script type="text/javascript" src="../../Ctx3D/CameraMatrixFunctions.js"></script>
 <script type="text/javascript" src="../../Ctx3D/Shaders.js"></script>
+<script type="text/javascript" src="../../Math/glMatrix-0.9.5.min.js"></script> <!-- tmp -->
 
 <script>
 function lg(s) { console.log(s); }
@@ -121,11 +122,11 @@ var WebGL_Editor = {
 
 		this.cube2 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
 
-		// Enable all of the vertex attribute arrays.
+		gl.lightAttrib();
+		gl.light();
 		gl.enableVertexAttribArray(0);
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
-
 		gl.cameraSpherique(true);
 		gl.cameraAuto();
 	},
@@ -159,28 +160,37 @@ var canvasloth = new Canvasloth({
 <body>
 
 	<div class="canvasloth canvasloth-dark">
-		<script id="vshader" type="x-shader/x-vertex">
+		<script type="x-shader/x-vertex">
 			uniform mat4 u_modelViewProjMatrix;
 			uniform mat4 u_normalMatrix;
-			uniform vec3 lightDir;
+//			uniform vec3 lightDir;
 			attribute vec3 vNormal;
 			attribute vec4 vColor;
 			attribute vec4 vPosition;
-			varying float v_Dot;
+			varying float directionalLightWeighting;
 			varying vec4 v_Color;
+
+			uniform vec3 uAmbientColor;
+			uniform vec3 uLightingDirection;
+			uniform vec3 uDirectionalColor;
+			uniform bool uUseLighting;
+			varying vec3 vLightWeighting;
+
 			void main(void) {
 				gl_Position = u_modelViewProjMatrix * vPosition;
 				v_Color = vColor;
 				vec4 transNormal = u_normalMatrix * vec4(vNormal, 1);
-				v_Dot = max(dot(transNormal.xyz, lightDir), 0.0);
+//				directionalLightWeighting = max(dot(transNormal.xyz, lightDir), 0.0);
+				directionalLightWeighting = max(dot(transNormal.xyz, uLightingDirection), 0.0);
+				vLightWeighting = uAmbientColor + uDirectionalColor + directionalLightWeighting;
 			}
 		</script>
-		<script id="fshader" type="x-shader/x-fragment">
+		<script type="x-shader/x-fragment">
 			precision mediump float;
-			varying float v_Dot;
 			varying vec4 v_Color;
+			varying vec3 vLightWeighting;
 			void main(void) {
-				gl_FragColor = vec4(v_Color.xyz * v_Dot, v_Color.a);
+				gl_FragColor = vec4(v_Color.xyz * vLightWeighting, v_Color.a);
 			}
 		</script>
 		<div class="canvasloth-hud-passive">
