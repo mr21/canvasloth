@@ -70,8 +70,14 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl.cameraRadius     = function(n) { if (n !== undefined) this._camera_ray = n; return this._camera_ray; };
 	gl.cameraLongitude  = function(n) { if (n !== undefined) this._camera_phy = n; return this._camera_phy; };
 	gl.cameraLatitude   = function(n) { if (n !== undefined) this._camera_the = n; return this._camera_the; };
-	gl._camera_mouseDown = function() { this._camera_moving = true;  };
-	gl._camera_mouseUp   = function() { this._camera_moving = false; };
+	gl._camera_mouseDown = function() {
+		this._camera_moving = true;
+		canvasloth.canvas.cursor('move');
+	};
+	gl._camera_mouseUp = function() {
+		this._camera_moving = false;
+		canvasloth.canvas.cursor('default');
+	};
 	gl._camera_mouseWheel = function(y) {
 		this._camera_ray *= y > 0
 			? this._camera_zoomRatio
