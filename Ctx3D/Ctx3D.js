@@ -246,11 +246,9 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		prog.directionalColorUniform  = this.getUniformLocation(prog, "uDirectionalColor");
 	};
 	gl.light = function() {
-		// gl._shaders.samplerUniform = gl.getUniformLocation(gl._shaders, "uSampler");
-		// gl.uniform1i(gl._shaders.samplerUniform, 0);
 		gl.uniform1i(gl._shaders.program.useLightingUniform, true);
 		gl.uniform3f(gl._shaders.program.ambientColorUniform, 0.2, 0.2, 0.2);
-		
+
 		var lightingDirection = [-0.25, -0.25, 1];
 		var adjustedLD = vec3.create();
 		vec3.normalize(lightingDirection, adjustedLD);
@@ -259,6 +257,8 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		gl.uniform3fv(gl._shaders.program.lightingDirectionUniform, adjustedLD);
 		gl.uniform3f(gl._shaders.directionalColorUniform, 0.8, 0.8, 0.8);
 	};
+
+
 	// Initialiser le context
 	gl.clearColor(0.07, 0.07, 0.07, 1);
 	gl.enable(gl.DEPTH_TEST);
