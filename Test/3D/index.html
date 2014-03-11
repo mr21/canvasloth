@@ -92,12 +92,12 @@ var WebGL_Editor = {
 
 		// Set up the array of colors for the cube's faces
 		colors = [
-			0, 0, 1, 1,   0, 0, 1, 1,   0, 0, 1, 1,   0, 0, 1, 1, // v0-v1-v2-v3 front  BLEU
-			1, 0, 0, 1,   1, 0, 0, 1,   1, 0, 0, 1,   1, 0, 0, 1, // v0-v3-v4-v5 right  ROUGE
-			0, 1, 0, 1,   0, 1, 0, 1,   0, 1, 0, 1,   0, 1, 0, 1, // v0-v5-v6-v1 top    VERT
-			1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1, // v1-v6-v7-v2 left   BLANC
-			1, 0, 1, 1,   1, 0, 1, 1,   1, 0, 1, 1,   1, 0, 1, 1, // v7-v4-v3-v2 bottom 
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1  // v4-v7-v6-v5 back   
+			0, 0, 255, 255,     0, 0, 255, 255,     0, 0, 255, 255,       0, 0, 255, 255, // v0-v1-v2-v3 front  BLEU
+			255, 0, 0, 255,     255, 0, 0, 255,     255, 0, 0, 255,       255, 0, 0, 255, // v0-v3-v4-v5 right  ROUGE
+			0, 255, 0, 255,     0, 255, 0, 255,     0, 255, 0, 255,       0, 255, 0, 255, // v0-v5-v6-v1 top    VERT
+			0, 255, 255, 255,   0, 255, 255, 255,   0, 255, 255, 255,     0, 255, 255, 255, // v1-v6-v7-v2 left   TURQUOISE
+			255, 0, 255, 255,   255, 0, 255, 255,   255, 0, 255, 255,     255, 0, 255, 255, // v7-v4-v3-v2 bottom ROSE
+			255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,   255, 255, 255, 255  // v4-v7-v6-v5 back   BLANC
 		];
 
 		this.cube1 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
@@ -112,18 +112,23 @@ var WebGL_Editor = {
 		];
 
 		colors = [
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1, // v0-v1-v2-v3 front  BLEU
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1, // v0-v3-v4-v5 right  ROUGE
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1, // v0-v5-v6-v1 top    VERT
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1, // v1-v6-v7-v2 left   BLANC
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1, // v7-v4-v3-v2 bottom 
-			0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1,   0, 1, 1, 1  // v4-v7-v6-v5 back   
+			58, 103, 255, 255,   58, 103, 255, 255,   58, 103, 255, 255,   58, 103, 255, 255,
+			56, 124, 255, 255,   56, 124, 255, 255,   56, 124, 255, 255,   56, 124, 255, 255,
+			56, 156, 232, 255,   56, 156, 232, 255,   56, 156, 232, 255,   56, 156, 232, 255,
+			74, 218, 255, 255,   74, 218, 255, 255,   74, 218, 255, 255,   74, 218, 255, 255,
+			56, 232, 228, 255,   56, 232, 228, 255,   56, 232, 228, 255,   56, 232, 228, 255,
+			62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255  
 		];
 
 		this.cube2 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
 
-		gl.lightAttrib();
-		gl.light();
+		gl.ambientLightAttrib();
+		gl.dirLightAttrib();
+
+		gl.ambientLight(0.5, 0.5, 0.5);
+		gl.dirLight(-0.25, -0.25, 1, 0.8, 0.8, 0.8);
+		gl.enableDirLight(false);
+		
 		gl.enableVertexAttribArray(0);
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
@@ -164,11 +169,11 @@ var canvasloth = new Canvasloth({
 			uniform mat4 u_modelViewProjMatrix;
 			uniform mat4 u_normalMatrix;
 //			uniform vec3 lightDir;
-			attribute vec3 vNormal;
-			attribute vec4 vColor;
-			attribute vec4 vPosition;
-			varying float directionalLightWeighting;
-			varying vec4 v_Color;
+			attribute vec3 aVertexNormal;
+			attribute vec4 aVertexColor;
+			attribute vec4 aVertexPosition;
+			
+			varying vec4 vColor;
 
 			uniform vec3 uAmbientColor;
 			uniform vec3 uLightingDirection;
@@ -177,20 +182,24 @@ var canvasloth = new Canvasloth({
 			varying vec3 vLightWeighting;
 
 			void main(void) {
-				gl_Position = u_modelViewProjMatrix * vPosition;
-				v_Color = vColor;
-				vec4 transNormal = u_normalMatrix * vec4(vNormal, 1);
-//				directionalLightWeighting = max(dot(transNormal.xyz, lightDir), 0.0);
-				directionalLightWeighting = max(dot(transNormal.xyz, uLightingDirection), 0.0);
-				vLightWeighting = uAmbientColor + uDirectionalColor + directionalLightWeighting;
+				gl_Position = u_modelViewProjMatrix * aVertexPosition;
+				vColor = aVertexColor;
+				if (!uUseLighting) {
+        	    	vLightWeighting = vec3(1.0, 1.0, 1.0);
+        		} else {
+        			vec4 transNormal = u_normalMatrix * vec4(aVertexNormal, 1);
+					float directionalLightWeighting = max(dot(transNormal.xyz, uLightingDirection), 0.0);
+					vLightWeighting = uAmbientColor + uDirectionalColor + directionalLightWeighting;
+				}
 			}
 		</script>
 		<script type="x-shader/x-fragment">
 			precision mediump float;
-			varying vec4 v_Color;
+			varying vec4 vColor;
 			varying vec3 vLightWeighting;
+
 			void main(void) {
-				gl_FragColor = vec4(v_Color.xyz * vLightWeighting, v_Color.a);
+				gl_FragColor = vec4(vColor.xyz * vLightWeighting, vColor.a);
 			}
 		</script>
 		<div class="canvasloth-hud-passive">

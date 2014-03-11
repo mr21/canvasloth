@@ -14,13 +14,14 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl._M4obj = new J3DIMatrix4();
 	gl._M4nrm = new J3DIMatrix4();
 	gl._M4mvp = new J3DIMatrix4();
-	gl._M4nrmLoc  = gl.getUniformLocation(gl._shaders.program, 'u_normalMatrix');
+	gl._nMatrixUniform  = gl.getUniformLocation(gl._shaders.program, 'u_normalMatrix');
 	gl._M4mdlVLoc = gl.getUniformLocation(gl._shaders.program, 'u_modelViewProjMatrix');
-	gl.uniform3f(gl.getUniformLocation(gl._shaders.program, 'lightDir'), 1, 1, 1); // tmp
+	// gl.uniform3f(gl.getUniformLocation(gl._shaders.program, 'lightDir'), 1, 1, 1); // tmp
 	gl._camera_eyX = 5; gl._camera_eyY = 5; gl._camera_eyZ = 5;
 	gl._camera_ctX = 0; gl._camera_ctY = 0; gl._camera_ctZ = 0;
 	gl._camera_upX = 0; gl._camera_upY = 0; gl._camera_upZ = 1;
 	gl._camera_zoomRatio = 1.2;
+	gl._dir_light_enabled = true;
 	// * Matrices
 	gl.translate = function(   x, y, z) { this._M4obj.translate(x, y, z); return this; };
 	gl.scale     = function(   x, y, z) { this._M4obj.scale    (x, y, z); return this; };
@@ -70,14 +71,8 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl.cameraRadius     = function(n) { if (n !== undefined) this._camera_ray = n; return this._camera_ray; };
 	gl.cameraLongitude  = function(n) { if (n !== undefined) this._camera_phy = n; return this._camera_phy; };
 	gl.cameraLatitude   = function(n) { if (n !== undefined) this._camera_the = n; return this._camera_the; };
-	gl._camera_mouseDown = function() {
-		this._camera_moving = true;
-		canvasloth.canvas.cursor('move');
-	};
-	gl._camera_mouseUp = function() {
-		this._camera_moving = false;
-		canvasloth.canvas.cursor('default');
-	};
+	gl._camera_mouseDown = function() { this._camera_moving = true;  };
+	gl._camera_mouseUp   = function() { this._camera_moving = false; };
 	gl._camera_mouseWheel = function(y) {
 		this._camera_ray *= y > 0
 			? this._camera_zoomRatio
@@ -135,7 +130,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this._M4nrm.load(this._M4obj);
 		this._M4nrm.invert();
 		this._M4nrm.transpose();
-		this._M4nrm.setUniform(this, this._M4nrmLoc, false);
+		this._M4nrm.setUniform(this, this._nMatrixUniform, false);
 		// Construct the model-view * projection matrix and pass it in
 		this._M4mvp.load(this._M4cam);
 		this._M4mvp.multiply(this._M4obj);
@@ -234,30 +229,38 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 			}
 			if (obj.colors.active) {
 				this.bindBuffer(this.ARRAY_BUFFER, obj.colors.buffer);
-				this.vertexAttribPointer(1, obj.colors.itemSize, this.UNSIGNED_BYTE, false, 0, 0);
+				this.vertexAttribPointer(1, obj.colors.itemSize, this.UNSIGNED_BYTE, true, 0, 0);
 			}
 		}
 	};
-	gl.lightAttrib = function() {
+	gl.ambientLightAttrib = function() {
 		var prog = this._shaders.program;
 		prog.useLightingUniform       = this.getUniformLocation(prog, "uUseLighting");
 		prog.ambientColorUniform      = this.getUniformLocation(prog, "uAmbientColor");
+	};
+	gl.dirLightAttrib = function () {
+		var prog = this._shaders.program;
 		prog.lightingDirectionUniform = this.getUniformLocation(prog, "uLightingDirection");
 		prog.directionalColorUniform  = this.getUniformLocation(prog, "uDirectionalColor");
 	};
-	gl.light = function() {
+	gl.ambientLight = function(r, g, b) {
 		gl.uniform1i(gl._shaders.program.useLightingUniform, true);
-		gl.uniform3f(gl._shaders.program.ambientColorUniform, 0.2, 0.2, 0.2);
+		gl.uniform3f(gl._shaders.program.ambientColorUniform, r, g, b);
 
-		var lightingDirection = [-0.25, -0.25, 1];
+	};
+	gl.dirLight = function(lightDirX, lightDirZ, lightDirY, r, g, b) {
+		var lightingDirection = [lightDirX, lightDirZ, lightDirY];
 		var adjustedLD = vec3.create();
 		vec3.normalize(lightingDirection, adjustedLD);
 		vec3.scale(adjustedLD, -1);
 
 		gl.uniform3fv(gl._shaders.program.lightingDirectionUniform, adjustedLD);
-		gl.uniform3f(gl._shaders.directionalColorUniform, 0.8, 0.8, 0.8);
+		gl.uniform3f(gl._shaders.directionalColorUniform, r, g, b);
 	};
-
+	gl.enableDirLight = function(activate) {
+		gl._dir_light_enabled = activate;
+		gl.uniform1i(gl._shaders.program.useLightingUniform, activate);
+	};
 
 	// Initialiser le context
 	gl.clearColor(0.07, 0.07, 0.07, 1);
