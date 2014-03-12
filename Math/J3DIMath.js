@@ -123,7 +123,9 @@ J3DIMatrix4.prototype.setUniform = function(ctx, loc, transpose)
     }
 
     if (J3DIHasCSSMatrixCopy)
-        this.$matrix.copy(J3DIMatrix4.setUniformWebGLArray);
+        {
+            this.$matrix.copy(J3DIMatrix4.setUniformWebGLArray);
+    }
     else {
         J3DIMatrix4.setUniformArray[0] = this.$matrix.m11;
         J3DIMatrix4.setUniformArray[1] = this.$matrix.m12;
@@ -144,7 +146,6 @@ J3DIMatrix4.prototype.setUniform = function(ctx, loc, transpose)
 
         J3DIMatrix4.setUniformWebGLArray.set(J3DIMatrix4.setUniformArray);
     }
-
     ctx.uniformMatrix4fv(loc, transpose, J3DIMatrix4.setUniformWebGLArray);
 }
 

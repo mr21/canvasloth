@@ -8,26 +8,25 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this.canvas.getContext('experimental-webgl');
 	// Fonctionnalites additionnelles
 	// * Attributs
-	gl._shaders = new Canvasloth.Ctx3D.Shaders(container, gl);
-	gl._M4stack = [];
-	gl._M4cam = new J3DIMatrix4();
-	gl._M4obj = new J3DIMatrix4();
-	gl._M4nrm = new J3DIMatrix4();
-	gl._M4mvp = new J3DIMatrix4();
-	gl._nMatrixUniform  = gl.getUniformLocation(gl._shaders.program, 'u_normalMatrix');
-	gl._M4mdlVLoc = gl.getUniformLocation(gl._shaders.program, 'u_modelViewProjMatrix');
-	// gl.uniform3f(gl.getUniformLocation(gl._shaders.program, 'lightDir'), 1, 1, 1); // tmp
+	gl._shaders  = new Canvasloth.Ctx3D.Shaders(container, gl);
+	gl._M4stack  = [];
+	gl._pMatrix  = new J3DIMatrix4();   // M4cam
+	gl._mvMatrix = new J3DIMatrix4();   // M4obj
+	gl._nNatrix  = new J3DIMatrix4();   // M4nmr
+	gl._shaders.nMatrix    = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
+	gl._shaders.uPMatrix   = gl.getUniformLocation(gl._shaders.program, 'uPMatrix');
+	gl._shaders.uMVMatrix  = gl.getUniformLocation(gl._shaders.program, 'uMVMatrix');
 	gl._camera_eyX = 5; gl._camera_eyY = 5; gl._camera_eyZ = 5;
 	gl._camera_ctX = 0; gl._camera_ctY = 0; gl._camera_ctZ = 0;
 	gl._camera_upX = 0; gl._camera_upY = 0; gl._camera_upZ = 1;
 	gl._camera_zoomRatio = 1.2;
 	gl._dir_light_enabled = true;
 	// * Matrices
-	gl.translate = function(   x, y, z) { this._M4obj.translate(x, y, z); return this; };
-	gl.scale     = function(   x, y, z) { this._M4obj.scale    (x, y, z); return this; };
-	gl.rotate    = function(a, x, y, z) { this._M4obj.rotate(a, x, y, z); return this; };
-	gl.save    = function() { this._M4stack.push(new J3DIMatrix4(this._M4obj)); return this; };
-	gl.restore = function() { this._M4obj = this._M4stack.pop(); return this; };
+	gl.translate = function(   x, y, z) { this._mvMatrix.translate(x, y, z); return this; };
+	gl.scale     = function(   x, y, z) { this._mvMatrix.scale    (x, y, z); return this; };
+	gl.rotate    = function(a, x, y, z) { this._mvMatrix.rotate(a, x, y, z); return this; };
+	gl.save    = function() { this._M4stack.push(new J3DIMatrix4(this._mvMatrix)); return this; };
+	gl.restore = function() { this._mvMatrix = this._M4stack.pop(); return this; };
 	// * Camera
 	gl.cameraFovy = function(z) { if (z !== undefined) this._fovy = z; return this._fovy; };
 	gl.cameraNear = function(z) { if (z !== undefined) this._near = z; return this._near; };
@@ -95,8 +94,8 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		}
 	};
 	gl._setPerspective = function() {
-		this._M4cam.makeIdentity();
-		this._M4cam.perspective(
+		this._pMatrix.makeIdentity();
+		this._pMatrix.perspective(
 			this._fovy,
 			canvasloth.canvas.width() / canvasloth.canvas.height(),
 			this._near, this._far
@@ -110,7 +109,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this._camera_eyZ = this._camera_ray * Math.cos(this._camera_the);
 		// lookAt
 		this._setPerspective();
-		this._M4cam.lookat(
+		this._pMatrix.lookat(
 			this._camera_eyX,   this._camera_eyY,   this._camera_eyZ,
 			this._camera_ctX,   this._camera_ctY,   this._camera_ctZ,
 			this._camera_upX,   this._camera_upY,   this._camera_upZ
@@ -118,7 +117,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	};
 	gl.lookAt = function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
 		this._setPerspective();
-		this._M4cam.lookat(
+		this._pMatrix.lookat(
 			this._camera_eyX=eyX,   this._camera_eyY=eyY,   this._camera_eyZ=eyZ,
 			this._camera_ctX=ctX,   this._camera_ctY=ctY,   this._camera_ctZ=ctZ,
 			this._camera_upX=upX,   this._camera_upY=upY,   this._camera_upZ=upZ
@@ -126,15 +125,18 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	};
 	// * Render
 	gl._setUniform = function() {
+		this._pMatrix.setUniform(this, this._shaders.uPMatrix, false);
+		this._mvMatrix.setUniform(this, this._shaders.uMVMatrix, false);
+		// this.uniformMatrix4fv(this._shaders.uPMatrix, false, this._pMatrix);
+		// this.uniformMatrix4fv(this._shaders.uMVMatrix, false, this._mvMatrix);
+
 		// Construct the normal matrix from the model-view matrix and pass it in
-		this._M4nrm.load(this._M4obj);
-		this._M4nrm.invert();
-		this._M4nrm.transpose();
-		this._M4nrm.setUniform(this, this._nMatrixUniform, false);
-		// Construct the model-view * projection matrix and pass it in
-		this._M4mvp.load(this._M4cam);
-		this._M4mvp.multiply(this._M4obj);
-		this._M4mvp.setUniform(this, this._M4mdlVLoc, false);
+		this._nNatrix.load(this._mvMatrix);
+		this._nNatrix.invert();
+		this._nNatrix.transpose();
+		this._nNatrix.setUniform(this, this._shaders.nMatrix, false);
+		
+
 	};
 	gl.drawObject = function(mode, count, type, indices) {
 		this._setUniform();
@@ -283,7 +285,7 @@ Canvasloth.Ctx3D.prototype = {
 	render: function(userApp) {
 		var gl = this.ctx;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
-		gl._M4obj.makeIdentity();
+		gl._mvMatrix.makeIdentity();
 		if (gl._camera_auto_active === true)
 			gl._auto_lookAt();
 		this.events.call('render', gl);

@@ -4,9 +4,6 @@ Canvasloth.Ctx3D.Shaders = function(container, ctx) {
 	this.attribs = ['aVertexNormal', 'aVertexColor', 'aVertexPosition'];
 	this.program = this.loadShaders();
 	var gl = this.ctx;
-	// if (this.program) {
-	// 	gl.uniform3f(gl.getUniformLocation(this.program, "lightDir"), 0, 0, 1); // TMP Set up a uniform variable for the shaders
-	// }
 };
 
 Canvasloth.Ctx3D.Shaders.prototype = {
