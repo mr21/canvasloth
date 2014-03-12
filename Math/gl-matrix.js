@@ -2886,7 +2886,7 @@ mat4.copy = function(out, a) {
     out[4] = a[4];
     out[5] = a[5];
     out[6] = a[6];
-    out[7] = a[7];
+    out[7] = a[7];m
     out[8] = a[8];
     out[9] = a[9];
     out[10] = a[10];
@@ -3653,23 +3653,26 @@ mat4.lookAt = function (out, eye, center, up) {
         y2 *= len;
     }
 
-    out[0] = x0;
-    out[1] = y0;
-    out[2] = z0;
-    out[3] = 0;
-    out[4] = x1;
-    out[5] = y1;
-    out[6] = z1;
-    out[7] = 0;
-    out[8] = x2;
-    out[9] = y2;
-    out[10] = z2;
-    out[11] = 0;
-    out[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
-    out[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
-    out[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
-    out[15] = 1;
+    var _ = [];
+    _[0] = x0;
+    _[1] = y0;
+    _[2] = z0;
+    _[3] = 0;
+    _[4] = x1;
+    _[5] = y1;
+    _[6] = z1;
+    _[7] = 0;
+    _[8] = x2;
+    _[9] = y2;
+    _[10] = z2;
+    _[11] = 0;
+    _[12] = 0;
+    _[13] = 0;
+    _[14] = 0;
+    _[15] = 1;
 
+    mat4.translate(_, _, [-eyex, -eyey, -eyez]);
+    mat4.multiply(out, out, _);
     return out;
 };
 
