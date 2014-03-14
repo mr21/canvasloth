@@ -259,33 +259,37 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	};
 	gl.ambientLightAttrib = function() {
 		var prog = this._shaders.program;
-		prog.useLightingUniform       = this.getUniformLocation(prog, "uUseLighting");
+		prog.useAmbLightingUniform       = this.getUniformLocation(prog, "uUseAmbLighting");
 		prog.ambientColorUniform      = this.getUniformLocation(prog, "uAmbientColor");
 	};
 	gl.dirLightAttrib = function () {
 		var prog = this._shaders.program;
+		prog.useDirLightingUniform       = this.getUniformLocation(prog, "uUseDirLighting");
 		prog.lightingDirectionUniform = this.getUniformLocation(prog, "uLightingDirection");
 		prog.directionalColorUniform  = this.getUniformLocation(prog, "uDirectionalColor");
 	};
 	gl.ambientLight = function(r, g, b) {
-		gl.uniform1i(gl._shaders.program.useLightingUniform, true);
+		gl.uniform1i(gl._shaders.program.useAmbLightingUniform, true);
 		gl.uniform3f(gl._shaders.program.ambientColorUniform, r, g, b);
 
 	};
 	gl.dirLight = function(lightDirX, lightDirZ, lightDirY, r, g, b) {
 		var lightingDirection = [lightDirX, lightDirZ, lightDirY];
 		var adjustedLD = vec3.create();
-		vec3.normalize(lightingDirection, adjustedLD);
-		vec3.scale(adjustedLD, -1);
+		vec3.normalize(adjustedLD, lightingDirection);
+		vec3.scale(adjustedLD, adjustedLD, -1);
 
 		gl.uniform3fv(gl._shaders.program.lightingDirectionUniform, adjustedLD);
 		gl.uniform3f(gl._shaders.directionalColorUniform, r, g, b);
 	};
+	gl.enableAmbLight = function(activate) {
+		gl._amb_light_enabled = activate;
+		gl.uniform1i(gl._shaders.program.useAmbLightingUniform, activate);
+	};
 	gl.enableDirLight = function(activate) {
 		gl._dir_light_enabled = activate;
-		gl.uniform1i(gl._shaders.program.useLightingUniform, activate);
+		gl.uniform1i(gl._shaders.program.useDirLightingUniform, activate);
 	};
-
 	// Initialiser le context
 	gl.clearColor(0.07, 0.07, 0.07, 1);
 	gl.enable(gl.DEPTH_TEST);
