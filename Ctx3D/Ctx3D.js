@@ -13,32 +13,32 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl.convertmat4toJ3DI = function(m) {
 		var tmp = new J3DIMatrix4();
 		tmp.$matrix.m11 = m[0];
-        tmp.$matrix.m12 = m[1];
-        tmp.$matrix.m13 = m[2];
-        tmp.$matrix.m14 = m[3];
-        tmp.$matrix.m21 = m[4];
-        tmp.$matrix.m22 = m[5];
-        tmp.$matrix.m23 = m[6];
-        tmp.$matrix.m24 = m[7];
-        tmp.$matrix.m31 = m[8];
-        tmp.$matrix.m32 = m[9];
-        tmp.$matrix.m33 = m[10];
-        tmp.$matrix.m34 = m[11];
-        tmp.$matrix.m41 = m[12];
-        tmp.$matrix.m42 = m[13];
-        tmp.$matrix.m43 = m[14];
-        tmp.$matrix.m44 = m[15];
-        return tmp;
+		tmp.$matrix.m12 = m[1];
+		tmp.$matrix.m13 = m[2];
+		tmp.$matrix.m14 = m[3];
+		tmp.$matrix.m21 = m[4];
+		tmp.$matrix.m22 = m[5];
+		tmp.$matrix.m23 = m[6];
+		tmp.$matrix.m24 = m[7];
+		tmp.$matrix.m31 = m[8];
+		tmp.$matrix.m32 = m[9];
+		tmp.$matrix.m33 = m[10];
+		tmp.$matrix.m34 = m[11];
+		tmp.$matrix.m41 = m[12];
+		tmp.$matrix.m42 = m[13];
+		tmp.$matrix.m43 = m[14];
+		tmp.$matrix.m44 = m[15];
+		return tmp;
 	};
-	gl._pMatrix  = mat4.create();    // M4cam
+	gl._pMatrix  = mat4.create(); // M4cam
+	gl._mvMatrix = mat4.create(); // M4obj
+	gl._nMatrix  = mat4.create(); // M4nmr
 	mat4.identity(gl._pMatrix);
-	gl._mvMatrix  = mat4.create();   // M4obj
 	mat4.identity(gl._mvMatrix);
-	gl._nMatrix  = mat4.create();    // M4nmr
 	mat4.identity(gl._nMatrix);
-	gl._shaders.nMatrix    = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
-	gl._shaders.uPMatrix   = gl.getUniformLocation(gl._shaders.program, 'uPMatrix');
-	gl._shaders.uMVMatrix  = gl.getUniformLocation(gl._shaders.program, 'uMVMatrix');
+	gl._shaders.nMatrix   = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
+	gl._shaders.uPMatrix  = gl.getUniformLocation(gl._shaders.program, 'uPMatrix');
+	gl._shaders.uMVMatrix = gl.getUniformLocation(gl._shaders.program, 'uMVMatrix');
 	gl._camera_eyX = 5; gl._camera_eyY = 5; gl._camera_eyZ = 5;
 	gl._camera_ctX = 0; gl._camera_ctY = 0; gl._camera_ctZ = 0;
 	gl._camera_upX = 0; gl._camera_upY = 0; gl._camera_upZ = 1;
@@ -96,8 +96,8 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl.cameraRadius     = function(n) { if (n !== undefined) this._camera_ray = n; return this._camera_ray; };
 	gl.cameraLongitude  = function(n) { if (n !== undefined) this._camera_phy = n; return this._camera_phy; };
 	gl.cameraLatitude   = function(n) { if (n !== undefined) this._camera_the = n; return this._camera_the; };
-	gl._camera_mouseDown = function() { this._camera_moving = true;  };
-	gl._camera_mouseUp   = function() { this._camera_moving = false; };
+	gl._camera_mouseDown  = function() { this._camera_moving = true;  };
+	gl._camera_mouseUp    = function() { this._camera_moving = false; };
 	gl._camera_mouseWheel = function(y) {
 		this._camera_ray *= y > 0
 			? this._camera_zoomRatio
@@ -120,7 +120,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		}
 	};
 	gl._setPerspective = function() {
-		mat4.perspective(gl._pMatrix,
+		mat4.perspective(this._pMatrix,
 			this._fovy,
 			canvasloth.canvas.width() / canvasloth.canvas.height(),
 			this._near,
@@ -135,16 +135,15 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		this._camera_eyZ = this._camera_ray * Math.cos(this._camera_the);
 		// lookAt
 		this._setPerspective();
-		mat4.lookAt(
-			this._pMatrix,
+		mat4.lookAt(this._pMatrix,
 			[this._camera_eyX,   this._camera_eyY,   this._camera_eyZ],
 			[this._camera_ctX,   this._camera_ctY,   this._camera_ctZ],
 			[this._camera_upX,   this._camera_upY,   this._camera_upZ]
-			);		
+		);
 	};
 	gl.lookAt = function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
 		this._setPerspective();
-		mat4.lookAt(
+		mat4.lookAt(this._pMatrix,
 			[this._camera_eyX=eyX,   this._camera_eyY=eyY,   this._camera_eyZ=eyZ],
 			[this._camera_ctX=ctX,   this._camera_ctY=ctY,   this._camera_ctZ=ctZ],
 			[this._camera_upX=upX,   this._camera_upY=upY,   this._camera_upZ=upZ]
@@ -154,7 +153,6 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	gl._setUniform = function() {
 		this.uniformMatrix4fv(this._shaders.uPMatrix, false, this._pMatrix);
 		this.uniformMatrix4fv(this._shaders.uMVMatrix, false, this._mvMatrix);
-
 		gl._nMatrix = mat4.clone(gl._mvMatrix);
 		mat4.invert(gl._nMatrix, gl._nMatrix);
 		mat4.transpose(gl._nMatrix, gl._nMatrix);
