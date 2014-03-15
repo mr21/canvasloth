@@ -10,7 +10,7 @@ function Canvasloth(p) {
 	this.btnBool = [];
 	this.active = false;
 	this.time = new Canvasloth.Time();
-	this.pages = new Canvasloth.Pages(this);
+	this.pages = new Canvasloth.Pages(this, p.node);
 	this.assets = new Canvasloth.Assets(this.getCtx(), this.time);
 	var self = this;
 	this.assets.images.load(p.images, function() { self.ready(); });
@@ -24,9 +24,10 @@ Canvasloth.RIGHT_BUTTON  = 2;
 Canvasloth.prototype = {
 	ready: function() {
 		this.ctx.resize();
+		this.focus();
+		this.pages.open();
 		this.events.call('ready', this);
 		this.time.reset();
-		this.focus();
 	},
 	getCtx: function() { return this.ctx.ctx; },
 	cursor: function(c) { this.canvas.cursor(c); },

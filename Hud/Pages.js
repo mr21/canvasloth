@@ -1,4 +1,4 @@
-Canvasloth.Pages = function(canvasloth) {
+Canvasloth.Pages = function(canvasloth, container) {
 	var self = this;
 	this.canvasloth = canvasloth;
 	this.pageCurr = this.pageCurrNoCross = null;
@@ -6,7 +6,8 @@ Canvasloth.Pages = function(canvasloth) {
 	this.cross.href = '#';
 	this.cross.className = 'canvasloth-cross';
 	this.cross.onclick = function() { return self.close(true), false; };
-	canvasloth.container.insertBefore(this.cross, canvasloth.canvas.canvas);
+	container.insertBefore(this.cross, canvasloth.canvas.canvas);
+	this.startPage = container._domSelector('.canvasloth-page.canvasloth-start')[0];
 };
 
 Canvasloth.Pages.prototype = {
@@ -14,6 +15,8 @@ Canvasloth.Pages.prototype = {
 		return this.pageCurr;
 	},
 	open: function(page) {
+		if (!page && !(page = this.startPage))
+			return;
 		if (page !== this.pageCurr) {
 			this.close(false);
 			var obj = [
