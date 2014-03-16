@@ -36,7 +36,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	mat4.identity(gl._pMatrix);
 	mat4.identity(gl._mvMatrix);
 	mat4.identity(gl._nMatrix);
-	gl._shaders.nMatrix   = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
+	gl._shaders.uNMatrix   = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
 	gl._shaders.uPMatrix  = gl.getUniformLocation(gl._shaders.program, 'uPMatrix');
 	gl._shaders.uMVMatrix = gl.getUniformLocation(gl._shaders.program, 'uMVMatrix');
 	gl._camera_eyX = 5; gl._camera_eyY = 5; gl._camera_eyZ = 5;
@@ -278,7 +278,7 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 		vec3.scale(adjustedLD, adjustedLD, -1);
 
 		gl.uniform3fv(gl._shaders.program.lightingDirectionUniform, adjustedLD);
-		gl.uniform3f(gl._shaders.directionalColorUniform, r, g, b);
+		gl.uniform3f(gl._shaders.program.directionalColorUniform, r, g, b);
 	};
 	gl.enableAmbLight = function(activate) {
 		gl._amb_light_enabled = activate;

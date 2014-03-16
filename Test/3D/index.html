@@ -67,7 +67,7 @@ var WebGL_Editor = {
 			-1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // v1-v6-v7-v2 left
 			 0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, // v7-v4-v3-v2 bottom
 			 0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  // v4-v7-v6-v5 back
-       ];
+			 ];
 
 		// texCoord array
 		texCoords = [
@@ -122,11 +122,12 @@ var WebGL_Editor = {
 		this.cube2 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
 
 		gl.ambientLightAttrib();
-		gl.ambientLight(0.5, 0, 0);
+		gl.ambientLight(0.2, 0.2, 0.2);
 		gl.enableAmbLight(true);
 
-		// gl.dirLightAttrib();
-		// gl.dirLight(-0.25, -0.25, 1, 0.8, 0.8, 0.8);
+		gl.dirLightAttrib();
+		gl.dirLight(0.2, 0.7, -0.5, 1, 1, 1);
+		gl.enableDirLight(true);
 		
 		gl.enableVertexAttribArray(0);
 		gl.enableVertexAttribArray(1);
@@ -172,36 +173,42 @@ var canvasloth = new Canvasloth({
 			
 			uniform mat4 uNMatrix;
 			uniform mat4 uMVMatrix;
-    		uniform mat4 uPMatrix;
+			uniform mat4 uPMatrix;
 			
 			varying vec4 vColor;
+			varying vec4 vFinalLight;
 
 			uniform vec3 uAmbientColor;
 			uniform vec3 uLightingDirection;
 			uniform vec3 uDirectionalColor;
 			uniform bool uUseAmbLighting;
+			uniform bool uUseDirLighting;
 			varying vec3 vLightWeighting;
 
-
 			void main(void) {
-				gl_Position = uPMatrix * uMVMatrix * aVertexPosition;
-				vColor = aVertexColor;
 				if (!uUseAmbLighting) {
-        	    	vLightWeighting = vec3(1.0, 1.0, 1.0);
-        		} else {
-        			vec4 transNormal = uNMatrix * vec4(aVertexNormal, 1);
-					float directionalLightWeighting = max(dot(transNormal.xyz, uLightingDirection), 0.0);
-					vLightWeighting = uAmbientColor + uDirectionalColor + directionalLightWeighting;
+					vFinalLight = vec4(1.0, 1.0, 1.0, 1.0);
+				} else if (uUseAmbLighting && !uUseDirLighting){	
+					vFinalLight = vec4(uAmbientColor, 1.0) ;
+				} else {
+					vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));
+					vec3 L = normalize(uLightingDirection);
+					float lambertCoef = max(dot(N, -L), 0.0);
+					vFinalLight.xyz = uAmbientColor + uDirectionalColor * lambertCoef;
+					vFinalLight.a = 1.0;
 				}
+				vColor = aVertexColor;
+				gl_Position = uPMatrix * uMVMatrix * aVertexPosition;
 			}
 		</script>
 		<script type="x-shader/x-fragment">
 			precision mediump float;
 			varying vec4 vColor;
+			varying vec4 vFinalLight;
 			varying vec3 vLightWeighting;
 
 			void main(void) {
-				gl_FragColor = vec4(vColor.xyz * vLightWeighting, vColor.a);
+				gl_FragColor = vColor * vFinalLight;
 			}
 		</script>
 		<div class="canvasloth-hud-passive">
