@@ -10,26 +10,6 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	// * Attributs
 	gl._shaders  = new Canvasloth.Ctx3D.Shaders(container, gl);
 	gl._M4stack  = [];
-	gl.convertmat4toJ3DI = function(m) {
-		var tmp = new J3DIMatrix4();
-		tmp.$matrix.m11 = m[0];
-		tmp.$matrix.m12 = m[1];
-		tmp.$matrix.m13 = m[2];
-		tmp.$matrix.m14 = m[3];
-		tmp.$matrix.m21 = m[4];
-		tmp.$matrix.m22 = m[5];
-		tmp.$matrix.m23 = m[6];
-		tmp.$matrix.m24 = m[7];
-		tmp.$matrix.m31 = m[8];
-		tmp.$matrix.m32 = m[9];
-		tmp.$matrix.m33 = m[10];
-		tmp.$matrix.m34 = m[11];
-		tmp.$matrix.m41 = m[12];
-		tmp.$matrix.m42 = m[13];
-		tmp.$matrix.m43 = m[14];
-		tmp.$matrix.m44 = m[15];
-		return tmp;
-	};
 	gl._pMatrix  = mat4.create(); // M4cam
 	gl._mvMatrix = mat4.create(); // M4obj
 	gl._nMatrix  = mat4.create(); // M4nmr
