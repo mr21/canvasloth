@@ -177,40 +177,40 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 			}
 		};
 
-		// Vertex des positions
-		if (vertices !== undefined) {
+		if (!vertices) {
+			obj.vertices.active = false;
+		} else {
 			this.bindBuffer(this.ARRAY_BUFFER, obj.vertices.buffer);
 			this.bufferData(this.ARRAY_BUFFER, new Float32Array(vertices), this.STATIC_DRAW);
-		} else
-			obj.vertices.active = false;
+		}
 
-		// Vertex des normales
-		if (normals !== undefined) {
+		if (!normals) {
+			obj.normals.active = false;
+		} else {
 			this.bindBuffer(this.ARRAY_BUFFER, obj.normals.buffer);
 			this.bufferData(this.ARRAY_BUFFER, new Float32Array(normals), this.STATIC_DRAW);
-		} else
-			obj.normals.active = false;
+		}
 
-		// Vertex des textures
-		if (texCoords !== undefined) {
+		if (!texCoords) {
+			obj.textCoords.active = false;
+		} else {
 			this.bindBuffer(this.ARRAY_BUFFER, obj.texCoords.buffer);
 			this.bufferData(this.ARRAY_BUFFER, new Float32Array(texCoords), this.STATIC_DRAW);
-		} else
-			obj.textCoords.active = false;
+		}
 
-		// Vertex des index
-		if (faces !== undefined) {
-			this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, obj.faces.buffer);
-			this.bufferData(this.ELEMENT_ARRAY_BUFFER, new Uint8Array(faces), this.STATIC_DRAW);
-		} else
+		if (!faces) {
 			obj.faces.active = false;
+		} else {
+			this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, obj.faces.buffer);
+			this.bufferData(this.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), this.STATIC_DRAW);
+		}
 
-		// Set up the vertex buffer for the colors
-		if (colors !== undefined) {
+		if (!colors) {
+			obj.colors.active = false;
+		} else {
 			this.bindBuffer(this.ARRAY_BUFFER, obj.colors.buffer);
 			this.bufferData(this.ARRAY_BUFFER, new Uint8Array(colors), this.STATIC_DRAW);
-		} else
-			obj.colors.active = false;
+		}
 
 		this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
 		return obj;
@@ -285,7 +285,6 @@ Canvasloth.Ctx3D.prototype = {
 		    h = this.canvas.height();
 		this.ctx.viewport(0, 0, w, h);
 	},
-	// render
 	render: function(userApp) {
 		var gl = this.ctx;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);

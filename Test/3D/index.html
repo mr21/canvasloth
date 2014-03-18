@@ -121,12 +121,67 @@ var WebGL_Editor = {
 
 		this.cube2 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
 
+
+		//Sphere
+		colors.length = vertices.length = normals.length = texCoords.length = indices.length = 0;
+		
+		var latitude  = 128;
+		var longitude = 128;
+		var radius    = 2;
+		var sphereColor = [255, 255, 255, 255];
+
+		for (var currentLat = 0; currentLat <= latitude; currentLat++) {
+			var theta = currentLat * Math.PI / latitude;
+			var sinTheta = Math.sin(theta);
+			var cosTheta = Math.cos(theta);
+
+			for (var currentLong = 0; currentLong <= longitude; currentLong++) {
+				var phi = currentLong * 2 * Math.PI / longitude;
+				var sinPhi = Math.sin(phi);
+				var cosPhi = Math.cos(phi);
+
+				var x = cosPhi * sinTheta;
+				var y = cosTheta;
+				var z = sinPhi * sinTheta;
+				var u = 1 - (currentLong / longitude);
+				var v = 1 - (currentLat / latitude);
+
+				normals.push(x);
+				normals.push(y);
+				normals.push(z);
+				colors.push(sphereColor[0]);
+				colors.push(sphereColor[1]);
+				colors.push(sphereColor[2]);
+				colors.push(sphereColor[3]);
+				vertices.push(radius * x);
+				vertices.push(radius * y);
+				vertices.push(radius * z);
+			}
+		}
+
+		for (var currentLat = 0; currentLat < latitude; currentLat++) {
+			for (var currentLong = 0; currentLong < longitude; currentLong++) {
+				var first = (currentLat * (longitude + 1)) + currentLong;
+				var second = first + longitude + 1;
+				indices.push(first);
+				indices.push(second);
+				indices.push(first + 1);
+
+				indices.push(second);
+				indices.push(second + 1);
+				indices.push(first + 1);
+			}
+		}
+		lg(indices);
+
+		this.sphere = gl.createObject('sphere', vertices, normals, texCoords, indices, colors);
+		lg("on est sorti de create obj");
 		gl.ambientLightAttrib();
 		gl.ambientLight(0.2, 0.2, 0.2);
 		gl.enableAmbLight(true);
 
 		gl.dirLightAttrib();
-		gl.dirLight(0.2, 0.7, -0.5, 1, 1, 1);
+		gl.dirLight(0.2, 0.7, -0.5, 0.5, 0.2, 0.8);
 		gl.enableDirLight(true);
 		
 		gl.enableVertexAttribArray(0);
@@ -140,11 +195,16 @@ var WebGL_Editor = {
 	render: function(gl) {
 		gl.translate(0, 3, 0);
 		gl.bindObject(this.cube1);
-		gl.drawObject(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_BYTE, 0);
+		gl.drawObject(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 
 		gl.translate(0, -5, 0);
 		gl.bindObject(this.cube2);
-		gl.drawObject(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_BYTE, 0);
+		gl.drawObject(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+
+		gl.translate(-5, 2, 0);
+		gl.bindObject(this.sphere);
+		lg(this.sphere.faces.itemNumber);
+		gl.drawObject(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 	}
 };
 
