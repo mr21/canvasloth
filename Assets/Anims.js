@@ -45,6 +45,9 @@ Canvasloth.Assets.Anims.Anim.prototype = {
 	},
 	rewind: function() {
 	},
+	progress: function() {
+		return this.frame / this.nbFrames;
+	},
 	// private
 	moveFrame: function(f) {
 		this.frame += f;
