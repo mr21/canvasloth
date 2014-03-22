@@ -20,6 +20,11 @@ function Canvasloth(p) {
 Canvasloth.LEFT_BUTTON   = 0;
 Canvasloth.MIDDLE_BUTTON = 1;
 Canvasloth.RIGHT_BUTTON  = 2;
+Canvasloth.CENTER = 1000000000; // ne pas utiliser les operateurs bit a bit ici (cf.: Sprite.js)
+Canvasloth.LEFT   = 2000000000;
+Canvasloth.RIGHT  = 3000000000;
+Canvasloth.TOP    = 4000000000;
+Canvasloth.BOTTOM = 5000000000;
 
 Canvasloth.prototype = {
 	ready: function() {
