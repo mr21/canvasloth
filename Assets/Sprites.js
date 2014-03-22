@@ -4,15 +4,15 @@ Canvasloth.Assets.Sprites = function(ctx, images) {
 };
 
 Canvasloth.Assets.Sprites.prototype = {
-	create: function(imgPath, x, y, w, h) {
+	create: function(arg) { // {img:, x:, y:, w:, h:}
 		var sp = new Canvasloth.Assets.Sprites.Sprite();
 		sp.opacity(1);
 		sp.ctx = this.ctx;
-		sp.src = this.images.find(imgPath);
-		sp.x = x || 0;
-		sp.y = y || 0;
-		sp.w = w || sp.src.width  - sp.x;
-		sp.h = h || sp.src.height - sp.y;
+		sp.src = this.images.find(arg.img);
+		sp.x = arg.x || 0;
+		sp.y = arg.y || 0;
+		sp.w = arg.w || sp.src.width  - sp.x;
+		sp.h = arg.h || sp.src.height - sp.y;
 		return sp;
 	}
 };
