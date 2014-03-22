@@ -4,14 +4,14 @@ Canvasloth.Assets.Anims = function(time, sprites) {
 };
 
 Canvasloth.Assets.Anims.prototype = {
-	create: function(arg) { // {img:, x:, y:, w:, h:, nbFrames:, returnTo:, loop:, delay:}
+	create: function(arg) { // {img:, x:0, y:0, w:img.width - x, h:img.height - y, nbFrames:, returnTo:, loop:false, delay:}
 		var an = new Canvasloth.Assets.Anims.Anim();
 		an.time = this.time;
 		an.sprite = this.sprites.create(arg);
 		an.framesAxeX = arg.nbFrames > 0;
 		an.nbFrames = Math.abs(arg.nbFrames);
 		an.returnTo = arg.returnTo;
-		an.loop = arg.loop;
+		an.loop = arg.loop !== undefined ? arg.loop : false;
 		an.delay = arg.delay / an.nbFrames;
 		an.frame = an.returnTo === -1 ? -1 : 0;
 		an.timePrev = an.time.realTime;

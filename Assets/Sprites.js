@@ -4,7 +4,7 @@ Canvasloth.Assets.Sprites = function(ctx, images) {
 };
 
 Canvasloth.Assets.Sprites.prototype = {
-	create: function(arg) { // {img:, x:, y:, w:, h:}
+	create: function(arg) { // {img:, x:0, y:0, w:img.width - x, h:img.height - y}
 		var sp = new Canvasloth.Assets.Sprites.Sprite();
 		sp.opacity(1);
 		sp.ctx = this.ctx;
