@@ -24,7 +24,7 @@ Canvasloth.Assets.Sprites.Sprite.prototype = {
 			return this.opacityValue;
 		this.opacityValue = a;
 	},
-	draw: function(x, y, debug) {
+	draw: function(x, y) {
 		this.ctx.globalAlpha = this.opacityValue;
 		this.ctx.drawImage(
 			this.src,
@@ -34,9 +34,5 @@ Canvasloth.Assets.Sprites.Sprite.prototype = {
 			this.w, this.h
 		);
 		this.ctx.globalAlpha = 1;
-		if (debug) {
-			this.ctx.strokeStyle = 'rgba(255, 255, 50, 0.75)';
-			this.ctx.strokeRect(x, y, this.w, this.h);
-		}
 	}
 };
