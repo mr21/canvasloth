@@ -84,7 +84,7 @@ Canvasloth.Events.prototype = {
 			}
 		});
 
-		var cam = c.getCtx()._V2cam || {x:0, y:0}; // tmp
+		var cam = c.getCtx().V2cam || {x:0, y:0}; // tmp
 		catchMouse._addEvent('mousedown', function(e) {
 			if (c.active && !c.btnBool[e.button]) {
 				e.preventDefault();

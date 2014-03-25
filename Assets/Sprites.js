@@ -45,18 +45,33 @@ Canvasloth.Assets.Sprites.Sprite.prototype = {
 			return this.opacityValue;
 		this.opacityValue = a;
 	},
-	draw: function(x, y) {
-		x = x || 0;
-		y = y || 0;
+	drawImage: function(x, y) {
 		this.ctx.globalAlpha = this.opacityValue;
 		this.ctx.drawImage(
 			this.src,
 			this.x, this.y,
 			this.w, this.h,
-			x - this.cx,
-			y - this.cy,
+			x,      y,
 			this.w, this.h
 		);
 		this.ctx.globalAlpha = 1;
+	},
+	draw: function(x, y, z) {
+		x = x || 0;
+		y = y || 0;
+		if (z === undefined || z === 0) {
+			this.drawImage(x - this.cx, y - this.cy);
+		} else {
+			var ctx = this.ctx;
+			z = Math.pow(z, 1.5);
+			x += z * (-1 + (x + ctx.V2cam.x) / ctx.width()  * 2);
+			y += z * (-1 + (y + ctx.V2cam.y) / ctx.height() * 2);
+			z = 1 + z / 100;
+			ctx.save();
+				ctx.translate(x, y);
+					ctx.scale(z, z);
+						this.drawImage(-this.cx, -this.cy);
+			ctx.restore();
+		}
 	}
 };
