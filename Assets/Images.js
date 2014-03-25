@@ -1,11 +1,12 @@
 Canvasloth.Assets.Images = function() {
-	this.array = [];
+	this.imgs = {};
 };
 
 Canvasloth.Assets.Images.prototype = {
 	load: function(imgs, callback) {
 		if (!imgs || imgs.length === 0) {
-			callback();
+			if (callback)
+				callback();
 		} else {
 			var self = this,
 				nbImagesToLoad = imgs.length;
@@ -13,21 +14,16 @@ Canvasloth.Assets.Images.prototype = {
 				img = new Image();
 				img.src = imgs[i];
 				img.onload = function() {
-					self.array.push(this);
+					var name = this.src.substr(this.src.lastIndexOf('/') + 1);
+					name = name.substr(0, name.lastIndexOf('.'));
+					self.imgs[name] = this;
 					if (--nbImagesToLoad === 0 && callback)
 						callback();
 				};
 			}
 		}
 	},
-	find: function(path) {
-		var i, img;
-		if (path === undefined)
-			img = this.array[0];
-		else if (!isNaN(i = parseInt(path)))
-			img = this.array[i];
-		else
-			for (i = 0; (img = this.array[i]) && img.src.indexOf(path) === -1; ++i) {}
-		return img || null;
+	find: function(name) {
+		return this.imgs[name];
 	}
 };
