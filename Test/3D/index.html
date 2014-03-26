@@ -36,9 +36,9 @@
 <script type="text/javascript" src="../../Ctx3D/Ctx3D.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Matrix.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Camera.js"></script>
+<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Shader.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Light.js"></script>
 <script type="text/javascript" src="../../Ctx3D/CameraMatrixFunctions.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Shaders.js"></script>
 <script type="text/javascript" src="../../Math/gl-matrix.js"></script> <!-- tmp -->
 
 <script>
@@ -51,7 +51,7 @@ var WebGL_Editor = {
 		this.canvasloth = canvasloth;
 		var vertices, normals, texCoords, indices, colors;
 		var gl = canvasloth.getCtx();
-		this.program = gl._shaders.getProgram();
+		this.program = gl.shader.program;
 		
 		vertices = [
 			 0.5, 0.5, 0.5,  -0.5, 0.5, 0.5,  -0.5,-0.5, 0.5,   0.5,-0.5, 0.5, // v0-v1-v2-v3 front

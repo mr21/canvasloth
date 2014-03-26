@@ -1,20 +1,19 @@
-Canvasloth.Ctx3D.Shaders = function(container, ctx) {
+WebGLRenderingContext.prototype.Shader = function(gl, container) {
 	this.container = container;
-	this.ctx = ctx;
+	this.gl = gl;
 	this.attribs = ['aVertexNormal', 'aVertexColor', 'aVertexPosition'];
 	this.program = this.loadShaders();
-	var gl = this.ctx;
+	this.uNMatrix  = gl.getUniformLocation(this.program, 'uNMatrix');
+	this.uPMatrix  = gl.getUniformLocation(this.program, 'uPMatrix');
+	this.uMVMatrix = gl.getUniformLocation(this.program, 'uMVMatrix');
 };
 
-Canvasloth.Ctx3D.Shaders.prototype = {
-	getProgram: function() {
-		return this.program;
-	},
+WebGLRenderingContext.prototype.Shader.prototype = {
 	loadShaders: function() {
 		var program = null,
 		    shaders = this.compileShaders();
 		if (shaders.length) {
-			var gl = this.ctx;
+			var gl = this.gl;
 			program = gl.createProgram();
 			for (var i = 0, s; s = shaders[i]; ++i)
 				gl.attachShader(program, s);
@@ -42,7 +41,7 @@ Canvasloth.Ctx3D.Shaders.prototype = {
 		return shaders;
 	},
 	compileShader: function(script) {
-		var gl = this.ctx, shader = null;
+		var gl = this.gl, shader = null;
 		switch (script.type) {
 			case 'x-shader/x-fragment' : shader = gl.createShader(gl.FRAGMENT_SHADER); break;
 			case 'x-shader/x-vertex'   : shader = gl.createShader(gl.VERTEX_SHADER);   break;

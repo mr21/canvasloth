@@ -5,23 +5,19 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	var gl = this.ctx =
 		this.canvas.getContext('webgl') ||
 		this.canvas.getContext('experimental-webgl');
-	/*tmp*/gl._shaders  = new Canvasloth.Ctx3D.Shaders(container, gl);
 	gl.matrix = new gl.Matrix();
 	gl.camera = new gl.Camera(gl.matrix, canvasloth);
-	gl.light  = new gl.Light(gl);
+	gl.shader = new gl.Shader(gl, container);
+	gl.light  = new gl.Light(gl, gl.shader);
 	// Fonctionnalites additionnelles
-	// * Attributs
-	gl._shaders.uNMatrix  = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
-	gl._shaders.uPMatrix  = gl.getUniformLocation(gl._shaders.program, 'uPMatrix');
-	gl._shaders.uMVMatrix = gl.getUniformLocation(gl._shaders.program, 'uMVMatrix');
 	// * Render
 	gl._setUniform = function() {
-		this.uniformMatrix4fv(this._shaders.uPMatrix, false, this.matrix.p);
-		this.uniformMatrix4fv(this._shaders.uMVMatrix, false, this.matrix.m);
+		this.uniformMatrix4fv(this.shader.uPMatrix, false, this.matrix.p);
+		this.uniformMatrix4fv(this.shader.uMVMatrix, false, this.matrix.m);
 		this.matrix.n = mat4.clone(this.matrix.m);
 		mat4.invert(this.matrix.n, this.matrix.n);
 		mat4.transpose(this.matrix.n, this.matrix.n);
-		this.uniformMatrix4fv(this._shaders.uNMatrix, false, this.matrix.n);
+		this.uniformMatrix4fv(this.shader.uNMatrix, false, this.matrix.n);
 	};
 	gl.drawObject = function(mode, count, type, indices) {
 		this._setUniform();
