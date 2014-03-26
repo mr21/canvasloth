@@ -130,7 +130,7 @@ var WebGL_Editor = {
 		
 		var latitude  = 128;
 		var longitude = 128;
-		var radius    = 2;
+		var radius    = 0.6;
 		var sphereColor = [255, 255, 255, 255];
 
 		for (var currentLat = 0; currentLat <= latitude; currentLat++) {
@@ -180,7 +180,7 @@ var WebGL_Editor = {
 		this.sphere = gl.object.create('sphere', vertices, normals, texCoords, indices, colors);
 		lg("on est sorti de create obj");
 		gl.light.ambient(0.2, 0.2, 0.2);
-		gl.light.dir(0.2, 0.7, -0.5, 0.5, 0.2, 0.8);
+		gl.light.dir(0.2, 0.7, 0.5, 0.5, 0.2, 0.8);
 		gl.light.enableAmbient(true);
 		gl.light.enableDir(true);
 		
@@ -193,18 +193,24 @@ var WebGL_Editor = {
 	update: function(time) {
 	},
 	render: function(gl) {
-		gl.matrix.translate(0, 3, 0);
-		gl.object.bind(this.cube1);
-		gl.object.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.matrix.push();
+			gl.matrix.translate(0, 0, 1.0);
+				gl.object.bind(this.cube2);
+				gl.object.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.matrix.pop();
 
-		gl.matrix.translate(0, -5, 0);
-		gl.object.bind(this.cube2);
-		gl.object.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.matrix.push();
+			gl.matrix.translate(-1, 2, 0.5);
+				gl.matrix.rotate(40, 0, 0, 1);
+					gl.object.bind(this.cube1);
+					gl.object.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.matrix.pop();
 
-		gl.matrix.translate(-5, 2, 0);
-		gl.object.bind(this.sphere);
-		lg(this.sphere.faces.itemNumber);
-		gl.object.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.matrix.push();
+			gl.matrix.translate(1.5, 1.7, 0.6);
+				gl.object.bind(this.sphere);
+				gl.object.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.matrix.pop();
 	}
 };
 
