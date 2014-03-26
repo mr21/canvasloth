@@ -36,6 +36,7 @@
 <script type="text/javascript" src="../../Ctx3D/Ctx3D.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Matrix.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Camera.js"></script>
+<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Light.js"></script>
 <script type="text/javascript" src="../../Ctx3D/CameraMatrixFunctions.js"></script>
 <script type="text/javascript" src="../../Ctx3D/Shaders.js"></script>
 <script type="text/javascript" src="../../Math/gl-matrix.js"></script> <!-- tmp -->
@@ -178,13 +179,10 @@ var WebGL_Editor = {
 
 		this.sphere = gl.createObject('sphere', vertices, normals, texCoords, indices, colors);
 		lg("on est sorti de create obj");
-		gl.ambientLightAttrib();
-		gl.ambientLight(0.2, 0.2, 0.2);
-		gl.enableAmbLight(true);
-
-		gl.dirLightAttrib();
-		gl.dirLight(0.2, 0.7, -0.5, 0.5, 0.2, 0.8);
-		gl.enableDirLight(true);
+		gl.light.ambient(0.2, 0.2, 0.2);
+		gl.light.dir(0.2, 0.7, -0.5, 0.5, 0.2, 0.8);
+		gl.light.enableAmbient(true);
+		gl.light.enableDir(true);
 		
 		gl.enableVertexAttribArray(0);
 		gl.enableVertexAttribArray(1);

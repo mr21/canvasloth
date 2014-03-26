@@ -5,22 +5,22 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 	var gl = this.ctx =
 		this.canvas.getContext('webgl') ||
 		this.canvas.getContext('experimental-webgl');
+	/*tmp*/gl._shaders  = new Canvasloth.Ctx3D.Shaders(container, gl);
 	gl.matrix = new gl.Matrix();
 	gl.camera = new gl.Camera(gl.matrix, canvasloth);
+	gl.light  = new gl.Light(gl);
 	// Fonctionnalites additionnelles
 	// * Attributs
-	gl._shaders  = new Canvasloth.Ctx3D.Shaders(container, gl);
 	gl._shaders.uNMatrix  = gl.getUniformLocation(gl._shaders.program, 'uNMatrix');
 	gl._shaders.uPMatrix  = gl.getUniformLocation(gl._shaders.program, 'uPMatrix');
 	gl._shaders.uMVMatrix = gl.getUniformLocation(gl._shaders.program, 'uMVMatrix');
-	gl._dir_light_enabled = true;
 	// * Render
 	gl._setUniform = function() {
 		this.uniformMatrix4fv(this._shaders.uPMatrix, false, this.matrix.p);
 		this.uniformMatrix4fv(this._shaders.uMVMatrix, false, this.matrix.m);
-		gl.matrix.n = mat4.clone(gl.matrix.m);
-		mat4.invert(gl.matrix.n, gl.matrix.n);
-		mat4.transpose(gl.matrix.n, gl.matrix.n);
+		this.matrix.n = mat4.clone(this.matrix.m);
+		mat4.invert(this.matrix.n, this.matrix.n);
+		mat4.transpose(this.matrix.n, this.matrix.n);
 		this.uniformMatrix4fv(this._shaders.uNMatrix, false, this.matrix.n);
 	};
 	gl.drawObject = function(mode, count, type, indices) {
@@ -119,40 +119,6 @@ Canvasloth.Ctx3D = function(canvasloth, container) {
 				this.vertexAttribPointer(1, obj.colors.itemSize, this.UNSIGNED_BYTE, true, 0, 0);
 			}
 		}
-	};
-	// Light
-	gl.ambientLightAttrib = function() {
-		var prog = this._shaders.program;
-		prog.useAmbLightingUniform       = this.getUniformLocation(prog, "uUseAmbLighting");
-		prog.ambientColorUniform      = this.getUniformLocation(prog, "uAmbientColor");
-	};
-	gl.dirLightAttrib = function () {
-		var prog = this._shaders.program;
-		prog.useDirLightingUniform       = this.getUniformLocation(prog, "uUseDirLighting");
-		prog.lightingDirectionUniform = this.getUniformLocation(prog, "uLightingDirection");
-		prog.directionalColorUniform  = this.getUniformLocation(prog, "uDirectionalColor");
-	};
-	gl.ambientLight = function(r, g, b) {
-		gl.uniform1i(gl._shaders.program.useAmbLightingUniform, true);
-		gl.uniform3f(gl._shaders.program.ambientColorUniform, r, g, b);
-
-	};
-	gl.dirLight = function(lightDirX, lightDirZ, lightDirY, r, g, b) {
-		var lightingDirection = [lightDirX, lightDirZ, lightDirY];
-		var adjustedLD = vec3.create();
-		vec3.normalize(adjustedLD, lightingDirection);
-		vec3.scale(adjustedLD, adjustedLD, -1);
-
-		gl.uniform3fv(gl._shaders.program.lightingDirectionUniform, adjustedLD);
-		gl.uniform3f(gl._shaders.program.directionalColorUniform, r, g, b);
-	};
-	gl.enableAmbLight = function(activate) {
-		gl._amb_light_enabled = activate;
-		gl.uniform1i(gl._shaders.program.useAmbLightingUniform, activate);
-	};
-	gl.enableDirLight = function(activate) {
-		gl._dir_light_enabled = activate;
-		gl.uniform1i(gl._shaders.program.useDirLightingUniform, activate);
 	};
 	// Initialiser le context
 	gl.clearColor(0.07, 0.07, 0.07, 1);
