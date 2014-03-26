@@ -63,9 +63,9 @@ WebGLRenderingContext.prototype.Camera.prototype = {
 			||  this._latitude < +Math.PI !== this._latitude2 < +Math.PI
 			||  this._latitude < -Math.PI !== this._latitude2 < -Math.PI)
 			{
-				this._upX = -this._upX;
-				this._upY = -this._upY;
-				this._upZ = -this._upZ;
+				this.upX = -this.upX;
+				this.upY = -this.upY;
+				this.upZ = -this.upZ;
 			}
 			this._latitude2 = this._latitude;
 		}
