@@ -4,7 +4,7 @@ WebGLRenderingContext.prototype.Camera = function(matrix, canvasloth) {
 	this.eyX = 5; this.eyY = 5; this.eyZ = 5;
 	this.ctX = 0; this.ctY = 0; this.ctZ = 0;
 	this.upX = 0; this.upY = 0; this.upZ = 1;
-	thiszoomRatio = 1.2;
+	this.zoomRatio = 1.2;
 	this.fovy(Math.PI / 3);
 	this.near(1);
 	this.far(10000);
