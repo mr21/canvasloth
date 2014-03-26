@@ -38,6 +38,7 @@
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Camera.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Shader.js"></script>
 <script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Light.js"></script>
+<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Object.js"></script>
 <script type="text/javascript" src="../../Math/gl-matrix.js"></script> <!-- tmp -->
 
 <script>
@@ -101,7 +102,7 @@ var WebGL_Editor = {
 			255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,   255, 255, 255, 255  // v4-v7-v6-v5 back   BLANC
 		];
 
-		this.cube1 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
+		this.cube1 = gl.object.create('cube', vertices, normals, texCoords, indices, colors);
 
 		vertices = [
 			 1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1, // v0-v2-v2-v3 front
@@ -121,7 +122,7 @@ var WebGL_Editor = {
 			62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255  
 		];
 
-		this.cube2 = gl.createObject('cube', vertices, normals, texCoords, indices, colors);
+		this.cube2 = gl.object.create('cube', vertices, normals, texCoords, indices, colors);
 
 
 		//Sphere
@@ -176,7 +177,7 @@ var WebGL_Editor = {
 		}
 		lg(indices);
 
-		this.sphere = gl.createObject('sphere', vertices, normals, texCoords, indices, colors);
+		this.sphere = gl.object.create('sphere', vertices, normals, texCoords, indices, colors);
 		lg("on est sorti de create obj");
 		gl.light.ambient(0.2, 0.2, 0.2);
 		gl.light.dir(0.2, 0.7, -0.5, 0.5, 0.2, 0.8);
@@ -193,17 +194,17 @@ var WebGL_Editor = {
 	},
 	render: function(gl) {
 		gl.matrix.translate(0, 3, 0);
-		gl.bindObject(this.cube1);
-		gl.drawObject(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.object.bind(this.cube1);
+		gl.object.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 
 		gl.matrix.translate(0, -5, 0);
-		gl.bindObject(this.cube2);
-		gl.drawObject(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.object.bind(this.cube2);
+		gl.object.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 
 		gl.matrix.translate(-5, 2, 0);
-		gl.bindObject(this.sphere);
+		gl.object.bind(this.sphere);
 		lg(this.sphere.faces.itemNumber);
-		gl.drawObject(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		gl.object.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 	}
 };
 

@@ -1,5 +1,5 @@
-WebGLRenderingContext.prototype.Camera = function(matrix, canvasloth) {
-	this.matrix = matrix;
+WebGLRenderingContext.prototype.Camera = function(gl, canvasloth) {
+	this.matrix = gl.matrix;
 	this.canvasloth = canvasloth;
 	this.eyX = 5; this.eyY = 5; this.eyZ = 5;
 	this.ctX = 0; this.ctY = 0; this.ctZ = 0;
