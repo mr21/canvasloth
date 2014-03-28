@@ -1,16 +1,12 @@
-Canvasloth.Ctx3D = function(canvasloth, container) {
+Canvasloth.Ctx3D = function(cnv, container) {
 	// Creation du context
-	this.canvas = canvasloth.canvas;
-	this.events = canvasloth.events;
+	this.cnv = cnv;
+	this.canvas = cnv.canvas;
+	this.events = cnv.events;
 	var gl = this.ctx =
 		this.canvas.getContext('webgl') ||
 		this.canvas.getContext('experimental-webgl');
 	// Initialisation
-	gl.matrix = new gl.Matrix();
-	gl.camera = new gl.Camera(gl, canvasloth);
-	gl.shader = new gl.Shader(gl, container);
-	gl.light  = new gl.Light(gl);
-	gl.object = new gl.Object(gl);
 	gl.clearColor(0.07, 0.07, 0.07, 1);
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.BLEND);
@@ -26,10 +22,11 @@ Canvasloth.Ctx3D.prototype = {
 	},
 	render: function(userApp) {
 		var gl = this.ctx;
+		var cnv = this.cnv;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
-		mat4.identity(gl.matrix.m);
-		if (gl.camera._auto === true)
-				gl.camera._lookAtAuto();
-		this.events.call('render', gl);
+		mat4.identity(cnv.matrix.m);
+		if (cnv.camera._auto === true)
+			cnv.camera._lookAtAuto();
+		this.events.exec('render', gl);
 	}
 };

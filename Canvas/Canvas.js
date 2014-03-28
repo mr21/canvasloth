@@ -1,23 +1,20 @@
-Canvasloth.Canvas = function(canvasloth, container) {
-	this.canvasloth = canvasloth;
-	this.container = container;
-	// <canvas>
-	this.canvas = document.createElement('canvas');
-	container.appendChild(this.canvas);
-	// <div.canvasloth-mouse>
-	this.catchMouse = document.createElement('div');
-	this.catchMouse.className = 'canvasloth-mouse';
-	container.appendChild(this.catchMouse);
-	this.catchMouse.oncontextmenu = function() { return false; };
-};
-
-Canvasloth.Canvas.prototype = {
-	getContext: function(type) { return this.canvas.getContext(type); },
-	cursor: function(c) { this.catchMouse.style.cursor = c; },
-	width:  function() { return this.canvas.width;  },
-	height: function() { return this.canvas.height; },
-	resize: function() {
-		this.canvas.width  = this.container.clientWidth;
-		this.canvas.height = this.container.clientHeight;
-	}
+Canvasloth.prototype.Canvas = function() {
+	var container = this.container,
+		domCanvas = document.createElement('canvas'),
+		domCatchMouse = document.createElement('div');
+	domCatchMouse.className = 'canvasloth-mouse';
+	domCatchMouse.oncontextmenu = function() { return false; };
+	container.appendChild(domCanvas);
+	container.appendChild(domCatchMouse);
+	this.canvas = {
+		catchMouse: domCatchMouse,
+		getContext: function(type) { return domCanvas.getContext(type); },
+		cursor: function(c) { domCatchMouse.style.cursor = c; },
+		width:  function() { return domCanvas.width;  },
+		height: function() { return domCanvas.height; },
+		resize: function() {
+			domCanvas.width  = container.clientWidth;
+			domCanvas.height = container.clientHeight;
+		}
+	};
 };

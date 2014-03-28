@@ -1,10 +1,18 @@
 function Canvasloth(p) {
 	this.app = p.app;
 	this.container = p.node;
-	this.events = new Canvasloth.Events(this);
-	this.canvas = new Canvasloth.Canvas(this, p.node);
-	this.ctx = new Canvasloth['Ctx' + p.type.toUpperCase()](this, p.node);
-	this.events.init(p.fn);
+	this.Events();
+	this.Canvas();
+	var type = p.type.toUpperCase();
+	this.ctx = new Canvasloth['Ctx' + type](this, p.node);
+	this['Matrix' + type]();
+	this['Camera' + type]();
+	if (type === '3D') {
+		this.Shader3D();
+		this.Light3D();
+		this.Object3D();
+	}
+	this.events.init(p.fn); // essaye de ranger ca aussi
 	this.fps = 40;
 	this.keyBool = [];
 	this.btnBool = [];
@@ -31,7 +39,7 @@ Canvasloth.prototype = {
 		this.ctx.resize();
 		this.focus();
 		this.pages.open();
-		this.events.call('ready', this);
+		this.events.exec('ready', this);
 		this.time.reset();
 	},
 	getCtx: function() { return this.ctx.ctx; },
@@ -77,7 +85,7 @@ Canvasloth.prototype = {
 	},
 	update: function() {
 		this.time.update();
-		this.events.call('update', this.time);
+		this.events.exec('update', this.time);
 	},
 	loop: function() {
 		var t = this;

@@ -25,7 +25,7 @@ Canvasloth.Ctx2D.prototype = {
 		c.clearRect(0, 0, this.canvas.width(), this.canvas.height());
 		c.save();
 			c.translate(c.V2cam.x, c.V2cam.y);
-				this.events.call('render', c);
+				this.events.exec('render', c);
 		c.restore();
 	}
 };

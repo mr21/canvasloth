@@ -34,11 +34,11 @@
 <script type="text/javascript" src="../../Math/Matrix.js"></script>
 <script type="text/javascript" src="../../Math/Vector.js"></script>
 <script type="text/javascript" src="../../Ctx3D/Ctx3D.js"></script>
-<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Matrix.js"></script>
-<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Camera.js"></script>
-<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Shader.js"></script>
-<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Light.js"></script>
-<script type="text/javascript" src="../../Ctx3D/WebGLRenderingContext_Object.js"></script>
+<script type="text/javascript" src="../../Ctx3D/Matrix.js"></script>
+<script type="text/javascript" src="../../Ctx3D/Camera.js"></script>
+<script type="text/javascript" src="../../Ctx3D/Shader.js"></script>
+<script type="text/javascript" src="../../Ctx3D/Light.js"></script>
+<script type="text/javascript" src="../../Ctx3D/Object.js"></script>
 <script type="text/javascript" src="../../Math/gl-matrix.js"></script> <!-- tmp -->
 
 <script>
@@ -47,11 +47,11 @@ function lg(s) { console.log(s); }
 window.onload = function() {
 
 var WebGL_Editor = {
-	ready: function(canvasloth) {
-		this.canvasloth = canvasloth;
+	ready: function(cnv) {
 		var vertices, normals, texCoords, indices, colors;
-		var gl = canvasloth.getCtx();
-		this.program = gl.shader.program;
+		var cnv = this.cnv = cnv;
+		var gl = cnv.getCtx();
+		this.program = cnv.shader.program;
 		
 		vertices = [
 			 0.5, 0.5, 0.5,  -0.5, 0.5, 0.5,  -0.5,-0.5, 0.5,   0.5,-0.5, 0.5, // v0-v1-v2-v3 front
@@ -102,7 +102,7 @@ var WebGL_Editor = {
 			255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,   255, 255, 255, 255  // v4-v7-v6-v5 back   BLANC
 		];
 
-		this.cube1 = gl.object.create('cube', vertices, normals, texCoords, indices, colors);
+		this.cube1 = cnv.object.create('cube', vertices, normals, texCoords, indices, colors);
 
 		vertices = [
 			 1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1, // v0-v2-v2-v3 front
@@ -122,14 +122,14 @@ var WebGL_Editor = {
 			62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255  
 		];
 
-		this.cube2 = gl.object.create('cube', vertices, normals, texCoords, indices, colors);
+		this.cube2 = cnv.object.create('cube', vertices, normals, texCoords, indices, colors);
 
 
 		//Sphere
 		colors.length = vertices.length = normals.length = texCoords.length = indices.length = 0;
 		
-		var latitude  = 128;
-		var longitude = 128;
+		var latitude  = 16;
+		var longitude = 16;
 		var radius    = 0.6;
 		var sphereColor = [255, 255, 255, 255];
 
@@ -175,46 +175,47 @@ var WebGL_Editor = {
 				indices.push(first + 1);
 			}
 		}
-		lg(indices);
 
-		this.sphere = gl.object.create('sphere', vertices, normals, texCoords, indices, colors);
-		lg("on est sorti de create obj");
-		gl.light.ambient(0.2, 0.2, 0.2);
-		gl.light.dir(0.2, 0.7, 0.5, 0.5, 0.2, 0.8);
-		gl.light.enableAmbient(true);
-		gl.light.enableDir(true);
-		
+		this.sphere = cnv.object.create('sphere', vertices, normals, texCoords, indices, colors);
+
 		gl.enableVertexAttribArray(0);
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
-		gl.camera.spherique(true);
-		gl.camera.auto();
+
+		cnv.light.ambient(0.2, 0.2, 0.2);
+		cnv.light.dir(0.2, 0.7, 0.5, 0.5, 0.2, 0.8);
+		cnv.light.enableAmbient(true);
+		cnv.light.enableDir(true);
+		cnv.camera.spherique(true);
+		cnv.camera.auto();
 	},
 	update: function(time) {
 	},
 	render: function(gl) {
-		gl.matrix.push();
-			gl.matrix.translate(0, 0, 1.0);
-				gl.object.bind(this.cube2);
-				gl.object.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
-		gl.matrix.pop();
+		var cnv = this.cnv;
 
-		gl.matrix.push();
-			gl.matrix.translate(-1, 2, 0.5);
-				gl.matrix.rotate(40, 0, 0, 1);
-					gl.object.bind(this.cube1);
-					gl.object.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
-		gl.matrix.pop();
+		cnv.matrix.push();
+			cnv.matrix.translate(0, 0, 1.0);
+				cnv.object.bind(this.cube2);
+				cnv.object.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		cnv.matrix.pop();
 
-		gl.matrix.push();
-			gl.matrix.translate(1.5, 1.7, 0.6);
-				gl.object.bind(this.sphere);
-				gl.object.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
-		gl.matrix.pop();
+		cnv.matrix.push();
+			cnv.matrix.translate(-1, 2, 0.5);
+				cnv.matrix.rotate(40, 0, 0, 1);
+					cnv.object.bind(this.cube1);
+					cnv.object.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		cnv.matrix.pop();
+
+		cnv.matrix.push();
+			cnv.matrix.translate(1.5, 1.7, 0.6);
+				cnv.object.bind(this.sphere);
+				cnv.object.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		cnv.matrix.pop();
 	}
 };
 
-var canvasloth = new Canvasloth({
+new Canvasloth({
 	type : '3d',
 	node : document._domSelector('.canvasloth')[0],
 	app  : WebGL_Editor,
