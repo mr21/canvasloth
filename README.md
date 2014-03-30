@@ -20,7 +20,7 @@ Les fonctionnalités du framework se rangent dans plusieurs catégories:
 * [Un système de pages (en HTML)](#un-syst%C3%A8me-de-pages).
 * [Les outils mathématiques](#les-outils-math%C3%A9matiques).
 * [La surcharge du context 3D](#la-surcharge-du-context-3d).
-* [La gestion des caméras](#les-cam%C3%A9ras).
+* [La gestion de la caméra](#la-cam%C3%A9ra).
 
 Par la suite, à l'université Laval, nous avons eu a faire un projet 3D en infographie avec *OpenGL* étant donné que nous sommes curieux de ce qui peut se faire de nouveau en **Web** nous avons voulu le faire en *WebGL*. Nous avons eu envie de découvrir l'envers du décors qui se cache derrière *three.js*.  
 
@@ -71,11 +71,10 @@ Le framework permet de **faire des sprites et des animations 2D**.
 
 Le Temps
 --------
-L'objet qui s'occupe du temps dans le framework est `canvasloth.time`. Cet objet est envoyé à l'utilisateur lors des `update` pour qu'il puisse faire un programme qui **ne dépend pas du framerate**./
-Un peu comme ceci:
+L'objet qui s'occupe du temps dans le framework est `canvasloth.times`. On s'en sert comme ceci:  
 
-    update: function(time) {
-        personnage.x += 50 * time.frametime;
+    update: function(canvasloth) {
+        personnage.x += 50 * canvasloth.times.frame;
     }
 
 Head-up display (HUD)
@@ -95,20 +94,20 @@ Les outils mathématiques
 La surcharge du context 3D
 --------------------------
 Plus haut était mentionné le fait que le context 3D n'a aucune fonction pour gérer les transformations ou la caméra.  
-C'est pourquoi nous avons rajoutés:
+C'est pourquoi nous avons rajoutés plusieurs modules à Canvasloth:
 
-* `ctx.lookAt()` pour gérer la caméra.
-* `ctx.save()`, `ctx.restore()` permet de modifier ou restaurer la matrice de transformation.
-* `ctx.translate()`, `ctx.scale()`, `ctx.rotate()` permet de modifier la matrice de transformation.
+* `canvasloth.camera.lookAt()` pour gérer la caméra.
+* `canvasloth.matrix.push()`, `canvasloth.matrix.pop()` permet de modifier ou restaurer la matrice de transformation.
+* `canvasloth.matrix.translate()`, `canvasloth.matrix.scale()`, `canvasloth.matrix.rotate()` permet de modifier la matrice de transformation.
 
 
-Les caméras
------------
+La caméra
+---------
 Il était nécessaire d'avoir **une gestion de caméra commune entre le context 2D et 3D**.
 Comme dit précédemment nous avons surchargés d'une fonction `lookAt` le context 3D, nous avons choisi de faire la même chose pour la 2D, cela simule le principe de **view 2D** que l'on retrouve avec la *SFML* par exemple.  
 De plus pour la 3D il est possible d'activer une **caméra spherique**.  
 
-    ctx.cameraSpherique(true);
-    ctx.cameraAuto();
+    canvasloth.camera.spherique(true);
+    canvasloth.camera.auto();
     
-`.cameraAuto()` permet de binder plusieurs événements par default pour déplacer la caméra automatiquement avec la souris.
+`.camera.auto()` permet de binder plusieurs événements par default pour déplacer la caméra automatiquement avec la souris.
