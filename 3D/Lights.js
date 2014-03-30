@@ -1,7 +1,7 @@
-Canvasloth.prototype.Light3D = function() {
-	var gl = this.ctx.ctx,
-	    prog = this.shader.program;
-	this.light = {
+Canvasloth.prototype.Lights3D = function() {
+	var gl = this.ctx,
+	    prog = this.shaders.program;
+	this.lights = {
 		ambient : function(r, g, b) {
 			gl.uniform1i(prog.useAmbLightingUniform, true);
 			gl.uniform3f(prog.ambientColorUniform, r, g, b);

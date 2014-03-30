@@ -1,16 +1,16 @@
-Canvasloth.prototype.Object3D = function() {
+Canvasloth.prototype.Objects3D = function() {
 	var cnv = this,
-	    gl = this.ctx.ctx,
-	    shader = this.shader,
+	    gl = this.gl,
+	    shaders = this.shaders,
 	    matrix = this.matrix;
-	this.object = {
+	this.objects = {
 		_setUniform : function() {
-			gl.uniformMatrix4fv(shader.uPMatrix, false, matrix.p);
-			gl.uniformMatrix4fv(shader.uMVMatrix, false, matrix.m);
+			gl.uniformMatrix4fv(shaders.uPMatrix, false, matrix.p);
+			gl.uniformMatrix4fv(shaders.uMVMatrix, false, matrix.m);
 			matrix.n = mat4.clone(matrix.m);
 			mat4.invert(matrix.n, matrix.n);
 			mat4.transpose(matrix.n, matrix.n);
-			gl.uniformMatrix4fv(shader.uNMatrix, false, matrix.n);
+			gl.uniformMatrix4fv(shaders.uNMatrix, false, matrix.n);
 		},
 		draw : function(mode, count, type, indices) {
 			this._setUniform();

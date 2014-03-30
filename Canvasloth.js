@@ -1,34 +1,37 @@
 function Canvasloth(p) {
 	this.app = p.app;
 	this.container = p.node;
+	this.Times();
 	this.Events();
 	this.Canvas();
+	this.Pages();
+	this.Images();
 	var type = p.type.toUpperCase();
-	this.ctx = new Canvasloth['Ctx' + type](this, p.node);
+	this['Ctx'    + type]();
 	this['Matrix' + type]();
 	this['Camera' + type]();
-	if (type === '3D') {
-		this.Shader3D();
-		this.Light3D();
-		this.Object3D();
+	if (type === '2D') {
+		this.Sprites2D();
+		this.Anims2D();
+	} else {
+		this.Shaders3D();
+		this.Lights3D();
+		this.Objects3D();
 	}
-	this.events.init(p.fn); // essaye de ranger ca aussi
+	this.events.init(p.fn);
 	this.fps = 40;
 	this.keyBool = [];
 	this.btnBool = [];
 	this.active = false;
-	this.time = new Canvasloth.Time();
-	this.pages = new Canvasloth.Pages(this, p.node);
-	this.assets = new Canvasloth.Assets(this.getCtx(), this.time);
 	var self = this;
-	this.assets.images.load(p.images, function() { self.ready(); });
+	this.images.load(p.images, function() { self.ready(); });
 }
 
 // Defines
 Canvasloth.LEFT_BUTTON   = 0;
 Canvasloth.MIDDLE_BUTTON = 1;
 Canvasloth.RIGHT_BUTTON  = 2;
-Canvasloth.CENTER = 1000000000; // ne pas utiliser les operateurs bit a bit ici (cf.: Sprite.js)
+Canvasloth.CENTER = 1000000000; // ne pas utiliser les operateurs bit a bit ici (cf.: Sprites2D.js)
 Canvasloth.LEFT   = 2000000000;
 Canvasloth.RIGHT  = 3000000000;
 Canvasloth.TOP    = 4000000000;
@@ -40,12 +43,8 @@ Canvasloth.prototype = {
 		this.focus();
 		this.pages.open();
 		this.events.exec('ready', this);
-		this.time.reset();
+		this.times.reset();
 	},
-	getCtx: function() { return this.ctx.ctx; },
-	cursor: function(c) { this.canvas.cursor(c); },
-	width:  function() { return this.canvas.width();  },
-	height: function() { return this.canvas.height(); },
 	resetKeyboard: function() {
 		for (var i in this.keyBool)
 			if (this.keyBool[i = parseInt(i)]) {
@@ -67,7 +66,7 @@ Canvasloth.prototype = {
 			this.active = true;
 			document.body._addClass('canvasloth-focus');
 			this.container._addClass('canvasloth-active');
-			this.time.update();
+			this.times.update();
 			this.loop();
 		}
 	},
@@ -84,8 +83,8 @@ Canvasloth.prototype = {
 		this.ctx.render(this.app);
 	},
 	update: function() {
-		this.time.update();
-		this.events.exec('update', this.time);
+		this.times.update();
+		this.events.exec('update', this);
 	},
 	loop: function() {
 		var t = this;

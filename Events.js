@@ -73,8 +73,7 @@ Canvasloth.prototype.Events = function() {
 					t.exec('mouseup', e);
 				}
 			});
-
-			var cam = cnv.getCtx().V2cam || {x:0, y:0}; // tmp
+			var cam = cnv.camera.V2cam || {x:0, y:0}; // tmp
 			catchMouse._addEvent('mousedown', function(e) {
 				if (cnv.active && !cnv.btnBool[e.button]) {
 					e.preventDefault();

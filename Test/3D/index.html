@@ -21,25 +21,22 @@
 <script type="text/javascript" src="../../../JsExt/OffsetPosition.js"></script>
 <!-- JS.Canvasloth -->
 <script type="text/javascript" src="../../Canvasloth.js"></script>
-<script type="text/javascript" src="../../Canvas/Canvas.js"></script>
-<script type="text/javascript" src="../../Events/Events.js"></script>
-<script type="text/javascript" src="../../Hud/Pages.js"></script>
-<script type="text/javascript" src="../../Hud/DomIntIncrease.js"></script>
-<script type="text/javascript" src="../../Assets/Assets.js"></script>
-<script type="text/javascript" src="../../Assets/Images.js"></script>
-<script type="text/javascript" src="../../Assets/Sprites.js"></script>
-<script type="text/javascript" src="../../Assets/Anims.js"></script>
-<script type="text/javascript" src="../../Time/Time.js"></script>
+<script type="text/javascript" src="../../Events.js"></script>
+<script type="text/javascript" src="../../Images.js"></script>
+<script type="text/javascript" src="../../Times.js"></script>
+<script type="text/javascript" src="../../HTML/Canvas.js"></script>
+<script type="text/javascript" src="../../HTML/Pages.js"></script>
+<script type="text/javascript" src="../../HTML/DomIntIncrease.js"></script>
 <script type="text/javascript" src="../../Math/Math.js"></script>
+<script type="text/javascript" src="../../Math/gl-matrix.js"></script>
 <script type="text/javascript" src="../../Math/Matrix.js"></script>
 <script type="text/javascript" src="../../Math/Vector.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Ctx3D.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Matrix.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Camera.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Shader.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Light.js"></script>
-<script type="text/javascript" src="../../Ctx3D/Object.js"></script>
-<script type="text/javascript" src="../../Math/gl-matrix.js"></script> <!-- tmp -->
+<script type="text/javascript" src="../../3D/Ctx.js"></script>
+<script type="text/javascript" src="../../3D/Matrix.js"></script>
+<script type="text/javascript" src="../../3D/Camera.js"></script>
+<script type="text/javascript" src="../../3D/Shaders.js"></script>
+<script type="text/javascript" src="../../3D/Lights.js"></script>
+<script type="text/javascript" src="../../3D/Objects.js"></script>
 
 <script>
 function lg(s) { console.log(s); }
@@ -50,8 +47,8 @@ var WebGL_Editor = {
 	ready: function(cnv) {
 		var vertices, normals, texCoords, indices, colors;
 		var cnv = this.cnv = cnv;
-		var gl = cnv.getCtx();
-		this.program = cnv.shader.program;
+		var gl = cnv.gl;
+		this.program = cnv.shaders.program;
 		
 		vertices = [
 			 0.5, 0.5, 0.5,  -0.5, 0.5, 0.5,  -0.5,-0.5, 0.5,   0.5,-0.5, 0.5, // v0-v1-v2-v3 front
@@ -102,7 +99,7 @@ var WebGL_Editor = {
 			255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,   255, 255, 255, 255  // v4-v7-v6-v5 back   BLANC
 		];
 
-		this.cube1 = cnv.object.create('cube', vertices, normals, texCoords, indices, colors);
+		this.cube1 = cnv.objects.create('cube', vertices, normals, texCoords, indices, colors);
 
 		vertices = [
 			 1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1, // v0-v2-v2-v3 front
@@ -122,7 +119,7 @@ var WebGL_Editor = {
 			62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255  
 		];
 
-		this.cube2 = cnv.object.create('cube', vertices, normals, texCoords, indices, colors);
+		this.cube2 = cnv.objects.create('cube', vertices, normals, texCoords, indices, colors);
 
 
 		//Sphere
@@ -176,41 +173,32 @@ var WebGL_Editor = {
 			}
 		}
 
-		this.sphere = cnv.object.create('sphere', vertices, normals, texCoords, indices, colors);
+		this.sphere = cnv.objects.create('sphere', vertices, normals, texCoords, indices, colors);
 
 		gl.enableVertexAttribArray(0);
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
 
-		cnv.light.ambient(0.2, 0.2, 0.2);
-		cnv.light.dir(0.2, 0.7, 0.5, 0.5, 0.2, 0.8);
-		cnv.light.enableAmbient(true);
-		cnv.light.enableDir(true);
+		cnv.lights.ambient(0.2, 0.2, 0.2);
+		cnv.lights.dir(0.2, 0.7, 0.5, 0.5, 0.2, 0.8);
+		cnv.lights.enableAmbient(true);
+		cnv.lights.enableDir(true);
 		cnv.camera.spherique(true);
 		cnv.camera.auto();
 	},
-	update: function(time) {
+	update: function(cnv) {
 	},
-	render: function(gl) {
-		var cnv = this.cnv;
-
-		cnv.matrix.push();
-			cnv.matrix.translate(0, 0, 1.0);
-				cnv.object.bind(this.cube2);
-				cnv.object.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
-		cnv.matrix.pop();
-
-		cnv.matrix.push();
-			cnv.matrix.translate(-1, 2, 0.5);
-				cnv.matrix.rotate(40, 0, 0, 1);
-					cnv.object.bind(this.cube1);
-					cnv.object.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
-		cnv.matrix.pop();
-
-		cnv.matrix.push();
-			cnv.matrix.translate(1.5, 1.7, 0.6);
-				cnv.object.bind(this.sphere);
-				cnv.object.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+	render: function(cnv) {
+		var gl = cnv.gl;
+		cnv.matrix.push().translate(0, 0, 1.0);
+			cnv.objects.bind(this.cube2);
+			cnv.objects.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(40, 0, 0, 1);
+			cnv.objects.bind(this.cube1);
+			cnv.objects.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
+			cnv.objects.bind(this.sphere);
+			cnv.objects.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop();
 	}
 };
@@ -229,9 +217,7 @@ new Canvasloth({
 };
 </script>
 </head>
-
 <body>
-
 	<div class="canvasloth canvasloth-dark">
 		<script type="x-shader/x-vertex">
 			attribute vec3 aVertexNormal;

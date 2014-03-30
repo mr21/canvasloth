@@ -1,7 +1,8 @@
-Canvasloth.prototype.Shader3D = function() {
-	var gl = this.ctx.ctx,
-	    cnt = this.container;
-	this.shader = {
+Canvasloth.prototype.Shaders3D = function() {
+	var gl = this.ctx,
+	    cnt = this.container,
+	    shad =
+	this.shaders = {
 		loadShaders: function() {
 			var program = null,
 			    shaders = this.compileShaders(),
@@ -54,8 +55,8 @@ Canvasloth.prototype.Shader3D = function() {
 			return shader;
 		}
 	};
-	this.shader.program   = this.shader.loadShaders();
-	this.shader.uNMatrix  = gl.getUniformLocation(this.shader.program, 'uNMatrix');
-	this.shader.uPMatrix  = gl.getUniformLocation(this.shader.program, 'uPMatrix');
-	this.shader.uMVMatrix = gl.getUniformLocation(this.shader.program, 'uMVMatrix');
+	shad.program   = shad.loadShaders();
+	shad.uNMatrix  = gl.getUniformLocation(shad.program, 'uNMatrix');
+	shad.uPMatrix  = gl.getUniformLocation(shad.program, 'uPMatrix');
+	shad.uMVMatrix = gl.getUniformLocation(shad.program, 'uMVMatrix');
 };

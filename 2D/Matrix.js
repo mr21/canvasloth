@@ -1,5 +1,5 @@
 Canvasloth.prototype.Matrix2D = function() {
-	var ctx = this.ctx.ctx;
+	var ctx = this.ctx;
 	this.matrix = {
 		translate : function(x, y) { ctx.translate(x, y); return this; },
 		scale     : function(x, y) { ctx.scale    (x, y); return this; },
