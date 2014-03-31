@@ -21,12 +21,17 @@ Canvasloth.prototype.Lights3D = function() {
 			}
 			return this;
 		},
-		dir : function(x, y, z, r, g, b) {
+		dirPos : function(x, y, z) {
 			if (this.active) {
 				var adjustedLD = vec3.create();
 				vec3.normalize(adjustedLD, [x, y, z]);
 				vec3.scale(adjustedLD, adjustedLD, -1);
 				gl.uniform3fv(this.lightingDirectionUniform, adjustedLD);
+			}
+			return this;
+		},
+		dirCol : function(r, g, b) {
+			if (this.active) {
 				gl.uniform3f(this.directionalColorUniform, r, g, b);
 			}
 			return this;
