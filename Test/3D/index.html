@@ -179,10 +179,11 @@ var WebGL_Editor = {
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
 
-		cnv.lights.ambient(0.2, 0.2, 0.2);
-		cnv.lights.dir(0.2, 0.7, 0.5, 0.5, 0.2, 0.8);
-		cnv.lights.enableAmbient(true);
-		cnv.lights.enableDir(true);
+		cnv.lights
+			.enable()
+			.ambient(0.2, 0.2, 0.2)
+			.dir(0.2, 0.7, 0.5,     0.5, 0.2, 0.8);
+
 		cnv.camera.spherique(true);
 		cnv.camera.auto();
 	},
@@ -234,22 +235,14 @@ new Canvasloth({
 			uniform vec3 uAmbientColor;
 			uniform vec3 uLightingDirection;
 			uniform vec3 uDirectionalColor;
-			uniform bool uUseAmbLighting;
-			uniform bool uUseDirLighting;
 			varying vec3 vLightWeighting;
 
 			void main(void) {
-				if (!uUseAmbLighting) {
-					vFinalLight = vec4(1.0, 1.0, 1.0, 1.0);
-				} else if (uUseAmbLighting && !uUseDirLighting){	
-					vFinalLight = vec4(uAmbientColor, 1.0) ;
-				} else {
-					vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));
-					vec3 L = normalize(uLightingDirection);
-					float lambertCoef = max(dot(N, -L), 0.0);
-					vFinalLight.xyz = uAmbientColor + uDirectionalColor * lambertCoef;
-					vFinalLight.a = 1.0;
-				}
+				vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));
+				vec3 L = normalize(uLightingDirection);
+				float lambertCoef = max(dot(N, -L), 0.0);
+				vFinalLight.xyz = uAmbientColor + uDirectionalColor * lambertCoef;
+				vFinalLight.a = 1.0;
 				vColor = aVertexColor;
 				gl_Position = uPMatrix * uMVMatrix * aVertexPosition;
 			}
@@ -267,7 +260,9 @@ new Canvasloth({
 		<div class="canvasloth-hud-passive">
 		</div>
 	</div>
-	Mouvement circulaire de la camera :  clique gauche enfonce + mouvement de la souris<br>
-	Avancer ou reculer la camera : roulette de la souris vers le haut ou vers le bas
+	<p>
+		Mouvement circulaire de la camera : clique gauche enfonce + mouvement de la souris<br/>
+		Avancer ou reculer la camera : roulette de la souris vers le haut ou vers le bas.
+	</p>
 </body>
 </html>

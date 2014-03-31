@@ -2,30 +2,34 @@ Canvasloth.prototype.Lights3D = function() {
 	var gl = this.ctx,
 	    prog = this.shaders.program;
 	this.lights = {
+		ambientColorUniform      : gl.getUniformLocation(prog, 'uAmbientColor'),
+		lightingDirectionUniform : gl.getUniformLocation(prog, 'uLightingDirection'),
+		directionalColorUniform  : gl.getUniformLocation(prog, 'uDirectionalColor'),
+		enable: function() {
+			this.active = true;
+			this.ambient(0,0,0);
+			return this;
+		},
+		disable: function() {
+			this.ambient(1,1,1);
+			this.active = false;
+			return this;
+		},
 		ambient : function(r, g, b) {
-			gl.uniform1i(prog.useAmbLightingUniform, true);
-			gl.uniform3f(prog.ambientColorUniform, r, g, b);
+			if (this.active) {
+				gl.uniform3f(this.ambientColorUniform, r, g, b);
+			}
+			return this;
 		},
 		dir : function(x, y, z, r, g, b) {
-			var adjustedLD = vec3.create();
-			vec3.normalize(adjustedLD, [x, y, z]);
-			vec3.scale(adjustedLD, adjustedLD, -1);
-			gl.uniform3fv(prog.lightingDirectionUniform, adjustedLD);
-			gl.uniform3f(prog.directionalColorUniform, r, g, b);
-		},
-		enableAmbient : function(activate) {
-			this._amb_light_enabled = activate;
-			gl.uniform1i(prog.useAmbLightingUniform, activate);
-		},
-		enableDir : function(activate) {
-			this._dir_light_enabled = activate;
-			gl.uniform1i(prog.useDirLightingUniform, activate);
-		},
-		_dir_light_enabled : true
+			if (this.active) {
+				var adjustedLD = vec3.create();
+				vec3.normalize(adjustedLD, [x, y, z]);
+				vec3.scale(adjustedLD, adjustedLD, -1);
+				gl.uniform3fv(this.lightingDirectionUniform, adjustedLD);
+				gl.uniform3f(this.directionalColorUniform, r, g, b);
+			}
+			return this;
+		}
 	};
-	prog.useAmbLightingUniform    = gl.getUniformLocation(prog, 'uUseAmbLighting');
-	prog.ambientColorUniform      = gl.getUniformLocation(prog, 'uAmbientColor');
-	prog.useDirLightingUniform    = gl.getUniformLocation(prog, 'uUseDirLighting');
-	prog.lightingDirectionUniform = gl.getUniformLocation(prog, 'uLightingDirection');
-	prog.directionalColorUniform  = gl.getUniformLocation(prog, 'uDirectionalColor');
 };
