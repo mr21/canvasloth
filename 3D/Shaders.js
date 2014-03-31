@@ -1,62 +1,68 @@
 Canvasloth.prototype.Shaders3D = function() {
 	var gl = this.ctx,
-	    cnt = this.container,
-	    shad =
+	    cnt = this.container;
 	this.shaders = {
-		loadShaders: function() {
-			var program = null,
-			    shaders = this.compileShaders(),
-			    attribs = ['aVertexNormal', 'aVertexColor', 'aVertexPosition'];
-			if (shaders.length) {
-				program = gl.createProgram();
-				for (var i = 0, s; s = shaders[i]; ++i)
-					gl.attachShader(program, s);
-				for (var i = 0, a; a = attribs[i]; ++i)
-					gl.bindAttribLocation(program, i, a);
-				gl.linkProgram(program);
-				if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
-					gl.useProgram(program);
-				} else {
-					console.log('Shaders: Unable to initialize the shader program');
-					console.log(gl.getProgramInfoLog(program));
-					for (var i = 0, s; s = shaders[i]; ++i)
-						gl.deleteProgram(s);
-					gl.deleteProgram(program);
-				}
+		xVertex:
+			'attribute vec3 aVertexNormal;'+
+			'attribute vec4 aVertexColor;'+
+			'attribute vec4 aVertexPosition;'+
+			'uniform mat4 uNMatrix;'+
+			'uniform mat4 uMVMatrix;'+
+			'uniform mat4 uPMatrix;'+
+			'uniform vec3 uAmbientColor;'+
+			'uniform vec3 uLightingDirection;'+
+			'uniform vec3 uDirectionalColor;'+
+			'varying vec4 vColor;'+
+			'varying vec4 vFinalLight;'+
+			'void main(void) {'+
+				'vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));'+
+				'vec3 L = normalize(uLightingDirection);'+
+				'float lambertCoef = max(dot(N, -L), 0.0);'+
+				'vFinalLight.xyz = uAmbientColor + uDirectionalColor * lambertCoef;'+
+				'vFinalLight.a = 1.0;'+
+				'vColor = aVertexColor;'+
+				'gl_Position = uPMatrix * uMVMatrix * aVertexPosition;'+
+			'}',
+		xFragment:
+			'precision mediump float;'+
+			'varying vec4 vColor;'+
+			'varying vec4 vFinalLight;'+
+			'void main(void) {'+
+				'gl_FragColor = vColor * vFinalLight;'+
+			'}',
+		load: function() {
+			var attribs = ['aVertexNormal', 'aVertexColor', 'aVertexPosition'],
+			    vShad = this.loadShader(gl.VERTEX_SHADER, this.xVertex),
+			    fShad = this.loadShader(gl.FRAGMENT_SHADER, this.xFragment);
+			this.program = gl.createProgram();
+			gl.attachShader(this.program, vShad);
+			gl.attachShader(this.program, fShad);
+			for (var i = 0, a; a = attribs[i]; ++i)
+				gl.bindAttribLocation(this.program, i, a);
+			gl.linkProgram(this.program);
+			if (gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+				gl.useProgram(this.program);
+				this.uNMatrix  = gl.getUniformLocation(this.program, 'uNMatrix');
+				this.uPMatrix  = gl.getUniformLocation(this.program, 'uPMatrix');
+				this.uMVMatrix = gl.getUniformLocation(this.program, 'uMVMatrix');
+			} else {
+				console.log('Shaders: Unable to initialize the shader program.');
+				console.log(gl.getProgramInfoLog(this.program));
+				gl.deleteProgram(vShad);
+				gl.deleteProgram(fShad);
+				gl.deleteProgram(this.program);
 			}
-			return program;
 		},
-		compileShaders: function() {
-			var i = 0, script, shader, shaders = [],
-			    scripts = cnt.getElementsByTagName('script');
-			for (; script = scripts[i]; ++i)
-				if (shader = this.compileShader(script))
-					shaders.push(shader);
-			return shaders;
-		},
-		compileShader: function(script) {
-			var shader = null;
-			switch (script.type) {
-				case 'x-shader/x-fragment' : shader = gl.createShader(gl.FRAGMENT_SHADER); break;
-				case 'x-shader/x-vertex'   : shader = gl.createShader(gl.VERTEX_SHADER);   break;
-			}
-			if (shader) {
-				var source = '';
-				for (var child = script.firstChild; child; child = child.nextSibling)
-					if (child.nodeType === Node.TEXT_NODE)
-						source += child.textContent;
-				gl.shaderSource(shader, source);
-				gl.compileShader(shader);
-				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-					console.log('Shaders: compiling error: ' + gl.getShaderInfoLog(shader));
-					shader = null;
-				}
+		loadShader: function(type, source) {
+			var shader = gl.createShader(type);
+			gl.shaderSource(shader, source);
+			gl.compileShader(shader);
+			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+				console.log('Shaders: compiling error: ' + gl.getShaderInfoLog(shader));
+				shader = null;
 			}
 			return shader;
 		}
 	};
-	shad.program   = shad.loadShaders();
-	shad.uNMatrix  = gl.getUniformLocation(shad.program, 'uNMatrix');
-	shad.uPMatrix  = gl.getUniformLocation(shad.program, 'uPMatrix');
-	shad.uMVMatrix = gl.getUniformLocation(shad.program, 'uMVMatrix');
+	this.shaders.load();
 };

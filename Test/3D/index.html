@@ -91,12 +91,12 @@ var WebGL_Editor = {
 
 		// Set up the array of colors for the cube's faces
 		colors = [
-			0, 0, 255, 255,     0, 0, 255, 255,     0, 0, 255, 255,       0, 0, 255, 255, // v0-v1-v2-v3 front  BLEU
-			255, 0, 0, 255,     255, 0, 0, 255,     255, 0, 0, 255,       255, 0, 0, 255, // v0-v3-v4-v5 right  ROUGE
-			0, 255, 0, 255,     0, 255, 0, 255,     0, 255, 0, 255,       0, 255, 0, 255, // v0-v5-v6-v1 top    VERT
-			0, 255, 255, 255,   0, 255, 255, 255,   0, 255, 255, 255,     0, 255, 255, 255, // v1-v6-v7-v2 left   TURQUOISE
-			255, 0, 255, 255,   255, 0, 255, 255,   255, 0, 255, 255,     255, 0, 255, 255, // v7-v4-v3-v2 bottom ROSE
-			255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,   255, 255, 255, 255  // v4-v7-v6-v5 back   BLANC
+			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v0-v1-v2-v3 front
+			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v0-v3-v4-v5 right
+			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v0-v5-v6-v1 top
+			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v1-v6-v7-v2 left
+			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v7-v4-v3-v2 bottom
+			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255  // v4-v7-v6-v5 back
 		];
 
 		this.cube1 = cnv.objects.create('cube', vertices, normals, texCoords, indices, colors);
@@ -111,12 +111,12 @@ var WebGL_Editor = {
 		];
 
 		colors = [
-			58, 103, 255, 255,   58, 103, 255, 255,   58, 103, 255, 255,   58, 103, 255, 255,
-			56, 124, 255, 255,   56, 124, 255, 255,   56, 124, 255, 255,   56, 124, 255, 255,
-			56, 156, 232, 255,   56, 156, 232, 255,   56, 156, 232, 255,   56, 156, 232, 255,
-			74, 218, 255, 255,   74, 218, 255, 255,   74, 218, 255, 255,   74, 218, 255, 255,
-			56, 232, 228, 255,   56, 232, 228, 255,   56, 232, 228, 255,   56, 232, 228, 255,
-			62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255,   62, 255, 204, 255  
+			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v0-v1-v2-v3 front
+			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v0-v3-v4-v5 right
+			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v0-v5-v6-v1 top
+			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v1-v6-v7-v2 left
+			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v7-v4-v3-v2 bottom
+			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255  // v4-v7-v6-v5 back
 		];
 
 		this.cube2 = cnv.objects.create('cube', vertices, normals, texCoords, indices, colors);
@@ -179,10 +179,10 @@ var WebGL_Editor = {
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
 
-		cnv.lights
-			.enable()
-			.ambient(0.2, 0.2, 0.2)
-			.dir(0.2, 0.7, 0.5,     0.5, 0.2, 0.8);
+		cnv.lights.enable()
+			.ambient(0.04, 0.04, 0.04)
+			.dirPos(0.6, 0.14, 0.8)
+			.dirCol(1, 1, 1);
 
 		cnv.camera.spherique(true);
 		cnv.camera.auto();
@@ -194,7 +194,7 @@ var WebGL_Editor = {
 		cnv.matrix.push().translate(0, 0, 1.0);
 			cnv.objects.bind(this.cube2);
 			cnv.objects.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
-		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(40, 0, 0, 1);
+		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(Math.PI/5, 0, 0, 1);
 			cnv.objects.bind(this.cube1);
 			cnv.objects.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
@@ -220,43 +220,6 @@ new Canvasloth({
 </head>
 <body>
 	<div class="canvasloth canvasloth-dark">
-		<script type="x-shader/x-vertex">
-			attribute vec3 aVertexNormal;
-			attribute vec4 aVertexColor;
-			attribute vec4 aVertexPosition;
-			
-			uniform mat4 uNMatrix;
-			uniform mat4 uMVMatrix;
-			uniform mat4 uPMatrix;
-			
-			varying vec4 vColor;
-			varying vec4 vFinalLight;
-
-			uniform vec3 uAmbientColor;
-			uniform vec3 uLightingDirection;
-			uniform vec3 uDirectionalColor;
-			varying vec3 vLightWeighting;
-
-			void main(void) {
-				vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));
-				vec3 L = normalize(uLightingDirection);
-				float lambertCoef = max(dot(N, -L), 0.0);
-				vFinalLight.xyz = uAmbientColor + uDirectionalColor * lambertCoef;
-				vFinalLight.a = 1.0;
-				vColor = aVertexColor;
-				gl_Position = uPMatrix * uMVMatrix * aVertexPosition;
-			}
-		</script>
-		<script type="x-shader/x-fragment">
-			precision mediump float;
-			varying vec4 vColor;
-			varying vec4 vFinalLight;
-			varying vec3 vLightWeighting;
-
-			void main(void) {
-				gl_FragColor = vColor * vFinalLight;
-			}
-		</script>
 		<div class="canvasloth-hud-passive">
 		</div>
 	</div>
