@@ -175,10 +175,6 @@ var WebGL_Editor = {
 
 		this.sphere = cnv.objects.create('sphere', vertices, normals, texCoords, indices, colors);
 
-		gl.enableVertexAttribArray(0);
-		gl.enableVertexAttribArray(1);
-		gl.enableVertexAttribArray(2);
-
 		cnv.lights.enable()
 			.ambient(0.04, 0.04, 0.04)
 			.dirPos(0.6, 0.14, 0.8)

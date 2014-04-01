@@ -9,18 +9,18 @@ Canvasloth.prototype.Shaders3D = function() {
 			'uniform mat4 uNMatrix;'+
 			'uniform mat4 uMVMatrix;'+
 			'uniform mat4 uPMatrix;'+
-			'uniform vec3 uAmbientColor;'+
-			'uniform vec3 uLightingDirection;'+
-			'uniform vec3 uDirectionalColor;'+
+			'uniform vec3 ambColor;'+
+			'uniform vec3 dirPos;'+
+			'uniform vec3 dirColor;'+
 			'varying vec4 vColor;'+
 			'varying vec4 vFinalLight;'+
 			'void main(void) {'+
-				'vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));'+
-				'vec3 L = normalize(uLightingDirection);'+
-				'float lambertCoef = max(dot(N, -L), 0.0);'+
-				'vFinalLight.xyz = uAmbientColor + uDirectionalColor * lambertCoef;'+
-				'vFinalLight.a = 1.0;'+
 				'vColor = aVertexColor;'+
+				'vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));'+
+				'vec3 L = normalize(dirPos);'+
+				'float lambertCoef = max(dot(N, -L), 0.0);'+
+				'vFinalLight.xyz = ambColor + dirColor * lambertCoef;'+
+				'vFinalLight.a = 1.0;'+
 				'gl_Position = uPMatrix * uMVMatrix * aVertexPosition;'+
 			'}',
 		xFragment:
@@ -37,8 +37,10 @@ Canvasloth.prototype.Shaders3D = function() {
 			this.program = gl.createProgram();
 			gl.attachShader(this.program, vShad);
 			gl.attachShader(this.program, fShad);
-			for (var i = 0, a; a = attribs[i]; ++i)
+			for (var i = 0, a; a = attribs[i]; ++i) {
 				gl.bindAttribLocation(this.program, i, a);
+				gl.enableVertexAttribArray(i);
+			}
 			gl.linkProgram(this.program);
 			if (gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
 				gl.useProgram(this.program);
