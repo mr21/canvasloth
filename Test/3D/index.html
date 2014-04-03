@@ -177,13 +177,25 @@ var WebGL_Editor = {
 
 		cnv.lights.enable()
 			.ambient(0.04, 0.04, 0.04)
-			.dirPos(0.6, 0.14, 0.8)
-			.dirCol(1, 1, 1);
+			.dir('sunA')
+				.pos(0.6, 0.1, 1.0)
+				.col(0, 0, 0.3);
+
+		cnv.lights
+			.dir('sunB')
+				.pos(-0.6, -0.1, 1.5)
+				.col(1, 0.5, 0);
 
 		cnv.camera.spherique(true);
 		cnv.camera.auto();
 	},
 	update: function(cnv) {
+	},
+	keydown: function(key) {
+		switch (key) {
+			case 65 : this.cnv.lights.dir('sunA').toggle(); break;
+			case 66 : this.cnv.lights.dir('sunB').toggle(); break;
+		}
 	},
 	render: function(cnv) {
 		var gl = cnv.gl;
@@ -205,9 +217,10 @@ new Canvasloth({
 	node : document._domSelector('.canvasloth')[0],
 	app  : WebGL_Editor,
 	fn   : {
-		'ready'  : WebGL_Editor.ready,
-		'update' : WebGL_Editor.update,
-		'render' : WebGL_Editor.render
+		'ready'   : WebGL_Editor.ready,
+		'update'  : WebGL_Editor.update,
+		'render'  : WebGL_Editor.render,
+		'keydown' : WebGL_Editor.keydown
 	}
 });
 
