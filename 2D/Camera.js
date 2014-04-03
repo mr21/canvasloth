@@ -7,6 +7,7 @@ Canvasloth.prototype.Camera2D = function() {
 				this.V2cam.setV(x);
 			else
 				this.V2cam.setF(x, y);
+			return this;
 		}
 	};
 };

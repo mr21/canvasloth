@@ -5,9 +5,9 @@ Canvasloth.prototype.Camera3D = function() {
 		ctX: 0, ctY: 0, ctZ: 0,
 		upX: 0, upY: 0, upZ: 1,
 		zoomRatio: 1.2,
-		fovy : function(z) { if (z !== undefined) this._fovy = z; return this._fovy; },
-		near : function(z) { if (z !== undefined) this._near = z; return this._near; },
-		far  : function(z) { if (z !== undefined) this._far  = z; return this._far;  },
+		fovy : function(z) { if (z !== undefined) return this._fovy = z, this; return this._fovy; },
+		near : function(z) { if (z !== undefined) return this._near = z, this; return this._near; },
+		far  : function(z) { if (z !== undefined) return this._far  = z, this; return this._far;  },
 		auto : function() {
 			if (!this._auto) {
 				this._auto = true;
@@ -16,6 +16,7 @@ Canvasloth.prototype.Camera3D = function() {
 				this.eventMM = cnv.events.add('mousemove',  this, this._mouseMove);
 				this.eventMS = cnv.events.add('mousewheel', this, this._mouseWheel);
 			}
+			return this;
 		},
 		manuel : function() {
 			if (this._auto) {
@@ -25,6 +26,7 @@ Canvasloth.prototype.Camera3D = function() {
 				cnv.events.del('mousemove',  this.eventMM);
 				cnv.events.del('mousewheel', this.eventMS);
 			}
+			return this;
 		},
 		spherique : function(a) {
 			if (!a) {
@@ -41,10 +43,11 @@ Canvasloth.prototype.Camera3D = function() {
 					?               Math.acos(x / Math.sqrt(xxyy))
 					: 2 * Math.PI - Math.acos(x / Math.sqrt(xxyy));
 			}
+			return this;
 		},
-		radius    : function(n) { if (n !== undefined) this._radius    = n; return this._radius;    },
-		longitude : function(n) { if (n !== undefined) this._longitude = n; return this._longitude; },
-		latitude  : function(n) { if (n !== undefined) this._latitude  = n; return this._latitude;  },
+		radius    : function(n) { if (n !== undefined) return this._radius    = n, this; return this._radius;    },
+		longitude : function(n) { if (n !== undefined) return this._longitude = n, this; return this._longitude; },
+		latitude  : function(n) { if (n !== undefined) return this._latitude  = n, this; return this._latitude;  },
 		_mouseDown  : function() { this.moving = true;  },
 		_mouseUp    : function() { this.moving = false; },
 		_mouseWheel : function(y) { this._radius *= y > 0 ? this.zoomRatio : (1 / this.zoomRatio); },
@@ -93,9 +96,11 @@ Canvasloth.prototype.Camera3D = function() {
 				[this.ctX=ctX,  this.ctY=ctY,  this.ctZ=ctZ],
 				[this.upX=upX,  this.upY=upY,  this.upZ=upZ]
 			);
+			return this;
 		}
 	};
-	this.camera.fovy(Math.PI / 3);
-	this.camera.near(1);
-	this.camera.far(10000);
+	this.camera
+		.fovy(Math.PI / 3)
+		.near(1)
+		.far(10000);
 };
