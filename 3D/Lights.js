@@ -9,18 +9,22 @@ Canvasloth.prototype.Lights3D = function() {
 		uDirPos: [],
 		uDirCol: [],
 		nbDir: 0,
-		uAmbCol: gl.getUniformLocation(prog, 'lightAmb_col'),
+		uActive: gl.getUniformLocation(prog, 'active'),
+		uAmbCol: gl.getUniformLocation(prog, 'ambCol'),
 		enable: function() {
-			this.active = true;
+			gl.uniform1i(this.uActive, this.active = 1);
 			this.ambient(0,0,0);
 			return this;
 		},
 		disable: function() {
 			this.ambient(1,1,1);
-			this.active = false;
+			gl.uniform1i(this.uActive, this.active = 0);
 			return this;
 		},
-		ambient : function(r, g, b) {
+		toggle: function() {
+			return this.active ? this.disable() : this.enable();
+		},
+		ambient: function(r, g, b) {
 			if (this.active)
 				gl.uniform3f(this.uAmbCol, r, g, b);
 			return this;
@@ -51,9 +55,9 @@ Canvasloth.Light = function(lights, gl, id) {
 };
 
 Canvasloth.Light.prototype = {
-	enable:  function() { this.gl.uniform1i(this.uAct, this._active = 1); return this; },
-	disable: function() { this.gl.uniform1i(this.uAct, this._active = 0); return this; },
-	toggle:  function() { return this._active ? this.disable() : this.enable(); },
+	enable:  function() { this.gl.uniform1i(this.uAct, this.active = 1); return this; },
+	disable: function() { this.gl.uniform1i(this.uAct, this.active = 0); return this; },
+	toggle:  function() { return this.active ? this.disable() : this.enable(); },
 	col: function(r, g, b) {
 		if (r === undefined)
 			return this.vCol;

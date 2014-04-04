@@ -7,6 +7,7 @@ Canvasloth.prototype.Shaders3D = function() {
 			'attribute vec3 aVertexNormal;'+
 			'attribute vec4 aVertexColor;'+
 			'attribute vec4 aVertexPosition;'+
+			'uniform int  active;'+
 			'uniform mat4 uNMatrix;'+
 			'uniform mat4 uMVMatrix;'+
 			'uniform mat4 uPMatrix;'+
@@ -16,19 +17,21 @@ Canvasloth.prototype.Shaders3D = function() {
 				'vec3 col;'+
 			'};'+
 			'uniform Light dir['+DIRLIGHTS_MAX+'];'+
-			'uniform vec3 lightAmb_col;'+
+			'uniform vec3 ambCol;'+
 			'varying vec4 vColor;'+
 			'varying vec4 vFinalLight;'+
 			'void main(void) {'+
-				'vFinalLight.xyz = lightAmb_col;'+
+				'vFinalLight.xyz = ambCol;'+
 				'vColor = aVertexColor;'+
-				'vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));'+
-				'for (int i = 0; i < '+DIRLIGHTS_MAX+'; ++i)'+
-					'if (dir[i].act == 1) {'+
-						'vec3 L = normalize(dir[i].pos);'+
-						'float lambertCoef = max(dot(N, -L), 0.0);'+
-						'vFinalLight.xyz += dir[i].col * lambertCoef;'+
-					'}'+
+				'if (active == 1) {'+
+					'vec3 N = normalize(vec3(uNMatrix * vec4(aVertexNormal, 1.0)));'+
+					'for (int i = 0; i < '+DIRLIGHTS_MAX+'; ++i)'+
+						'if (dir[i].act == 1) {'+
+							'vec3 L = normalize(dir[i].pos);'+
+							'float lambertCoef = max(dot(N, -L), 0.0);'+
+							'vFinalLight.xyz += dir[i].col * lambertCoef;'+
+						'}'+
+				'}'+
 				'vFinalLight.a = 1.0;'+
 				'gl_Position = uPMatrix * uMVMatrix * aVertexPosition;'+
 			'}',

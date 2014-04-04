@@ -6,7 +6,7 @@
 <link type="text/css" rel="stylesheet" href="../../Canvasloth.css"/>
 <!-- CSS.main -->
 <style type="text/css">	
-	.canvasloth { width:1024px; height:720px; background:#aaf; }
+	.canvasloth { width:800px; height:480px; background:#aaf; }
 	.canvasloth-mouse { background:red; }
 </style>
 
@@ -175,12 +175,12 @@ var WebGL_Editor = {
 
 		this.sphere = cnv.objects.create('sphere', vertices, normals, texCoords, indices, colors);
 
+		// ### Lights ###
 		cnv.lights.enable()
 			.ambient(0.04, 0.04, 0.04)
 			.dir('sunA')
 				.pos(0.6, 0.1, 1.0)
 				.col(0, 0, 0.3);
-
 		cnv.lights
 			.dir('sunB')
 				.pos(-0.6, -0.1, 1.5)
@@ -196,6 +196,7 @@ var WebGL_Editor = {
 		switch (key) {
 			case 65 : this.cnv.lights.dir('sunA').toggle(); break;
 			case 66 : this.cnv.lights.dir('sunB').toggle(); break;
+			case 76 : this.cnv.lights.toggle(); break;
 		}
 	},
 	render: function(cnv) {
@@ -233,9 +234,12 @@ new Canvasloth({
 		<div class="canvasloth-hud-passive">
 		</div>
 	</div>
-	<p>
-		Mouvement circulaire de la camera : clique gauche enfonce + mouvement de la souris<br/>
-		Avancer ou reculer la camera : roulette de la souris vers le haut ou vers le bas.
-	</p>
+	<ul>
+		<li><b>mouseLeft + mouseMove</b> : Move the spherical camera.</li>
+		<li><b>mouseWheel</b> : Zoom.</li>
+		<li><b>L</b> : Toggle all the lights.</li>
+		<li><b>A</b> : Toggle the blue directionnal light.</li>
+		<li><b>B</b> : Toggle the yellow directionnal light.</li>
+	</ul>
 </body>
 </html>
