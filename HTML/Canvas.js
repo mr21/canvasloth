@@ -1,20 +1,21 @@
 Canvasloth.prototype.Canvas = function() {
 	var container = this.container,
-		domCanvas = document.createElement('canvas'),
-		domCatchMouse = document.createElement('div');
-	domCatchMouse.className = 'canvasloth-mouse';
-	domCatchMouse.oncontextmenu = function() { return false; };
-	container.appendChild(domCanvas);
-	container.appendChild(domCatchMouse);
+		canvas = document.createElement('canvas'),
+		catchMouse = document.createElement('div');
+	catchMouse.className = 'canvasloth-mouse';
+	catchMouse.oncontextmenu = function() { return false; };
+	container.appendChild(canvas);
+	container.appendChild(catchMouse);
 	this.canvas = {
-		catchMouse: domCatchMouse,
-		getContext: function(type) { return domCanvas.getContext(type); },
-		cursor: function(c) { domCatchMouse.style.cursor = c; },
-		width:  function() { return domCanvas.width;  },
-		height: function() { return domCanvas.height; },
+		canvas: canvas,
+		catchMouse: catchMouse,
+		getContext: function(type) { return canvas.getContext(type); },
+		cursor: function(c) { catchMouse.style.cursor = c; },
+		width:  function() { return canvas.width;  },
+		height: function() { return canvas.height; },
 		resize: function() {
-			domCanvas.width  = container.clientWidth;
-			domCanvas.height = container.clientHeight;
+			canvas.width  = container.clientWidth;
+			canvas.height = container.clientHeight;
 		}
 	};
 };
