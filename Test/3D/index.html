@@ -99,7 +99,13 @@ var WebGL_Editor = {
 			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255  // v4-v7-v6-v5 back
 		];
 
-		this.cube1 = cnv.objects.create(vertices, normals, texCoords, indices, colors);
+		this.cube1 = cnv.objects.create({
+			vertices:  vertices,
+			normals:   normals,
+			texCoords: texCoords,
+			indices:   indices,
+			colors:    colors
+		});
 
 		vertices = [
 			 1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1, // v0-v2-v2-v3 front
@@ -119,7 +125,13 @@ var WebGL_Editor = {
 			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255  // v4-v7-v6-v5 back
 		];
 
-		this.cube2 = cnv.objects.create(vertices, normals, texCoords, indices, colors);
+		this.cube2 = cnv.objects.create({
+			vertices:  vertices,
+			normals:   normals,
+			texCoords: texCoords,
+			indices:   indices,
+			colors:    colors
+		});
 
 		//Sphere
 		colors.length = vertices.length = normals.length = texCoords.length = indices.length = 0;
@@ -172,7 +184,13 @@ var WebGL_Editor = {
 			}
 		}
 
-		this.sphere = cnv.objects.create(vertices, normals, texCoords, indices, colors);
+		this.sphere = cnv.objects.create({
+			vertices:  vertices,
+			normals:   normals,
+			texCoords: texCoords,
+			indices:   indices,
+			colors:    colors
+		});
 
 		// ### Lights ###
 		cnv.lights.enable()
@@ -204,15 +222,15 @@ var WebGL_Editor = {
 		cnv.matrix.push().translate(0, 0, 1.0);
 			this.cube2
 				.bind()
-				.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+				.draw(gl.TRIANGLES, this.cube2.indices.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(Math.PI/5, 0, 0, 1);
 			this.cube1
 				.bind()
-				.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+				.draw(gl.TRIANGLES, this.cube1.indices.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
 			this.sphere
 				.bind()
-				.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+				.draw(gl.TRIANGLES, this.sphere.indices.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop();
 	}
 };
