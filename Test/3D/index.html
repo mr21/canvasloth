@@ -152,8 +152,8 @@ var WebGL_Editor = {
 				var cosPhi = Math.cos(phi);
 
 				var x = cosPhi * sinTheta;
-				var y = cosTheta;
-				var z = sinPhi * sinTheta;
+				var y = sinPhi * sinTheta;
+				var z = cosTheta;
 				var u = 1 - (currentLong / longitude);
 				var v = 1 - (currentLat / latitude);
 
@@ -185,6 +185,7 @@ var WebGL_Editor = {
 		}
 
 		this.sphere = cnv.objects.create({
+			type: 'LINES',
 			vtx: vertices,
 			nrm: normals,
 			tex: texCoords,

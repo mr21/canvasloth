@@ -5,7 +5,8 @@ Canvasloth.prototype.Objects3D = function() {
 	    matrix = this.matrix;
 	this.objects = {
 		create: function(data) {
-			var obj = new Canvasloth.Object(this);
+			var obj = new Canvasloth.Object(gl, this);
+			obj.type(data.type || 'TRIANGLES');
 			obj.vtxBuf = gl.createBuffer(); obj.vtxNb = data.vtx.length / 3;
 			obj.nrmBuf = gl.createBuffer(); obj.nrmNb = data.nrm.length / 3;
 			obj.texBuf = gl.createBuffer(); obj.texNb = data.tex.length / 2;
@@ -36,7 +37,7 @@ Canvasloth.prototype.Objects3D = function() {
 			gl.uniformMatrix4fv(shaders.uMVMatrix, false, matrix.m);
 			// draw
 			gl.drawElements(
-				gl.TRIANGLES,
+				obj._type,
 				obj.indNb,
 				gl.UNSIGNED_SHORT,
 				0
@@ -45,12 +46,16 @@ Canvasloth.prototype.Objects3D = function() {
 	};
 };
 
-Canvasloth.Object = function(parent) {
+Canvasloth.Object = function(gl, parent) {
+	this.gl = gl;
 	this.parent = parent;
 };
 
 Canvasloth.Object.prototype = {
 	draw: function() {
 		return this.parent.draw(this), this;
+	},
+	type: function(t) {
+		this._type = this.gl[t];
 	}
 };
