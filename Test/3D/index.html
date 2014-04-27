@@ -121,7 +121,6 @@ var WebGL_Editor = {
 
 		this.cube2 = cnv.objects.create(vertices, normals, texCoords, indices, colors);
 
-
 		//Sphere
 		colors.length = vertices.length = normals.length = texCoords.length = indices.length = 0;
 		
@@ -203,14 +202,17 @@ var WebGL_Editor = {
 	render: function(cnv) {
 		var gl = cnv.gl;
 		cnv.matrix.push().translate(0, 0, 1.0);
-			cnv.objects.bind(this.cube2);
-			cnv.objects.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+			this.cube2
+				.bind()
+				.draw(gl.TRIANGLES, this.cube2.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(Math.PI/5, 0, 0, 1);
-			cnv.objects.bind(this.cube1);
-			cnv.objects.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+			this.cube1
+				.bind()
+				.draw(gl.TRIANGLES, this.cube1.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
-			cnv.objects.bind(this.sphere);
-			cnv.objects.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
+			this.sphere
+				.bind()
+				.draw(gl.TRIANGLES, this.sphere.faces.itemNumber, gl.UNSIGNED_SHORT, 0);
 		cnv.matrix.pop();
 	}
 };
