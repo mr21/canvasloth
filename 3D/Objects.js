@@ -36,9 +36,8 @@ Canvasloth.prototype.Objects3D = function() {
 				}
 			}
 		},
-		create : function(type, vertices, normals, texCoords, faces, colors) {
+		create : function(vertices, normals, texCoords, faces, colors) {
 			var obj = {
-				type : type,
 				vertices: {
 					buffer: gl.createBuffer(),
 					itemNumber: vertices.length / 3,
