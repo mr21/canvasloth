@@ -22,17 +22,17 @@ Canvasloth.Object = function(objects, gl, obj) {
 	this.objects = objects;
 	this.gl = gl;
 
-	this.vertices  = { buffer:gl.createBuffer(), itemNumber:obj.vertices .length / 3 };
-	this.normals   = { buffer:gl.createBuffer(), itemNumber:obj.normals  .length / 3 };
-	this.texCoords = { buffer:gl.createBuffer(), itemNumber:obj.texCoords.length / 2 };
-	this.colors    = { buffer:gl.createBuffer(), itemNumber:obj.colors   .length / 4 };
-	this.indices   = { buffer:gl.createBuffer(), itemNumber:obj.indices  .length / 1 };
+	this.vtxBuf = gl.createBuffer(); this.vtxNb = obj.vtx.length / 3;
+	this.nrmBuf = gl.createBuffer(); this.nrmNb = obj.nrm.length / 3;
+	this.texBuf = gl.createBuffer(); this.texNb = obj.tex.length / 2;
+	this.colBuf = gl.createBuffer(); this.colNb = obj.col.length / 4;
+	this.indBuf = gl.createBuffer(); this.indNb = obj.ind.length / 1;
 
-	gl.bindBuffer(gl.ARRAY_BUFFER,         this.vertices .buffer); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(obj.vertices),  gl.STATIC_DRAW);
-	gl.bindBuffer(gl.ARRAY_BUFFER,         this.normals  .buffer); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(obj.normals),   gl.STATIC_DRAW);
-	gl.bindBuffer(gl.ARRAY_BUFFER,         this.texCoords.buffer); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(obj.texCoords), gl.STATIC_DRAW);
-	gl.bindBuffer(gl.ARRAY_BUFFER,         this.colors   .buffer); gl.bufferData(gl.ARRAY_BUFFER,         new Uint8Array  (obj.colors),    gl.STATIC_DRAW);
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices  .buffer); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array (obj.indices),   gl.STATIC_DRAW);
+	gl.bindBuffer(gl.ARRAY_BUFFER,         this.vtxBuf); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(obj.vtx), gl.STATIC_DRAW);
+	gl.bindBuffer(gl.ARRAY_BUFFER,         this.nrmBuf); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(obj.nrm), gl.STATIC_DRAW);
+	gl.bindBuffer(gl.ARRAY_BUFFER,         this.texBuf); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(obj.tex), gl.STATIC_DRAW);
+	gl.bindBuffer(gl.ARRAY_BUFFER,         this.colBuf); gl.bufferData(gl.ARRAY_BUFFER,         new Uint8Array  (obj.col), gl.STATIC_DRAW);
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indBuf); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array (obj.ind), gl.STATIC_DRAW);
 };
 
 Canvasloth.Object.prototype = {
@@ -40,23 +40,22 @@ Canvasloth.Object.prototype = {
 		if (this.objects._currentObj !== this) {
 			var gl = this.gl;
 			this.objects._currentObj = this;
-
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices.buffer);
-			gl.vertexAttribPointer(2, 3 /*itemsize*/, gl.FLOAT, false, 0, 0);
-		
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.normals.buffer);
-			gl.vertexAttribPointer(0, 3 /*itemsize*/, gl.FLOAT, false, 0, 0);
-		
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.colors.buffer);
-			gl.vertexAttribPointer(1, 4 /*itemsize*/, gl.UNSIGNED_BYTE, true, 0, 0);
-		
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
+			gl.bindBuffer(gl.ARRAY_BUFFER,         this.vtxBuf); gl.vertexAttribPointer(2, 3 /*itemsize*/, gl.FLOAT,         false, 0, 0);
+			gl.bindBuffer(gl.ARRAY_BUFFER,         this.nrmBuf); gl.vertexAttribPointer(0, 3 /*itemsize*/, gl.FLOAT,         false, 0, 0);
+			gl.bindBuffer(gl.ARRAY_BUFFER,         this.colBuf); gl.vertexAttribPointer(1, 4 /*itemsize*/, gl.UNSIGNED_BYTE, true,  0, 0);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indBuf);
 		}
 		return this;
 	},
-	draw: function(mode, count, type, indices) {
+	draw: function() {
+		var gl = this.gl;
 		this.objects._setUniform();
-		this.gl.drawElements(mode, count, type, indices);
+		gl.drawElements(
+			gl.TRIANGLES,
+			this.indNb,
+			gl.UNSIGNED_SHORT,
+			0
+		);
 		return this;
 	}
 };

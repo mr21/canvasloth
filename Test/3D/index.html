@@ -100,11 +100,11 @@ var WebGL_Editor = {
 		];
 
 		this.cube1 = cnv.objects.create({
-			vertices:  vertices,
-			normals:   normals,
-			texCoords: texCoords,
-			indices:   indices,
-			colors:    colors
+			vtx: vertices,
+			nrm: normals,
+			tex: texCoords,
+			ind: indices,
+			col: colors
 		});
 
 		vertices = [
@@ -126,11 +126,11 @@ var WebGL_Editor = {
 		];
 
 		this.cube2 = cnv.objects.create({
-			vertices:  vertices,
-			normals:   normals,
-			texCoords: texCoords,
-			indices:   indices,
-			colors:    colors
+			vtx: vertices,
+			nrm: normals,
+			tex: texCoords,
+			ind: indices,
+			col: colors
 		});
 
 		//Sphere
@@ -185,11 +185,11 @@ var WebGL_Editor = {
 		}
 
 		this.sphere = cnv.objects.create({
-			vertices:  vertices,
-			normals:   normals,
-			texCoords: texCoords,
-			indices:   indices,
-			colors:    colors
+			vtx: vertices,
+			nrm: normals,
+			tex: texCoords,
+			ind: indices,
+			col: colors
 		});
 
 		// ### Lights ###
@@ -220,17 +220,11 @@ var WebGL_Editor = {
 	render: function(cnv) {
 		var gl = cnv.gl;
 		cnv.matrix.push().translate(0, 0, 1.0);
-			this.cube2
-				.bind()
-				.draw(gl.TRIANGLES, this.cube2.indices.itemNumber, gl.UNSIGNED_SHORT, 0);
+			this.cube2.bind().draw();
 		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(Math.PI/5, 0, 0, 1);
-			this.cube1
-				.bind()
-				.draw(gl.TRIANGLES, this.cube1.indices.itemNumber, gl.UNSIGNED_SHORT, 0);
+			this.cube1.bind().draw();
 		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
-			this.sphere
-				.bind()
-				.draw(gl.TRIANGLES, this.sphere.indices.itemNumber, gl.UNSIGNED_SHORT, 0);
+			this.sphere.bind().draw();
 		cnv.matrix.pop();
 	}
 };
