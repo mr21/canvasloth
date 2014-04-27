@@ -1,8 +1,8 @@
 function DomIntIncrease(elem) {
 	// parsing de la value de depart
-	var content    = elem.innerHTML;
+	var content    = elem.textContent;
 	this.numWidth  = content.length;
-	elem.innerHTML = '';
+	elem.textContent = '';
 	// calcul de la value d'origine (il est possible de mettre autre chose que des '0' dans son HTML)
 	this.value = 0;
 	for (var size = 0; size < content.length; ++size) {
@@ -82,10 +82,10 @@ DomIntIncrease.prototype = {
 	},
 	_set: function(val) {
 		this.valueTmpInt = val = Math.floor(val);
-		this.spanValue.innerHTML = val;
+		this.spanValue.textContent = val;
 		var width = 1;
 		while (parseInt(val /= 10))
 			++width;
-		this.spanZeros.innerHTML = this.fillStr.substr(width);
+		this.spanZeros.textContent = this.fillStr.substr(width);
 	}
 };
