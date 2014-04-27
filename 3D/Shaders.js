@@ -43,7 +43,7 @@ Canvasloth.prototype.Shaders3D = function() {
 				'gl_FragColor = vColor * vFinalLight;'+
 			'}',
 		load: function() {
-			var attribs = ['aVertexNormal', 'aVertexColor', 'aVertexPosition'],
+			var attribs = ['aVertexPosition', 'aVertexNormal', 'aVertexColor'],
 			    vShad = this.loadShader(gl.VERTEX_SHADER, this.xVertex),
 			    fShad = this.loadShader(gl.FRAGMENT_SHADER, this.xFragment);
 			this.program = gl.createProgram();
