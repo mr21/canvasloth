@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head>
 <meta charset="utf-8"/>
-
+<title>Canvasloth - 3D - Demo</title>
 <!-- CSS.Canvasloth -->
 <link type="text/css" rel="stylesheet" href="../../Canvasloth.css"/>
 <!-- CSS.main -->
@@ -214,9 +214,10 @@ var WebGL_Editor = {
 	},
 	keydown: function(key) {
 		switch (key) {
-			case 65 : this.cnv.lights.dir('sunA').toggle(); break;
-			case 66 : this.cnv.lights.dir('sunB').toggle(); break;
-			case 76 : this.cnv.lights.toggle(); break;
+			case 65: this.cnv.lights.dir('sunA').toggle(); break; // A
+			case 66: this.cnv.lights.dir('sunB').toggle(); break; // B
+			case 76: this.cnv.lights.toggle(); break; // L
+			case 71: this.cnv.grid.toggle(); break; // G
 		}
 	},
 	render: function(cnv) {
@@ -257,6 +258,7 @@ new Canvasloth({
 		<li><b>L</b> : Toggle all the lights.</li>
 		<li><b>A</b> : Toggle the blue directionnal light.</li>
 		<li><b>B</b> : Toggle the yellow directionnal light.</li>
+		<li><b>G</b> : Toggle the grid.</li>
 	</ul>
 </body>
 </html>

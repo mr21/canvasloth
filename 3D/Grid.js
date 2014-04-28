@@ -24,12 +24,9 @@ Canvasloth.prototype.Grid3D = function() {
 	}
 
 	this.grid = {
-		enable: function() {
-			this.active = true;
-		},
-		disable: function() {
-			this.active = false;
-		},
+		enable:  function() { this.active = true; },
+		disable: function() { this.active = false; },
+		toggle:  function() { this.active ? this.disable() : this.enable(); },
 		render: function() {
 			if (this.active) {
 				var lightActive = lights.active;
