@@ -51,6 +51,6 @@ Canvasloth.Object.prototype = {
 		return this.parent.draw(this), this;
 	},
 	type: function(t) {
-		this._type = this.gl[t];
+		return this._type = this.gl[t.toUpperCase()], this;
 	}
 };
