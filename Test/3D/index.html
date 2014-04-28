@@ -6,7 +6,7 @@
 <link type="text/css" rel="stylesheet" href="../../Canvasloth.css"/>
 <!-- CSS.main -->
 <style type="text/css">	
-	.canvasloth { width:800px; height:480px; background:#aaf; }
+	.canvasloth { width:600px; height:400px; background:#aaf; }
 	.canvasloth-mouse { background:red; }
 </style>
 
@@ -37,6 +37,7 @@
 <script type="text/javascript" src="../../3D/Shaders.js"></script>
 <script type="text/javascript" src="../../3D/Lights.js"></script>
 <script type="text/javascript" src="../../3D/Objects.js"></script>
+<script type="text/javascript" src="../../3D/Grid.js"></script>
 
 <script>
 function lg(s) { console.log(s); }
@@ -67,7 +68,7 @@ var WebGL_Editor = {
 			-1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // v1-v6-v7-v2 left
 			 0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, // v7-v4-v3-v2 bottom
 			 0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  // v4-v7-v6-v5 back
-			 ];
+		];
 
 		// texCoord array
 		texCoords = [

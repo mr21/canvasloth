@@ -16,6 +16,7 @@ Canvasloth.prototype.Ctx3D = function() {
 		mat4.identity(cnv.matrix.m);
 		if (cnv.camera._auto === true)
 			cnv.camera._lookAtAuto();
+		cnv.grid.render();
 		cnv.events.exec('render', cnv);
 	}
 	// Initialisation
