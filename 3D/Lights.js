@@ -11,13 +11,14 @@ Canvasloth.prototype.Lights3D = function() {
 		nbDir: 0,
 		uActive: gl.getUniformLocation(prog, 'active'),
 		uAmbCol: gl.getUniformLocation(prog, 'ambCol'),
+		ambCol: [0, 0, 0],
 		enable: function() {
+			gl.uniform3fv(this.uAmbCol, this.ambCol);
 			gl.uniform1i(this.uActive, this.active = 1);
-			this.ambient(0,0,0);
 			return this;
 		},
 		disable: function() {
-			this.ambient(1,1,1);
+			gl.uniform3f(this.uAmbCol, 1, 1, 1);
 			gl.uniform1i(this.uActive, this.active = 0);
 			return this;
 		},
@@ -26,7 +27,11 @@ Canvasloth.prototype.Lights3D = function() {
 		},
 		ambient: function(r, g, b) {
 			if (this.active)
-				gl.uniform3f(this.uAmbCol, r, g, b);
+				gl.uniform3f(this.uAmbCol,
+					this.ambCol[0] = r,
+					this.ambCol[1] = g,
+					this.ambCol[2] = b
+				);
 			return this;
 		},
 		dir: function(light) {

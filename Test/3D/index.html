@@ -196,7 +196,7 @@ var WebGL_Editor = {
 
 		// ### Lights ###
 		cnv.lights.enable()
-			.ambient(0.04, 0.04, 0.04)
+			.ambient(0.06, 0.06, 0.06)
 			.dir('sunA')
 				.pos(0.6, 0.1, 1.0)
 				.col(0, 0, 0.3);
@@ -232,7 +232,7 @@ var WebGL_Editor = {
 	}
 };
 
-new Canvasloth({
+window.cnv = new Canvasloth({
 	type : '3d',
 	node : document._domSelector('.canvasloth')[0],
 	app  : WebGL_Editor,
