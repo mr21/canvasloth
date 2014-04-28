@@ -5,9 +5,10 @@
 <!-- CSS.Canvasloth -->
 <link type="text/css" rel="stylesheet" href="../../Canvasloth.css"/>
 <!-- CSS.main -->
-<style type="text/css">	
-	.canvasloth { width:600px; height:400px; background:#aaf; }
-	.canvasloth-mouse { background:red; }
+<style type="text/css">
+body { background:#222; color:#ddd; }
+.canvasloth { width:600px; height:400px; background:#aaf; }
+.canvasloth-mouse { background:red; }
 </style>
 
 <!-- JS.JsExt -->
@@ -37,6 +38,7 @@
 <script type="text/javascript" src="../../3D/Shaders.js"></script>
 <script type="text/javascript" src="../../3D/Lights.js"></script>
 <script type="text/javascript" src="../../3D/Objects.js"></script>
+<script type="text/javascript" src="../../3D/Primitives.js"></script>
 <script type="text/javascript" src="../../3D/Grid.js"></script>
 
 <script>
@@ -46,153 +48,24 @@ window.onload = function() {
 
 var WebGL_Editor = {
 	ready: function(cnv) {
-		var vertices, normals, texCoords, indices, colors;
 		var cnv = this.cnv = cnv;
-		var gl = cnv.gl;
-		this.program = cnv.shaders.program;
-		
-		vertices = [
-			 0.5, 0.5, 0.5,  -0.5, 0.5, 0.5,  -0.5,-0.5, 0.5,   0.5,-0.5, 0.5, // v0-v1-v2-v3 front
-			 0.5, 0.5, 0.5,   0.5,-0.5, 0.5,   0.5,-0.5,-0.5,   0.5, 0.5,-0.5, // v0-v3-v4-v5 right
-			 0.5, 0.5, 0.5,   0.5, 0.5,-0.5,  -0.5, 0.5,-0.5,  -0.5, 0.5, 0.5, // v0-v5-v6-v1 top
-			-0.5, 0.5, 0.5,  -0.5, 0.5,-0.5,  -0.5,-0.5,-0.5,  -0.5,-0.5, 0.5, // v1-v6-v7-v2 left
-			-0.5,-0.5,-0.5,   0.5,-0.5,-0.5,   0.5,-0.5, 0.5,  -0.5,-0.5, 0.5, // v7-v4-v3-v2 bottom
-			 0.5,-0.5,-0.5,  -0.5,-0.5,-0.5,  -0.5, 0.5,-0.5,   0.5, 0.5,-0.5  // v4-v7-v6-v5 back
-		];
 
-		// normal array
-		normals = [
-			 0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1, // v0-v1-v2-v3 front
-			 1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0, // v0-v3-v4-v5 right
-			 0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0, // v0-v5-v6-v1 top
-			-1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // v1-v6-v7-v2 left
-			 0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, // v7-v4-v3-v2 bottom
-			 0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  // v4-v7-v6-v5 back
-		];
-
-		// texCoord array
-		texCoords = [
-			1, 1,   0, 1,   0, 0,   1, 0, // v0-v1-v2-v3 front
-			0, 1,   0, 0,   1, 0,   1, 1, // v0-v3-v4-v5 right
-			1, 0,   1, 1,   0, 1,   0, 0, // v0-v5-v6-v1 top
-			1, 1,   0, 1,   0, 0,   1, 0, // v1-v6-v7-v2 left
-			0, 0,   1, 0,   1, 1,   0, 1, // v7-v4-v3-v2 bottom
-			0, 0,   1, 0,   1, 1,   0, 1  // v4-v7-v6-v5 back
-		];
-
-		// index array
-		indices = [
-			 0,  1,  2,     0,  2,  3, // front
-			 4,  5,  6,     4,  6,  7, // right
-			 8,  9, 10,     8, 10, 11, // top
-			12, 13, 14,    12, 14, 15, // left
-			16, 17, 18,    16, 18, 19, // bottom
-			20, 21, 22,    20, 22, 23  // back
-		];
-
-		// Set up the array of colors for the cube's faces
-		colors = [
-			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v0-v1-v2-v3 front
-			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v0-v3-v4-v5 right
-			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v0-v5-v6-v1 top
-			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v1-v6-v7-v2 left
-			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255, // v7-v4-v3-v2 bottom
-			100,60,255,255,  100,60,255,255,  100,60,255,255,  100,60,255,255  // v4-v7-v6-v5 back
-		];
-
-		this.cube1 = cnv.objects.create({
-			vtx: vertices,
-			nrm: normals,
-			tex: texCoords,
-			ind: indices,
-			col: colors
+		this.cubeA = cnv.primitives.create({
+			type: 'box',
+			sizeX: 1, sizeY: 1, sizeZ: 1.8,
+			r: 100, g:  60, b: 255
 		});
 
-		vertices = [
-			 1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1, // v0-v2-v2-v3 front
-			 1, 1, 1,   1,-1, 1,   1,-1,-1,   1, 1,-1, // v0-v3-v4-v5 right
-			 1, 1, 1,   1, 1,-1,  -1, 1,-1,  -1, 1, 1, // v0-v5-v6-v2 top
-			-1, 1, 1,  -1, 1,-1,  -1,-1,-1,  -1,-1, 1, // v2-v6-v7-v2 left
-			-1,-1,-1,   1,-1,-1,   1,-1, 1,  -1,-1, 1, // v7-v4-v3-v2 bottom
-			 1,-1,-1,  -1,-1,-1,  -1, 1,-1,   1, 1,-1  // v4-v7-v6-v5 back
-		];
-
-		colors = [
-			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v0-v1-v2-v3 front
-			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v0-v3-v4-v5 right
-			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v0-v5-v6-v1 top
-			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v1-v6-v7-v2 left
-			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255, // v7-v4-v3-v2 bottom
-			200,35,35,255,  200,35,35,255,  200,35,35,255,  200,35,35,255  // v4-v7-v6-v5 back
-		];
-
-		this.cube2 = cnv.objects.create({
-			vtx: vertices,
-			nrm: normals,
-			tex: texCoords,
-			ind: indices,
-			col: colors
+		this.cubeB = cnv.primitives.create({
+			type: 'box',
+			sizeX: 2.8, sizeY: 2, sizeZ: 1.2,
+			r: 200, g:  35, b:  35
 		});
 
-		//Sphere
-		colors.length = vertices.length = normals.length = texCoords.length = indices.length = 0;
-		
-		var latitude  = 16;
-		var longitude = 16;
-		var radius    = 0.6;
-		var sphereColor = [255, 255, 255, 255];
-
-		for (var currentLat = 0; currentLat <= latitude; currentLat++) {
-			var theta = currentLat * Math.PI / latitude;
-			var sinTheta = Math.sin(theta);
-			var cosTheta = Math.cos(theta);
-
-			for (var currentLong = 0; currentLong <= longitude; currentLong++) {
-				var phi = currentLong * 2 * Math.PI / longitude;
-				var sinPhi = Math.sin(phi);
-				var cosPhi = Math.cos(phi);
-
-				var x = cosPhi * sinTheta;
-				var y = sinPhi * sinTheta;
-				var z = cosTheta;
-				var u = 1 - (currentLong / longitude);
-				var v = 1 - (currentLat / latitude);
-
-				normals.push(x);
-				normals.push(y);
-				normals.push(z);
-				colors.push(sphereColor[0]);
-				colors.push(sphereColor[1]);
-				colors.push(sphereColor[2]);
-				colors.push(sphereColor[3]);
-				vertices.push(radius * x);
-				vertices.push(radius * y);
-				vertices.push(radius * z);
-			}
-		}
-
-		for (var currentLat = 0; currentLat < latitude; currentLat++) {
-			for (var currentLong = 0; currentLong < longitude; currentLong++) {
-				var first = (currentLat * (longitude + 1)) + currentLong;
-				var second = first + longitude + 1;
-				indices.push(first);
-				indices.push(second);
-				indices.push(first + 1);
-
-				indices.push(second);
-				indices.push(second + 1);
-				indices.push(first + 1);
-			}
-		}
-
-		this.sphere = cnv.objects.create({
-			type: 'LINES',
-			vtx: vertices,
-			nrm: normals,
-			tex: texCoords,
-			ind: indices,
-			col: colors
-		});
+		this.sphere = cnv.primitives.create({
+			type: 'sphere', radius: 0.6,
+			r: 200, g: 255, b: 255
+		}).type('lines');
 
 		// ### Lights ###
 		cnv.lights.enable()
@@ -222,10 +95,10 @@ var WebGL_Editor = {
 	},
 	render: function(cnv) {
 		var gl = cnv.gl;
-		cnv.matrix.push().translate(0, 0, 1.0);
-			this.cube2.draw();
-		cnv.matrix.pop().push().translate(-1, 2, 0.5).rotate(Math.PI/5, 0, 0, 1);
-			this.cube1.draw();
+		cnv.matrix.push().translate(-1, 2, 0.9).rotate(Math.PI/5, 0, 0, 1);
+			this.cubeA.draw();
+		cnv.matrix.pop().push().translate(0, 0, 0.6);
+			this.cubeB.draw();
 		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
 			this.sphere.draw();
 		cnv.matrix.pop();
@@ -248,7 +121,7 @@ window.cnv = new Canvasloth({
 </script>
 </head>
 <body>
-	<div class="canvasloth canvasloth-dark">
+	<div class="canvasloth canvasloth-light">
 		<div class="canvasloth-hud-passive">
 		</div>
 	</div>
