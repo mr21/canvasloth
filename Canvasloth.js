@@ -17,8 +17,9 @@ function Canvasloth(p) {
 		this.Shaders3D();
 		this.Lights3D();
 		this.Objects3D();
-		this.Grid3D();
 		this.Primitives3D();
+		this.Grid3D();
+		this.CubeMap3D();
 	}
 	this.events.init(p.fn);
 	this.fps = 40;
