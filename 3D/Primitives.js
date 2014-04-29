@@ -2,8 +2,9 @@ Canvasloth.prototype.Primitives3D = function() {
 	var objects = this.objects;
 	this.primitives = {
 		create: function(a) {
-			var alpha = a.a !== undefined ? a.a : 255;
-			switch (a.type) {
+			var alpha = a.a !== undefined ? a.a : 255,
+				type = a.type.toLowerCase();
+			switch (type) {
 				case 'cube':
 					return this.cuboid(
 						a.size, a.size, a.size,
@@ -36,44 +37,44 @@ Canvasloth.prototype.Primitives3D = function() {
 			z /= 2;
 			return objects.create({
 				ind: [
-					 0,  1,  2,     0,  2,  3, // front
-					 4,  5,  6,     4,  6,  7, // right
-					 8,  9, 10,     8, 10, 11, // top
-					12, 13, 14,    12, 14, 15, // left
-					16, 17, 18,    16, 18, 19, // bottom
-					20, 21, 22,    20, 22, 23  // back
+					 0,  1,  2,      0,  2,  3, // +Z (top)
+					 4,  5,  6,      4,  6,  7, // +X
+					 8,  9, 10,      8, 10, 11, // +Y
+					12, 13, 14,     12, 14, 15, // -X
+					16, 17, 18,     16, 18, 19, // -Y 11,00,10   11,01,00
+					20, 21, 22,     20, 22, 23  // -Z (bottom)
 				],
 				vtx: [
-					 x, y, z,  -x, y, z,  -x,-y, z,   x,-y, z,   // v0-v1-v2-v3 front
-					 x, y, z,   x,-y, z,   x,-y,-z,   x, y,-z,   // v0-v3-v4-v5 right
-					 x, y, z,   x, y,-z,  -x, y,-z,  -x, y, z,   // v0-v5-v6-v1 top
-					-x, y, z,  -x, y,-z,  -x,-y,-z,  -x,-y, z,   // v1-v6-v7-v2 left
-					-x,-y,-z,   x,-y,-z,   x,-y, z,  -x,-y, z,   // v7-v4-v3-v2 bottom
-					 x,-y,-z,  -x,-y,-z,  -x, y,-z,   x, y,-z    // v4-v7-v6-v5 back
+					 x, y, z,  -x, y, z,  -x,-y, z,   x,-y, z, //   0  1  2  3   +Z (top)
+					 x, y, z,   x,-y, z,   x,-y,-z,   x, y,-z, //   4  5  6  7   +X
+					 x, y, z,   x, y,-z,  -x, y,-z,  -x, y, z, //   8  9 10 11   +Y
+					-x, y, z,  -x, y,-z,  -x,-y,-z,  -x,-y, z, //  12 13 14 15   -X
+					-x,-y,-z,   x,-y,-z,   x,-y, z,  -x,-y, z, //  16 17 18 19   -Y
+					 x,-y,-z,  -x,-y,-z,  -x, y,-z,   x, y,-z  //  20 21 22 23   -Z (bottom)
 				],
 				nrm: [
-					 0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1, // v0-v1-v2-v3 front
-					 1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0, // v0-v3-v4-v5 right
-					 0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0, // v0-v5-v6-v1 top
-					-1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // v1-v6-v7-v2 left
-					 0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, // v7-v4-v3-v2 bottom
-					 0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  // v4-v7-v6-v5 back
+					 0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1, // +Z (top)
+					 1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0, // +X
+					 0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0, // +Y
+					-1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // -X
+					 0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, // -Y
+					 0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  // -Z (bottom)
 				],
 				tex: [
-					1, 1,   0, 1,   0, 0,   1, 0, // v0-v1-v2-v3 front
-					0, 1,   0, 0,   1, 0,   1, 1, // v0-v3-v4-v5 right
-					1, 0,   1, 1,   0, 1,   0, 0, // v0-v5-v6-v1 top
-					1, 1,   0, 1,   0, 0,   1, 0, // v1-v6-v7-v2 left
-					0, 0,   1, 0,   1, 1,   0, 1, // v7-v4-v3-v2 bottom
-					0, 0,   1, 0,   1, 1,   0, 1  // v4-v7-v6-v5 back
+					1,1,        0,1,       0,0,       1,0,     // +Z (top)
+					0,0,        1,0,       1,1,       0,1,     // +X
+					1,0,        1,1,       0,1,       0,0,     // +Y
+					1,0,        1,1,       0,1,       0,0,     // -X
+					1,1,        0,1,       0,0,       1,0,     // -Y
+					1,1,        0,1,       0,0,       1,0      // -Z (bottom)
 				],
 				col: [
-					r,g,b,a,  r,g,b,a,  r,g,b,a,  r,g,b,a, // v0-v1-v2-v3 front
-					r,g,b,a,  r,g,b,a,  r,g,b,a,  r,g,b,a, // v0-v3-v4-v5 right
-					r,g,b,a,  r,g,b,a,  r,g,b,a,  r,g,b,a, // v0-v5-v6-v1 top
-					r,g,b,a,  r,g,b,a,  r,g,b,a,  r,g,b,a, // v1-v6-v7-v2 left
-					r,g,b,a,  r,g,b,a,  r,g,b,a,  r,g,b,a, // v7-v4-v3-v2 bottom
-					r,g,b,a,  r,g,b,a,  r,g,b,a,  r,g,b,a  // v4-v7-v6-v5 back
+					r,g,b,a,    r,g,b,a,   r,g,b,a,   r,g,b,a, // +Z (top)
+					r,g,b,a,    r,g,b,a,   r,g,b,a,   r,g,b,a, // +X
+					r,g,b,a,    r,g,b,a,   r,g,b,a,   r,g,b,a, // +Y
+					r,g,b,a,    r,g,b,a,   r,g,b,a,   r,g,b,a, // -X
+					r,g,b,a,    r,g,b,a,   r,g,b,a,   r,g,b,a, // -Y
+					r,g,b,a,    r,g,b,a,   r,g,b,a,   r,g,b,a  // -Z (bottom)
 				]
 			});
 		},
