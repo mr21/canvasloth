@@ -20,13 +20,13 @@ Canvasloth.prototype.Primitives3D = function() {
 					var radius = a.radius !== undefined ? a.radius : a.diameter / 2;
 					return this.ellipsoid(
 						radius, radius, radius,
-						a.latitude || 16, a.longitude || 16,
+						a.latitudes || 16, a.longitudes || 16,
 						a.r, a.g, a.b, alpha
 					);
 				case 'ellipsoid':
 					return this.ellipsoid(
 						a.sizeX, a.sizeY, a.sizeZ,
-						a.latitude || 16, a.longitude || 16,
+						a.latitudes || 16, a.longitudes || 16,
 						a.r, a.g, a.b, alpha
 					);
 			}
