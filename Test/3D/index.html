@@ -71,11 +71,11 @@ var WebGL_Editor = {
 		cnv.lights.enable()
 			.ambient(0.06, 0.06, 0.06)
 			.dir('sunA')
-				.pos(0.6, 0.1, 1.0)
+				.pos(-0.6, -0.1, 1.0)
 				.col(0, 0, 0.3);
 		cnv.lights
 			.dir('sunB')
-				.pos(-0.6, -0.1, 1.5)
+				.pos(0.6, 0.1, 1.5)
 				.col(1, 0.5, 0);
 
 		// ### Camera ###
@@ -95,11 +95,11 @@ var WebGL_Editor = {
 	},
 	render: function(cnv) {
 		var gl = cnv.gl;
-		cnv.matrix.push().translate(-1, 2, 0.9).rotate(Math.PI/5, 0, 0, 1);
+		cnv.matrix.push().translate(1,-2, 0.9).rotate(Math.PI/5, 0, 0, 1);
 			this.cubeA.draw();
 		cnv.matrix.pop().push().translate(0, 0, 0.6);
 			this.cubeB.draw();
-		cnv.matrix.pop().push().translate(1.5, 1.7, 0.6);
+		cnv.matrix.pop().push().translate(-1.5, -1.7, 0.6);
 			this.sphere.draw();
 		cnv.matrix.pop();
 	}

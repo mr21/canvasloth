@@ -1,9 +1,9 @@
 Canvasloth.prototype.Camera3D = function() {
 	var cnv = this;
 	this.camera = {
-		eyX: 5, eyY: 5, eyZ: 5,
-		ctX: 0, ctY: 0, ctZ: 0,
-		upX: 0, upY: 0, upZ: 1,
+		eyX:-1, eyY: -9, eyZ: 5,
+		ctX: 0, ctY:  0, ctZ: 0,
+		upX: 0, upY:  0, upZ: 1,
 		zoomRatio: 1.2,
 		fovy : function(z) { if (z !== undefined) return this._fovy = z, this; return this._fovy; },
 		near : function(z) { if (z !== undefined) return this._near = z, this; return this._near; },
