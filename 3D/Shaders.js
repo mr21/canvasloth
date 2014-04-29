@@ -4,9 +4,10 @@ Canvasloth.prototype.Shaders3D = function() {
 	this.shaders = {
 		DIRLIGHTS_MAX: DIRLIGHTS_MAX,
 		xVertex:
+			'attribute vec4 aVertexPosition;'+
 			'attribute vec3 aVertexNormal;'+
 			'attribute vec4 aVertexColor;'+
-			'attribute vec4 aVertexPosition;'+
+			'attribute vec2 aTextureCoord;'+
 			'uniform int  active;'+
 			'uniform mat4 uNMatrix;'+
 			'uniform mat4 uMVMatrix;'+
@@ -20,6 +21,7 @@ Canvasloth.prototype.Shaders3D = function() {
 			'uniform vec3 ambCol;'+
 			'varying vec4 vColor;'+
 			'varying vec4 vFinalLight;'+
+			'varying highp vec2 vTextureCoord;'+
 			'void main(void) {'+
 				'vFinalLight.xyz = ambCol;'+
 				'vColor = aVertexColor;'+
@@ -33,17 +35,20 @@ Canvasloth.prototype.Shaders3D = function() {
 						'}'+
 				'}'+
 				'vFinalLight.a = 1.0;'+
+				'vTextureCoord = aTextureCoord;'+
 				'gl_Position = uPMatrix * uMVMatrix * aVertexPosition;'+
 			'}',
 		xFragment:
 			'precision mediump float;'+
+			'uniform sampler2D uSampler;'+
+			'varying highp vec2 vTextureCoord;'+
 			'varying vec4 vColor;'+
 			'varying vec4 vFinalLight;'+
 			'void main(void) {'+
-				'gl_FragColor = vColor * vFinalLight;'+
+				'gl_FragColor = vFinalLight * vColor;/* * texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));*/'+
 			'}',
 		load: function() {
-			var attribs = ['aVertexPosition', 'aVertexNormal', 'aVertexColor'],
+			var attribs = ['aVertexPosition', 'aVertexNormal', 'aVertexColor', 'aTextureCoord'],
 			    vShad = this.loadShader(gl.VERTEX_SHADER, this.xVertex),
 			    fShad = this.loadShader(gl.FRAGMENT_SHADER, this.xFragment);
 			this.program = gl.createProgram();
