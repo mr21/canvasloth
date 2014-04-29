@@ -6,13 +6,16 @@ Canvasloth.prototype.Primitives3D = function() {
 				type = a.type.toLowerCase();
 			switch (type) {
 				case 'cube':
+				case 'cubemap':
 					return this.cuboid(
+						type,
 						a.size, a.size, a.size,
 						a.r, a.g, a.b, alpha
 					);
 				case 'box':
 				case 'cuboid':
 					return this.cuboid(
+						type,
 						a.sizeX, a.sizeY, a.sizeZ,
 						a.r, a.g, a.b, alpha
 					);
@@ -31,7 +34,8 @@ Canvasloth.prototype.Primitives3D = function() {
 					);
 			}
 		},
-		cuboid: function(x, y, z, r, g, b, a) {
+		cuboid: function(type, x, y, z, r, g, b, a) {
+			var f = 0.001;
 			x /= 2;
 			y /= 2;
 			z /= 2;
@@ -60,7 +64,19 @@ Canvasloth.prototype.Primitives3D = function() {
 					 0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, // -Y
 					 0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  // -Z (bottom)
 				],
-				tex: [
+				tex: type === 'cubemap' ? [
+					/*
+						Patron du cube (en respectant les ^2)
+						** +Z -Z **
+						-X +Y +X -Y
+					*/
+					0.50-f,0.50-f,  0.25+f,0.50-f,  0.25+f,0.00+f,  0.50-f,0.00+f, // +Z (top)
+					0.50+f,0.50+f,  0.75-f,0.50+f,  0.75-f,1.00-f,  0.50+f,1.00-f, // +X
+					0.50-f,0.50+f,  0.50-f,1.00-f,  0.25+f,1.00-f,  0.25+f,0.50+f, // +Y
+					0.25-f,0.50+f,  0.25-f,1.00-f,  0.00+f,1.00-f,  0.00+f,0.50+f, // -X
+					1.00-f,1.00-f,  0.75+f,1.00-f,  0.75+f,0.50+f,  1.00-f,0.50+f, // -Y
+					0.75-f,0.50-f,  0.50+f,0.50-f,  0.50+f,0.00+f,  0.75-f,0.00+f  // -Z (bottom)
+				] : [
 					1,1,        0,1,       0,0,       1,0,     // +Z (top)
 					0,0,        1,0,       1,1,       0,1,     // +X
 					1,0,        1,1,       0,1,       0,0,     // +Y

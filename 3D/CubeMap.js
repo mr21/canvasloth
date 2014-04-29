@@ -26,7 +26,7 @@ Canvasloth.prototype.CubeMap3D = function() {
 	};
 
 	this.cubemap.cube = this.primitives.create({
-		type: 'cube', size: 100,
+		type: 'cubemap', size: 100,
 		r:255, g:255, b:255
 	});
 	this.cubemap.enable();
