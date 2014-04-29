@@ -9,6 +9,7 @@ Canvasloth.prototype.Objects3D = function() {
 			obj.cnv = cnv;
 			obj.gl = gl;
 			obj.parent = this;
+			obj.tex = null;
 			obj.type(data.type || 'TRIANGLES');
 			obj.vtxBuf = gl.createBuffer(); obj.vtxNb = data.vtx.length / 3; gl.bindBuffer(gl.ARRAY_BUFFER,         obj.vtxBuf); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(data.vtx), gl.STATIC_DRAW);
 			obj.nrmBuf = gl.createBuffer(); obj.nrmNb = data.nrm.length / 3; gl.bindBuffer(gl.ARRAY_BUFFER,         obj.nrmBuf); gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(data.nrm), gl.STATIC_DRAW);
@@ -27,6 +28,7 @@ Canvasloth.prototype.Objects3D = function() {
 				gl.bindBuffer(gl.ARRAY_BUFFER,         obj.texBuf); gl.vertexAttribPointer(3, 2 /*itemsize*/, gl.FLOAT,         false, 0, 0);
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, obj.indBuf);
 			}
+			cnv.textures.bind(obj.tex);
 			// setUniform
 			matrix.n = mat4.clone(matrix.m);
 			mat4.invert(matrix.n, matrix.n);
@@ -35,10 +37,6 @@ Canvasloth.prototype.Objects3D = function() {
 			gl.uniformMatrix4fv(shaders.uPMatrix,  false, matrix.p);
 			gl.uniformMatrix4fv(shaders.uMVMatrix, false, matrix.m);
 			// draw
-			/*if (obj.tex)
-				cnv.textures.bind(obj.tex);
-			else
-				cnv.textures.unbind();*/
 			gl.drawElements(
 				obj._type,
 				obj.indNb,
@@ -55,9 +53,9 @@ Canvasloth.Object.prototype = {
 		return this.parent.draw(this), this;
 	},
 	texture: function(name) {
-		var img = this.cnv.images.find(name);
-		if (img)
-			this.tex = this.cnv.textures.create(img);
+		this.tex = this.cnv.images.find(name);
+		if (this.tex !== null)
+			this.tex = this.cnv.textures.create(this.tex);
 		return this;
 	},
 	type: function(t) {

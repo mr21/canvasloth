@@ -2,6 +2,7 @@ Canvasloth.prototype.Textures3D = function() {
 	var gl = this.gl,
 		prog = this.shaders.program;
 	this.textures = {
+		uActive: gl.getUniformLocation(prog, 'textureActive'),
 		create: function(img) {
 			var tex = gl.createTexture();
 			gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -12,16 +13,18 @@ Canvasloth.prototype.Textures3D = function() {
 			//gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // Prevents s-coordinate wrapping (repeating).
 			//gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); // Prevents t-coordinate wrapping (repeating).
 			gl.generateMipmap(gl.TEXTURE_2D);
-			this.unbind();
+			this.bind(null);
 			return tex;
 		},
 		bind: function(tex) {
-			//gl.activeTexture(gl.TEXTURE0); 
-			gl.bindTexture(gl.TEXTURE_2D, tex);
-			gl.uniform1i(gl.getUniformLocation(prog, 'uSampler'), 0);
-		},
-		unbind: function() {
-			gl.bindTexture(gl.TEXTURE_2D, null);
+			if (this._currentTex !== tex) {
+				this._currentTex = tex;
+				gl.activeTexture(gl.TEXTURE0); 
+				gl.bindTexture(gl.TEXTURE_2D, tex);
+				gl.uniform1i(this.uActive, tex !== null);
+				if (tex !== null)
+					gl.uniform1i(gl.getUniformLocation(prog, 'uSampler'), 0);
+			}
 		}
 	};
 };

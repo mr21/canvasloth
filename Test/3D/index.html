@@ -38,6 +38,7 @@ body { background:#222; color:#ddd; }
 <script type="text/javascript" src="../../3D/Shaders.js"></script>
 <script type="text/javascript" src="../../3D/Lights.js"></script>
 <script type="text/javascript" src="../../3D/Objects.js"></script>
+<script type="text/javascript" src="../../3D/Textures.js"></script>
 <script type="text/javascript" src="../../3D/Primitives.js"></script>
 <script type="text/javascript" src="../../3D/Grid.js"></script>
 <script type="text/javascript" src="../../3D/CubeMap.js"></script>
@@ -63,10 +64,17 @@ var WebGL_Editor = {
 			r: 200, g:  35, b:  35
 		});
 
-		this.sphere = cnv.primitives.create({
+		this.sphereA = cnv.primitives.create({
 			type: 'sphere', radius: 0.6,
+			latitudes:10, longitudes:10, 
 			r: 200, g: 255, b: 255
 		}).type('lines');
+
+		this.sphereB = cnv.primitives.create({
+			type: 'sphere', radius: 0.4,
+			latitudes:10, longitudes:10, 
+			r: 200, g: 255, b: 255
+		});
 
 		// ### Lights ###
 		cnv.lights.enable()
@@ -83,6 +91,10 @@ var WebGL_Editor = {
 		cnv.camera
 			.spherique(true)
 			.auto();
+
+		// ### CubeMap ###
+		cnv.cubemap.texture('cubemap');
+
 	},
 	update: function(cnv) {
 	},
@@ -101,7 +113,9 @@ var WebGL_Editor = {
 		cnv.matrix.pop().push().translate(0, 0, 0.6);
 			this.cubeB.draw();
 		cnv.matrix.pop().push().translate(-1.5, -1.7, 0.6);
-			this.sphere.draw();
+			this.sphereA.draw();
+		cnv.matrix.pop().push().translate(0.4, -0.7, 1.2 + 0.4);
+			this.sphereB.draw();
 		cnv.matrix.pop();
 	}
 };
@@ -115,7 +129,10 @@ window.cnv = new Canvasloth({
 		'update'  : WebGL_Editor.update,
 		'render'  : WebGL_Editor.render,
 		'keydown' : WebGL_Editor.keydown
-	}
+	},
+	images : [
+		'cubemap.jpg'
+	]
 });
 
 };

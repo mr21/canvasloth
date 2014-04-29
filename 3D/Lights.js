@@ -9,7 +9,7 @@ Canvasloth.prototype.Lights3D = function() {
 		uDirPos: [],
 		uDirCol: [],
 		nbDir: 0,
-		uActive: gl.getUniformLocation(prog, 'active'),
+		uActive: gl.getUniformLocation(prog, 'lightsActive'),
 		uAmbCol: gl.getUniformLocation(prog, 'ambCol'),
 		ambCol: [0, 0, 0],
 		enable: function() {

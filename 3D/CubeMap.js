@@ -9,12 +9,7 @@ Canvasloth.prototype.CubeMap3D = function() {
 		disable: function() { this.active = false; },
 		toggle:  function() { this.active ? this.disable() : this.enable(); },
 		texture: function(name) {
-			/*var img = images.find(name);
-			if (img) {
-				var tex = textures.create(img);
-				textures.bind(tex);
-			}*/
-			return this;
+			return this.cube.texture(name), this;
 		},
 		render: function() {
 			if (this.active) {
@@ -32,7 +27,7 @@ Canvasloth.prototype.CubeMap3D = function() {
 
 	this.cubemap.cube = this.primitives.create({
 		type: 'cube', size: 100,
-		r:30, g:30, b:30
+		r:255, g:255, b:255
 	});
 	this.cubemap.enable();
 };
