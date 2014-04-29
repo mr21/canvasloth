@@ -22,7 +22,7 @@ Canvasloth.prototype.Images = function() {
 			}
 		},
 		find: function(name) {
-			return this.imgs[name];
+			return this.imgs[name] || null;
 		}
 	};
 };
