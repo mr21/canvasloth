@@ -112,6 +112,7 @@ Canvasloth.prototype.Primitives3D = function() {
 						first+1,  second,
 						second+1, first+1
 					);
+					tex.push(1,1,  1,1);
 				}
 
 			return objects.create({
