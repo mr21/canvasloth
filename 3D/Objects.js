@@ -1,7 +1,7 @@
 Canvasloth.prototype.Objects3D = function() {
 	var cnv = this,
 	    gl = this.gl,
-	    shaders = this.shaders,
+	    shaders = this.webgl.shaders,
 	    matrix = this.webgl.matrix;
 	this.objects = {
 		create: function(data) {

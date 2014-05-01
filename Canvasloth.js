@@ -24,7 +24,6 @@ function Canvasloth(p) {
 		this.Sprites2D();
 		this.Anims2D();
 	} else {
-		this.Shaders3D();
 		this.Lights3D();
 		this.Objects3D();
 		this.Textures3D();

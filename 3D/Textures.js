@@ -1,6 +1,6 @@
 Canvasloth.prototype.Textures3D = function() {
 	var gl = this.gl,
-		prog = this.shaders.program;
+		prog = this.webgl.shaders.program();
 	this.textures = {
 		uActive: gl.getUniformLocation(prog, 'textureActive'),
 		create: function(img) {

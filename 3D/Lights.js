@@ -1,7 +1,7 @@
 Canvasloth.prototype.Lights3D = function() {
 	var gl = this.ctx,
-	    shaders = this.shaders,
-	    prog = shaders.program,
+	    shaders = this.webgl.shaders,
+	    prog = shaders.program(),
 	    lights =
 	this.lights = {
 		_dir: [],
