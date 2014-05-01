@@ -28,7 +28,7 @@ Canvasloth.prototype.Objects3D = function() {
 				gl.bindBuffer(gl.ARRAY_BUFFER,         obj.texBuf); gl.vertexAttribPointer(3, 2 /*itemsize*/, gl.FLOAT,         false, 0, 0);
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, obj.indBuf);
 			}
-			cnv.textures.bind(obj.tex);
+			cnv.webgl.textures.bind(obj.tex);
 			// setUniform
 			matrix.n = mat4.clone(matrix.m);
 			mat4.invert(matrix.n, matrix.n);
@@ -55,7 +55,7 @@ Canvasloth.Object.prototype = {
 	texture: function(name) {
 		this.tex = this.cnv.images.find(name);
 		if (this.tex !== null)
-			this.tex = this.cnv.textures.create(this.tex);
+			this.tex = this.cnv.webgl.textures.create(this.tex);
 		return this;
 	},
 	type: function(t) {

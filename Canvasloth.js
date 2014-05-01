@@ -26,7 +26,6 @@ function Canvasloth(p) {
 	} else {
 		this.Lights3D();
 		this.Objects3D();
-		this.Textures3D();
 		this.Primitives3D();
 		this.Grid3D();
 		this.CubeMap3D();
