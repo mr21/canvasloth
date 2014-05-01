@@ -1,16 +1,13 @@
 Canvasloth.prototype.Camera3D = function() {
 	var cnv = this,
-		matrix = this.webgl.matrix,
-		canvas = this.webgl.canvas;
+		canvas = this.webgl.canvas,
+		cam = this.webgl.camera;
 
 	this.camera = {
 		eyX:-1, eyY: -9, eyZ: 5,
 		ctX: 0, ctY:  0, ctZ: 0,
 		upX: 0, upY:  0, upZ: 1,
 		zoomRatio: 1.2,
-		fovy : function(z) { if (z !== undefined) return this._fovy = z, this; return this._fovy; },
-		near : function(z) { if (z !== undefined) return this._near = z, this; return this._near; },
-		far  : function(z) { if (z !== undefined) return this._far  = z, this; return this._far;  },
 		auto : function() {
 			if (!this._auto) {
 				this._auto = true;
@@ -70,40 +67,25 @@ Canvasloth.prototype.Camera3D = function() {
 				this._latitude2 = this._latitude;
 			}
 		},
-		_setPerspective : function() {
-			mat4.perspective(matrix.p,
-				this._fovy,
-				canvas.width() / canvas.height(),
-				this._near,
-				this._far
-			);
-		},
 		_lookAtAuto : function() {
 			// Eye (coordonnees spheriques -> cartesiens)
 			var sinTheta = Math.sin(this._latitude);
 			this.eyX = this._radius * Math.cos(this._longitude) * sinTheta;
 			this.eyY = this._radius * Math.sin(this._longitude) * sinTheta;
 			this.eyZ = this._radius * Math.cos(this._latitude);
-			// lookAt
-			this._setPerspective();
-			mat4.lookAt(matrix.p,
-				[this.eyX,  this.eyY,  this.eyZ],
-				[this.ctX,  this.ctY,  this.ctZ],
-				[this.upX,  this.upY,  this.upZ]
+			cam.lookAt(
+				this.eyX,  this.eyY,  this.eyZ,
+				this.ctX,  this.ctY,  this.ctZ,
+				this.upX,  this.upY,  this.upZ
 			);
 		},
-		lookAt : function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
-			this._setPerspective();
-			mat4.lookAt(matrix.p,
-				[this.eyX=eyX,  this.eyY=eyY,  this.eyZ=eyZ],
-				[this.ctX=ctX,  this.ctY=ctY,  this.ctZ=ctZ],
-				[this.upX=upX,  this.upY=upY,  this.upZ=upZ]
+		lookAt : function(eyX,eyY,eyZ,  ctX,ctY,ctZ,  upX,upY,upZ) {
+			cam.lookAt(
+				this.eyX=eyX,  this.eyY=eyY,  this.eyZ=eyZ,
+				this.ctX=ctX,  this.ctY=ctY,  this.ctZ=ctZ,
+				this.upX=upX,  this.upY=upY,  this.upZ=upZ
 			);
 			return this;
 		}
 	};
-	this.camera
-		.fovy(Math.PI / 3)
-		.near(1)
-		.far(10000);
 };
