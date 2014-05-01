@@ -1,4 +1,6 @@
 function Canvasloth(p) {
+	this.webgl = new WebGL(p.node);
+
 	this.app = p.app;
 	this.container = p.node;
 	this.Times();
@@ -8,9 +10,9 @@ function Canvasloth(p) {
 	this.Images();
 	var type = p.type.toUpperCase();
 	this['Ctx'    + type]();
-	this['Matrix' + type]();
 	this['Camera' + type]();
 	if (type === '2D') {
+		this.Matrix2D();
 		this.Sprites2D();
 		this.Anims2D();
 	} else {

@@ -1,5 +1,7 @@
 Canvasloth.prototype.Camera3D = function() {
-	var cnv = this;
+	var cnv = this,
+		matrix = this.webgl.matrix;
+
 	this.camera = {
 		eyX:-1, eyY: -9, eyZ: 5,
 		ctX: 0, ctY:  0, ctZ: 0,
@@ -68,7 +70,7 @@ Canvasloth.prototype.Camera3D = function() {
 			}
 		},
 		_setPerspective : function() {
-			mat4.perspective(cnv.matrix.p,
+			mat4.perspective(matrix.p,
 				this._fovy,
 				cnv.canvas.width() / cnv.canvas.height(),
 				this._near,
@@ -83,7 +85,7 @@ Canvasloth.prototype.Camera3D = function() {
 			this.eyZ = this._radius * Math.cos(this._latitude);
 			// lookAt
 			this._setPerspective();
-			mat4.lookAt(cnv.matrix.p,
+			mat4.lookAt(matrix.p,
 				[this.eyX,  this.eyY,  this.eyZ],
 				[this.ctX,  this.ctY,  this.ctZ],
 				[this.upX,  this.upY,  this.upZ]
@@ -91,7 +93,7 @@ Canvasloth.prototype.Camera3D = function() {
 		},
 		lookAt : function(eyX, eyY, eyZ, ctX, ctY, ctZ, upX, upY, upZ) {
 			this._setPerspective();
-			mat4.lookAt(cnv.matrix.p,
+			mat4.lookAt(matrix.p,
 				[this.eyX=eyX,  this.eyY=eyY,  this.eyZ=eyZ],
 				[this.ctX=ctX,  this.ctY=ctY,  this.ctZ=ctZ],
 				[this.upX=upX,  this.upY=upY,  this.upZ=upZ]

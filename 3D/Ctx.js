@@ -1,6 +1,7 @@
 Canvasloth.prototype.Ctx3D = function() {
 	var cnv = this,
 	    canvas = this.canvas,
+	    matrix = this.webgl.matrix,
 	    gl = this.ctx = this.gl =
 			canvas.getContext('webgl') ||
 			canvas.getContext('experimental-webgl');
@@ -13,7 +14,7 @@ Canvasloth.prototype.Ctx3D = function() {
 	};
 	gl.render = function(userApp) {
 		this.clear(this.COLOR_BUFFER_BIT | this.DEPTH_BUFFER_BIT | this.STENCIL_BUFFER_BIT);
-		mat4.identity(cnv.matrix.m);
+		mat4.identity(matrix.m);
 		if (cnv.camera._auto === true)
 			cnv.camera._lookAtAuto();
 		cnv.cubemap.render();

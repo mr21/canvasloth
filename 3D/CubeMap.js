@@ -3,7 +3,7 @@ Canvasloth.prototype.CubeMap3D = function() {
 		lights = this.lights,
 		images = this.images,
 		camera = this.camera,
-		matrix = this.matrix,
+		matrix = this.webgl.matrix,
 		textures = this.textures;
 
 	this.cubemap = {

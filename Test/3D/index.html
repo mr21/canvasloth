@@ -6,7 +6,7 @@
 <link type="text/css" rel="stylesheet" href="../../Canvasloth.css"/>
 <!-- CSS.main -->
 <style type="text/css">
-body { margin:0; background:#222; color:#ddd; font:12px sans-serif; }
+body { margin:1em; background:#222; color:#ddd; font:12px sans-serif; }
 a { text-decoration:none; color:#aaf; }
 a:hover { text-decoration:underline; }
 #global { width:600px; margin:auto; overflow:auto; padding:0 1em; background:rgba(0,0,0,0.2); }
@@ -15,7 +15,7 @@ h1 a { font-size:12px; }
 .canvasloth-mouse { background:red; }
 </style>
 
-<!-- JS.JsExt -->
+<!-- JsExt -->
 <script type="text/javascript" src="../../../JsExt/ClassName.js"></script>
 <script type="text/javascript" src="../../../JsExt/CSS.js"></script>
 <script type="text/javascript" src="../../../JsExt/CSSAnim.js"></script>
@@ -24,7 +24,20 @@ h1 a { font-size:12px; }
 <script type="text/javascript" src="../../../JsExt/EventsManager.js"></script>
 <script type="text/javascript" src="../../../JsExt/MathInterp.js"></script>
 <script type="text/javascript" src="../../../JsExt/OffsetPosition.js"></script>
-<!-- JS.Canvasloth -->
+<!-- gl-matrix -->
+<script type="text/javascript" src="../../../lib-WebGL/gl-matrix.js"></script>
+<!-- lib-WebGL -->
+<script type="text/javascript" src="../../../lib-WebGL/WebGL.js"></script>
+<script type="text/javascript" src="../../../lib-WebGL/Matrix.js"></script>
+<!--
+<script type="text/javascript" src="../../../lib-WebGL/Canvas.js"></script>
+<script type="text/javascript" src="../../../lib-WebGL/Camera.js"></script>
+<script type="text/javascript" src="../../../lib-WebGL/Shaders.js"></script>
+<script type="text/javascript" src="../../../lib-WebGL/Textures.js"></script>
+<script type="text/javascript" src="../../../lib-WebGL/Objects.js"></script>
+-->
+
+<!-- Canvasloth -->
 <script type="text/javascript" src="../../Canvasloth.js"></script>
 <script type="text/javascript" src="../../Events.js"></script>
 <script type="text/javascript" src="../../Images.js"></script>
@@ -32,12 +45,7 @@ h1 a { font-size:12px; }
 <script type="text/javascript" src="../../HTML/Canvas.js"></script>
 <script type="text/javascript" src="../../HTML/Pages.js"></script>
 <script type="text/javascript" src="../../HTML/DomIntIncrease.js"></script>
-<script type="text/javascript" src="../../Math/Math.js"></script>
-<script type="text/javascript" src="../../Math/gl-matrix.js"></script>
-<script type="text/javascript" src="../../Math/Matrix.js"></script>
-<script type="text/javascript" src="../../Math/Vector.js"></script>
 <script type="text/javascript" src="../../3D/Ctx.js"></script>
-<script type="text/javascript" src="../../3D/Matrix.js"></script>
 <script type="text/javascript" src="../../3D/Camera.js"></script>
 <script type="text/javascript" src="../../3D/Shaders.js"></script>
 <script type="text/javascript" src="../../3D/Lights.js"></script>
@@ -111,16 +119,17 @@ var WebGL_Editor = {
 		}
 	},
 	render: function(cnv) {
-		var gl = cnv.gl;
-		cnv.matrix.push().translate(1,-2, 0.9).rotate(Math.PI/5, 0, 0, 1);
+		var gl = cnv.gl,
+			mat = cnv.webgl.matrix;
+		mat.push().translate(1,-2, 0.9).rotate(Math.PI/5, 0, 0, 1);
 			this.cubeA.draw();
-		cnv.matrix.pop().push().translate(0, 0, 0.6);
+		mat.pop().push().translate(0, 0, 0.6);
 			this.cubeB.draw();
-		cnv.matrix.pop().push().translate(-1.5, -1.7, 0.6);
+		mat.pop().push().translate(-1.5, -1.7, 0.6);
 			this.sphereA.draw();
-		cnv.matrix.pop().push().translate(0.4, -0.7, 1.2 + 0.4);
+		mat.pop().push().translate(0.4, -0.7, 1.2 + 0.4);
 			this.sphereB.draw();
-		cnv.matrix.pop();
+		mat.pop();
 	}
 };
 
