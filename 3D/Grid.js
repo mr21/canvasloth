@@ -41,7 +41,7 @@ Canvasloth.prototype.Grid3D = function() {
 		}
 	};
 
-	this.grid.obj = this.objects.create({
+	this.grid.obj = this.webgl.objects.create({
 		type: 'LINES',
 		vtx: vtx,
 		nrm: nrm,

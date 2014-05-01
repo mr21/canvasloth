@@ -11,7 +11,7 @@ Canvasloth.prototype.CubeMap3D = function() {
 		disable: function() { this.active = false; },
 		toggle:  function() { this.active ? this.disable() : this.enable(); },
 		texture: function(name) {
-			return this.cube.texture(name), this;
+			return this.cube.texture(images.find(name)), this;
 		},
 		render: function() {
 			if (this.active) {

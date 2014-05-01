@@ -1,5 +1,5 @@
 Canvasloth.prototype.Primitives3D = function() {
-	var objects = this.objects;
+	var objects = this.webgl.objects;
 	this.primitives = {
 		create: function(a) {
 			var alpha = a.a !== undefined ? a.a : 255,
