@@ -1,6 +1,7 @@
 Canvasloth.prototype.Camera3D = function() {
 	var cnv = this,
-		matrix = this.webgl.matrix;
+		matrix = this.webgl.matrix,
+		canvas = this.webgl.canvas;
 
 	this.camera = {
 		eyX:-1, eyY: -9, eyZ: 5,
@@ -72,7 +73,7 @@ Canvasloth.prototype.Camera3D = function() {
 		_setPerspective : function() {
 			mat4.perspective(matrix.p,
 				this._fovy,
-				cnv.canvas.width() / cnv.canvas.height(),
+				canvas.width() / canvas.height(),
 				this._near,
 				this._far
 			);

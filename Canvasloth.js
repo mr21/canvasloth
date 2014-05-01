@@ -1,5 +1,4 @@
 function Canvasloth(p) {
-	this.webgl = new WebGL(p.node);
 
 	this.app = p.app;
 	this.container = p.node;
@@ -9,6 +8,15 @@ function Canvasloth(p) {
 	this.Pages();
 	this.Images();
 	var type = p.type.toUpperCase();
+
+	if (type === '3D') {
+	    var gl = this.ctx = this.gl =
+			this.canvas.getContext('webgl') ||
+			this.canvas.getContext('experimental-webgl');
+	}
+
+	this.webgl = new WebGL(gl);
+
 	this['Ctx'    + type]();
 	this['Camera' + type]();
 	if (type === '2D') {

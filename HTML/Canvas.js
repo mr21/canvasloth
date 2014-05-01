@@ -7,15 +7,8 @@ Canvasloth.prototype.Canvas = function() {
 	container.appendChild(canvas);
 	container.appendChild(catchMouse);
 	this.canvas = {
-		canvas: canvas,
 		catchMouse: catchMouse,
 		getContext: function(type) { return canvas.getContext(type); },
-		cursor: function(c) { catchMouse.style.cursor = c; },
-		width:  function() { return canvas.width;  },
-		height: function() { return canvas.height; },
-		resize: function() {
-			canvas.width  = container.clientWidth;
-			canvas.height = container.clientHeight;
-		}
+		cursor: function(c) { catchMouse.style.cursor = c; }
 	};
 };
