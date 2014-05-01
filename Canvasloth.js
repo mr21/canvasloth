@@ -20,7 +20,6 @@ function Canvasloth(p) {
 		this.Sprites2D();
 		this.Anims2D();
 	} else {
-		this.Lights3D();
 		this.Primitives3D();
 		this.Grid3D();
 		this.CubeMap3D();

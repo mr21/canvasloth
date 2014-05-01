@@ -1,5 +1,5 @@
 Canvasloth.prototype.Grid3D = function() {
-	var lights = this.lights,
+	var lights = this.webgl.lights,
 		nbLines = 11,
 		ind = [], vtx = [], nrm = [],
 		col = [], tex = [], alpha,
