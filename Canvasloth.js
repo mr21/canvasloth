@@ -11,8 +11,8 @@ function Canvasloth(p) {
 	    var gl = this.ctx = this.gl =
 			this.canvas.getContext('webgl') ||
 			this.canvas.getContext('experimental-webgl');
+		this.webgl = new WebGL(gl);
 	}
-	this.webgl = new WebGL(gl);
 	this['Ctx'    + type]();
 	this['Camera' + type]();
 	if (type === '2D') {
