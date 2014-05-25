@@ -9,6 +9,12 @@ Canvasloth.prototype.Canvas = function() {
 	this.canvas = {
 		catchMouse: catchMouse,
 		getContext: function(type) { return canvas.getContext(type); },
-		cursor: function(c) { catchMouse.style.cursor = c; }
+		cursor: function(c) { catchMouse.style.cursor = c; },
+		width:  function() { return canvas.width;  },
+		height: function() { return canvas.height; },
+		resize: function() {
+			canvas.width  = canvas.clientWidth;
+			canvas.height = canvas.clientHeight;
+		}
 	};
 };
