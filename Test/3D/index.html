@@ -105,9 +105,9 @@ var WebGL_Editor = {
 	},
 	keydown: function(key) {
 		switch (key) {
-			case 65: this.cnv.lights.dir('sunA').toggle(); break; // A
-			case 66: this.cnv.lights.dir('sunB').toggle(); break; // B
-			case 76: this.cnv.lights.toggle(); break; // L
+			case 65: this.cnv.webgl.lights.dir('sunA').toggle(); break; // A
+			case 66: this.cnv.webgl.lights.dir('sunB').toggle(); break; // B
+			case 76: this.cnv.webgl.lights.toggle(); break; // L
 			case 71: this.cnv.grid.toggle(); break; // G
 		}
 	},
