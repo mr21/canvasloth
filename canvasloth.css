@@ -1,0 +1,40 @@
+/*
+	Canvasloth - alpha
+	https://github.com/Mr21/Canvasloth
+*/
+
+.canvasloth {
+	position: relative;
+	}
+	.canvasloth > * {
+		position: absolute;
+		left: 0;
+		top: 0;
+		}
+	.canvasloth-assets {
+		z-index: 0;
+		width: 0;
+		height: 0;
+		overflow: hidden;
+		}
+	.canvasloth canvas {
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		}
+	.canvasloth-hud,
+	.canvasloth-events {
+		right: 0;
+		bottom: 0;
+		}
+	.canvasloth-hud {
+		z-index: 2;
+		}
+	.canvasloth-events {
+		z-index: 3;
+		/*background: #000;*/
+		/*opacity: 0;*/
+		}
+		.canvasloth-events:focus {
+			outline: solid 2px rgba(77, 144, 254, .75);
+			}

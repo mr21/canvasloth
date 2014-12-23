@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Canvasloth - demo</title>
+	<link rel="stylesheet" href="canvasloth.css"/>
+	<style>
+	.canvasloth {
+		width: 640px;
+		height: 480px;
+		}
+		canvas {
+			background: #ddd;
+			}
+		.canvasloth-hud {
+			/*background: red;*/
+			}
+	</style>
+	<!--<script src="../jquery.js"></script>-->
+	<script src="canvasloth.js"></script>
+	<script>
+	function lg(s) { console.log(s); }
+	function main() {
+
+		// Game class
+		function Game() {
+			this.name = 'Game';
+		}
+		Game.prototype = {
+			ready: function(cnv) {
+				this.cnv = cnv;
+				lg(this.name + ': ready');
+				// cnv.events('click',     this.click);    // error
+				// cnv.events('keyPress',  this.keyPress); // error
+				cnv.events('keyUp',     this.keyUp);
+				cnv.events('keyDown',   this.keyDown);
+				cnv.events('focus',     this.focus);
+				cnv.events('blur',      this.blur);
+				cnv.events('mouseUp',   this.mouseUp);
+				cnv.events('mouseDown', this.mouseDown);
+				// cnv.events('mousemove', this.mousemove);
+			},
+			loop: function() {
+				lg(this.name + ': loop');
+			},
+			focus:     function(e)         { lg(this.name + ': event: focus     ()'); },
+			blur:      function(e)         { lg(this.name + ': event: blur      ()'); },
+			keyUp:     function(key)       { lg(this.name + ': event: keyUp     (key:'+key+')'); },
+			keyDown:   function(key)       { lg(this.name + ': event: keyDown   (key:'+key+')'); },
+			mousemove: function(x, y, btn) { lg(this.name + ': event: mousemove (x:'+x+', y:'+y+', btn:'+btn+')'); },
+			mouseUp:   function(x, y, btn) { lg(this.name + ': event: mouseUp   (x:'+x+', y:'+y+', btn:'+btn+')'); },
+			mouseDown: function(x, y, btn) { lg(this.name + ': event: mouseDown (x:'+x+', y:'+y+', btn:'+btn+')'); }
+		};
+
+		// Game instance
+		var game = new Game();
+
+		// Creation of an instance of Canvasloth
+		new Canvasloth({
+			container: document.querySelectorAll('.canvasloth'),
+			// autoFocus: true,
+			fps: 2,
+			thisApp: game,
+			ready: game.ready,
+			loop: game.loop
+		});
+	}
+
+	// $(main);
+	window.onload = main;
+	</script>
+</head>
+<body>
+
+<div style="height:500px"></div>
+
+<div class="canvasloth">
+	<div class="canvasloth-assets">
+		<img src="img1.jpg"/>
+		<img src="img2.jpg"/>
+		<img src="img3.jpg"/>
+	</div>
+	<div class="canvasloth-hud"></div>
+</div>
+
+<div style="height:500px"></div>
+
+</body>
+</html>
