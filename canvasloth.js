@@ -141,7 +141,8 @@ function Canvasloth(p) {
 		});
 
 		attachEvent(el_evt, 'mousemove', function(e) {
-			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
+			if (isFocused)
+				fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
 		});
 
 		if (p.autoFocus)
