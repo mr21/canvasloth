@@ -23,6 +23,14 @@ function Canvasloth(p) {
 	this.refreshViewportSize = function() {
 		el_cnv.width  = el_cnv.clientWidth;
 		el_cnv.height = el_cnv.clientHeight;
+		return that;
+	};
+
+	this.image = function(name) {
+		for (var i = 0, e; e = nl_img[i]; ++i)
+			if (e.src.lastIndexOf(name) === e.src.length - name.length)
+				return e;
+		console.error('Canvasloth: image "'+name+'" not found.');
 	};
 
 	this.events = function(ev, fn) {
