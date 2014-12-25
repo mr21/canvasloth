@@ -28,17 +28,7 @@
 		}
 		Game.prototype = {
 			ready: function(cnv) {
-				this.cnv = cnv;
 				lg(this.name + ': ready');
-				// cnv.events('click',     this.click);    // error
-				// cnv.events('keyPress',  this.keyPress); // error
-				cnv.events('keyUp',     this.keyUp);
-				cnv.events('keyDown',   this.keyDown);
-				cnv.events('focus',     this.focus);
-				cnv.events('blur',      this.blur);
-				cnv.events('mouseUp',   this.mouseUp);
-				cnv.events('mouseDown', this.mouseDown);
-				// cnv.events('mouseMove', this.mouseMove);
 				var img = cnv.image('img2.jpg');
 				lg(img)
 			},
@@ -49,9 +39,9 @@
 			blur:      function(e)         { lg(this.name + ': event: blur      ()'); },
 			keyUp:     function(key)       { lg(this.name + ': event: keyUp     (key:'+key+')'); },
 			keyDown:   function(key)       { lg(this.name + ': event: keyDown   (key:'+key+')'); },
-			mouseMove: function(x, y, btn) { lg(this.name + ': event: mouseMove (x:'+x+', y:'+y+', btn:'+btn+')'); },
+			mouseMove: function(x, y)      { lg(this.name + ': event: mouseMove (x:'+x+', y:'+y+')'); },
 			mouseUp:   function(x, y, btn) { lg(this.name + ': event: mouseUp   (x:'+x+', y:'+y+', btn:'+btn+')'); },
-			mouseDown: function(x, y)      { lg(this.name + ': event: mouseDown (x:'+x+', y:'+y+')'); }
+			mouseDown: function(x, y, btn) { lg(this.name + ': event: mouseDown (x:'+x+', y:'+y+', btn:'+btn+')'); }
 		};
 
 		// Game instance
@@ -64,7 +54,16 @@
 			fps: 2,
 			thisApp: game,
 			ready: game.ready,
-			loop: game.loop
+			loop: game.loop,
+			events: {
+				keyUp:     game.keyUp,
+				keyDown:   game.keyDown,
+				focus:     game.focus,
+				blur:      game.blur,
+				mouseUp:   game.mouseUp,
+				mouseDown: game.mouseDown,
+				mouseMove: game.mouseMove
+			}
 		});
 	}
 

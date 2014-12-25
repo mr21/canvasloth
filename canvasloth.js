@@ -85,6 +85,9 @@ function Canvasloth(p) {
 		that.events('mouseup',   function() {});
 		that.events('mousemove', function() {});
 
+		for (var ev in p.events)
+			that.events(ev, p.events[ev]);
+
 		attachEvent(window, 'mouseup', function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 0;
