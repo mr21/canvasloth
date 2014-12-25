@@ -40,6 +40,13 @@ function Canvasloth(p) {
 	setEvents();
 	callReady();
 
+	function attachEvent(el, ev, fn) {
+		if (el.addEventListener)
+		  el.addEventListener(ev, fn, false);
+		else
+		  el.attachEvent('on'+ev, fn);
+	}
+
 	function createDom() {
 		el_ctn = p.container.nodeType === Node.ELEMENT_NODE
 			? p.container : p.container[0];
@@ -58,7 +65,10 @@ function Canvasloth(p) {
 	}
 
 	function setEvents() {
+		var	mouseButtonsStatus = [];
+
 		el_ctn.oncontextmenu = function() { return false; };
+
 		that.events('focus',     function() {});
 		that.events('blur',      function() {});
 		that.events('keydown',   function() {});
@@ -67,13 +77,19 @@ function Canvasloth(p) {
 		that.events('mouseup',   function() {});
 		that.events('mousemove', function() {});
 
-		el_evt.onfocus = function(e) {
+		attachEvent(window, 'mouseup', function(e) {
+			if (mouseButtonsStatus[e.button] === 1) {
+				mouseButtonsStatus[e.button] = 0;
+				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
+			}
+		});
+
+		attachEvent(el_evt, 'focus', function() {
 			isFocused = true;
 			fn_events.focus.call(p.thisApp);
-			return false;
-		};
+		});
 		
-		el_evt.onblur = function(e) {
+		attachEvent(el_evt, 'blur', function() {
 			if (isFocused) {
 				isFocused = false;
 				for (var i in keys)
@@ -85,41 +101,40 @@ function Canvasloth(p) {
 					el_evt.blur();
 				fn_events.blur.call(p.thisApp);
 			}
-			return false;
-		};
-		
-		el_evt.onkeydown = function(e) {
+		});
+
+		attachEvent(el_evt, 'keydown', function(e) {
 			if (!keys[e.keyCode]) {
 				fn_events.keydown.call(p.thisApp, e.keyCode);
 				keys[e.keyCode] = true;
 			}
-			return false;
-		};
-		
-		el_evt.onkeyup = function(e) {
+			e.preventDefault();
+		});
+
+		attachEvent(el_evt, 'keyup', function(e) {
 			if (keys[e.keyCode]) {
 				fn_events.keyup.call(p.thisApp, e.keyCode);
 				keys[e.keyCode] = false;
 			}
-			return false;
-		};
+		});
 
-		el_evt.onmousedown = function(e) {
+		attachEvent(el_evt, 'mousedown', function(e) {
+			mouseButtonsStatus[e.button] = 1;
 			if (!isFocused)
 				el_evt.focus();
 			fn_events.mousedown.call(p.thisApp, e.layerX, e.layerY, e.button);
-			return false;
-		};
+		});
 
-		el_evt.onmouseup = function(e) {
-			fn_events.mouseup.call(p.thisApp, e.layerX, e.layerY, e.button);
-			return false;
-		};
+		attachEvent(el_evt, 'mouseup', function(e) {
+			if (isFocused) {
+				mouseButtonsStatus[e.button] = 2;
+				fn_events.mouseup.call(p.thisApp, e.layerX, e.layerY, e.button);
+			}
+		});
 
-		el_evt.onmousemove = function(e) {
+		attachEvent(el_evt, 'mousemove', function(e) {
 			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
-			return false;
-		};
+		});
 
 		if (p.autoFocus)
 			el_evt.focus();
