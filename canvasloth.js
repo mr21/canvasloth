@@ -17,9 +17,16 @@ function Canvasloth(p) {
 		keys = [],
 		isFocused = false,
 		fn_events = [],
+		startTime = 0,
+		currentOldTime = 0,
+		currentTime = 0,
 		fps = p.fps
 			? 1000 / p.fps
 			: 1000 / 60;
+
+	this.resetTime = function() { startTime = currentTime; };
+	this.totalTime = function() { return currentTime - startTime; };
+	this.frameTime = function() { return currentTime - currentOldTime; };
 
 	this.refreshViewportSize = function() {
 		el_cnv.width  = el_cnv.clientWidth;
@@ -158,6 +165,8 @@ function Canvasloth(p) {
 
 	function startLooping() {
 		setInterval(function() {
+			currentOldTime = currentTime;
+			currentTime = new Date().getTime() / 1000;
 			if (isFocused)
 				p.loop.call(p.thisApp);
 		}, fps);
@@ -167,9 +176,12 @@ function Canvasloth(p) {
 		var	nbElementsToLoad = 1;
 		function loaded() {
 			if (!--nbElementsToLoad) {
+				currentTime =
+				startTime = new Date().getTime() / 1000;
 				p.ready.call(p.thisApp, that, ctx);
 				if (p.autoFocus)
 					el_evt.focus();
+				currentTime = new Date().getTime() / 1000;
 				startLooping();
 			}
 		}

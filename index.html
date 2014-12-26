@@ -38,13 +38,14 @@
 		}
 		Game.prototype = {
 			ready: function(cnv, ctx) {
+				this.cnv = cnv;
 				this.el_console = document.querySelector('.console');
 				this.consoleWrite('<b>ready</b> ( )');
 				var img = cnv.image('img2.jpg');
 				lg(img)
 			},
 			loop: function() {
-				this.consoleWrite('loop...');
+				this.consoleWrite('loop... frameTime: ' + (Math.round(this.cnv.frameTime() * 1000) / 1000) + ' (sec)');
 			},
 			consoleWrite: function(msg) {
 				var div = document.createElement('div');
