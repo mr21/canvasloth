@@ -46,7 +46,8 @@ function Canvasloth(p) {
 
 	createDom();
 	this.refreshViewportSize();
-	callReady();
+	setEvents();
+	loadAssetsAndGo();
 
 	function attachEvent(el, ev, fn) {
 		if (el.addEventListener)
@@ -153,25 +154,24 @@ function Canvasloth(p) {
 			if (isFocused)
 				fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
 		});
-
-		if (p.autoFocus)
-			el_evt.focus();
 	}
 
-	function ready() {
-		p.ready.call(p.thisApp, that, ctx);
-		setEvents();
+	function startLooping() {
 		setInterval(function() {
 			if (isFocused)
 				p.loop.call(p.thisApp);
 		}, fps);
 	}
 
-	function callReady() {
+	function loadAssetsAndGo() {
 		var	nbElementsToLoad = 1;
 		function loaded() {
-			if (!--nbElementsToLoad)
-				ready();
+			if (!--nbElementsToLoad) {
+				p.ready.call(p.thisApp, that, ctx);
+				if (p.autoFocus)
+					el_evt.focus();
+				startLooping();
+			}
 		}
 		if (p.ready)
 			for (var i = 0, img; img = nl_img[i]; ++i)
