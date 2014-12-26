@@ -1,5 +1,5 @@
 /*
-	Canvasloth - alpha
+	Canvasloth - beta
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -45,7 +45,6 @@ function Canvasloth(p) {
 
 	createDom();
 	this.refreshViewportSize();
-	setEvents();
 	callReady();
 
 	function attachEvent(el, ev, fn) {
@@ -154,6 +153,7 @@ function Canvasloth(p) {
 
 	function ready() {
 		p.ready.call(p.thisApp, that);
+		setEvents();
 		setInterval(function() {
 			if (isFocused)
 				p.loop.call(p.thisApp);

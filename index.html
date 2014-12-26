@@ -13,8 +13,18 @@
 			background: #ddd;
 			}
 		.canvasloth-hud {
-			/*background: red;*/
+			font: 11px sans-serif;
 			}
+			.canvasloth-hud .console {
+				position: absolute;
+				overflow: auto;
+				width: 210px;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				padding: .2em .3em;
+				background: rgba(0,0,0,.2);
+				}
 	</style>
 	<!--<script src="../jquery.js"></script>-->
 	<script src="canvasloth.js"></script>
@@ -28,20 +38,27 @@
 		}
 		Game.prototype = {
 			ready: function(cnv) {
-				lg(this.name + ': ready');
+				this.el_console = document.querySelector('.console');
+				this.consoleWrite('<b>ready</b> ( )');
 				var img = cnv.image('img2.jpg');
 				lg(img)
 			},
 			loop: function() {
-				lg(this.name + ': loop');
+				this.consoleWrite('loop...');
 			},
-			focus:     function(e)         { lg(this.name + ': event: focus     ()'); },
-			blur:      function(e)         { lg(this.name + ': event: blur      ()'); },
-			keyUp:     function(key)       { lg(this.name + ': event: keyUp     (key:'+key+')'); },
-			keyDown:   function(key)       { lg(this.name + ': event: keyDown   (key:'+key+')'); },
-			mouseMove: function(x, y)      { lg(this.name + ': event: mouseMove (x:'+x+', y:'+y+')'); },
-			mouseUp:   function(x, y, btn) { lg(this.name + ': event: mouseUp   (x:'+x+', y:'+y+', btn:'+btn+')'); },
-			mouseDown: function(x, y, btn) { lg(this.name + ': event: mouseDown (x:'+x+', y:'+y+', btn:'+btn+')'); }
+			consoleWrite: function(msg) {
+				var div = document.createElement('div');
+				div.innerHTML = msg;
+				this.el_console.appendChild(div);
+				this.el_console.scrollTop = 1000000;
+			},
+			focus:     function(e)         { this.consoleWrite('<b>focus</b>     ( )'); },
+			blur:      function(e)         { this.consoleWrite('<b>blur</b>      ( )'); },
+			keyUp:     function(key)       { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
+			keyDown:   function(key)       { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
+			mouseMove: function(x, y)      { this.consoleWrite('mouse<b>Move</b> ( x <b>'+x+'</b>, y <b>'+y+'</b> )'); },
+			mouseUp:   function(x, y, btn) { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); },
+			mouseDown: function(x, y, btn) { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); }
 		};
 
 		// Game instance
@@ -50,8 +67,8 @@
 		// Creation of an instance of Canvasloth
 		new Canvasloth({
 			container: document.querySelectorAll('.canvasloth'),
-			// autoFocus: true,
-			fps: 2,
+			autoFocus: true,
+			fps: 1,
 			thisApp: game,
 			ready: game.ready,
 			loop: game.loop,
@@ -60,9 +77,9 @@
 				keyDown:   game.keyDown,
 				focus:     game.focus,
 				blur:      game.blur,
+				// mouseMove: game.mouseMove,
 				mouseUp:   game.mouseUp,
-				mouseDown: game.mouseDown,
-				mouseMove: game.mouseMove
+				mouseDown: game.mouseDown
 			}
 		});
 	}
@@ -81,7 +98,9 @@
 		<img src="img2.jpg"/>
 		<img src="img3.jpg"/>
 	</div>
-	<div class="canvasloth-hud"></div>
+	<div class="canvasloth-hud">
+		<div class="console"></div>
+	</div>
 </div>
 
 <div style="height:500px"></div>
