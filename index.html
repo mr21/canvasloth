@@ -37,7 +37,7 @@
 			this.name = 'Game';
 		}
 		Game.prototype = {
-			ready: function(cnv) {
+			ready: function(cnv, ctx) {
 				this.el_console = document.querySelector('.console');
 				this.consoleWrite('<b>ready</b> ( )');
 				var img = cnv.image('img2.jpg');
@@ -67,6 +67,7 @@
 		// Creation of an instance of Canvasloth
 		new Canvasloth({
 			container: document.querySelectorAll('.canvasloth'),
+			context: '2d',
 			autoFocus: true,
 			fps: 1,
 			thisApp: game,

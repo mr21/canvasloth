@@ -7,6 +7,7 @@
 
 function Canvasloth(p) {
 	var	that = this,
+		ctx,
 		el_ctn,
 		el_ast,
 		el_cnv,
@@ -69,6 +70,12 @@ function Canvasloth(p) {
 		el_evt.className = 'canvasloth-events';
 		el_ctn.appendChild(el_cnv);
 		el_ctn.appendChild(el_evt);
+		ctx = p.context === '2d'
+			? el_cnv.getContext('2d')
+			: (
+				el_cnv.getContext('webgl') ||
+				el_cnv.getContext('experimental-webgl')
+			);
 	}
 
 	function setEvents() {
@@ -152,7 +159,7 @@ function Canvasloth(p) {
 	}
 
 	function ready() {
-		p.ready.call(p.thisApp, that);
+		p.ready.call(p.thisApp, that, ctx);
 		setEvents();
 		setInterval(function() {
 			if (isFocused)
