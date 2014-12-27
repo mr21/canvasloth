@@ -111,12 +111,14 @@ function Canvasloth(p) {
 
 		attachEvent(el_evt, 'focus', function() {
 			isFocused = true;
+			el_ctn.className += ' canvasloth-focus';
 			fn_events.focus.call(p.thisApp);
 		});
 		
 		attachEvent(el_evt, 'blur', function() {
 			if (isFocused) {
 				isFocused = false;
+				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, '');
 				for (var i in keys)
 					if (keys[i = parseInt(i)]) {
 						fn_events.keyup.call(p.thisApp, i);
@@ -151,7 +153,7 @@ function Canvasloth(p) {
 		});
 
 		attachEvent(el_evt, 'mouseup', function(e) {
-			if (isFocused) {
+			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 2;
 				fn_events.mouseup.call(p.thisApp, e.layerX, e.layerY, e.button);
 			}

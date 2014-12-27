@@ -12,6 +12,9 @@
 	    -ms-user-select: none;
 	        user-select: none;
 	}
+	.canvasloth-focus {
+		outline: solid 2px rgba(77, 144, 254, .75);
+		}
 	.canvasloth > * {
 		position: absolute;
 		left: 0;
@@ -38,9 +41,5 @@
 		}
 	.canvasloth-events {
 		z-index: 3;
-		/*background: #000;*/
-		/*opacity: 0;*/
+		outline: 0;
 		}
-		.canvasloth-events:focus {
-			outline: solid 2px rgba(77, 144, 254, .75);
-			}
