@@ -42,4 +42,5 @@
 	.canvasloth-events {
 		z-index: 3;
 		outline: 0;
+		cursor: default;
 		}
