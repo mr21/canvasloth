@@ -47,13 +47,28 @@
 					this.el_console.removeChild(this.el_console.children[0]);
 				this.el_console.scrollTop = 1000000;
 			},
+			putImage: function(x, y) {
+				var	w = this.img.width,
+					h = this.img.height;
+				this.ctx.globalAlpha = 0.5;
+				this.ctx.drawImage(
+					this.img,
+					0, 0,
+					w, h,
+					x - w * 2,
+					y - h * 2,
+					w * 4,
+					h * 4
+				);
+			},
 			// Callbacks
 			ready: function(cnv, ctx) {
 				this.cnv = cnv;
+				this.ctx = ctx;
+				this.isClicked = false;
 				this.el_console = document.querySelector('.console');
 				this.consoleWrite('<b>ready</b> ( )');
-				var img = cnv.image('img2.jpg');
-				lg(img)
+				this.img = cnv.image('dot.png');
 			},
 			loop: function() {
 				this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
@@ -61,12 +76,12 @@
 			// Events
 			focus:     function(e)            { this.consoleWrite('<b>focus</b>     ( )'); },
 			blur:      function(e)            { this.consoleWrite('<b>blur</b>      ( )'); },
-			keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
 			keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
-			mouseMove: function(x, y)         { this.consoleWrite('mouse<b>Move</b> ( x <b>'+x+'</b>, y <b>'+y+'</b> )'); },
+			keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
 			wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
-			mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); },
-			mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); }
+			mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
+			mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
+			mouseMove: function(x, y)         { if (this.isClicked) this.putImage(x, y); }
 		};
 
 		// Game instance
@@ -86,7 +101,7 @@
 				keyDown:   game.keyDown,
 				focus:     game.focus,
 				blur:      game.blur,
-				// mouseMove: game.mouseMove,
+				mouseMove: game.mouseMove,
 				wheel:     game.wheel,
 				mouseUp:   game.mouseUp,
 				mouseDown: game.mouseDown
@@ -104,9 +119,7 @@
 
 <div class="canvasloth">
 	<div class="canvasloth-assets">
-		<img src="img1.jpg"/>
-		<img src="img2.jpg"/>
-		<img src="img3.jpg"/>
+		<img src="dot.png"/>
 	</div>
 	<div class="canvasloth-hud">
 		<div class="console"></div>
