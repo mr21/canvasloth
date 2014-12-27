@@ -13,11 +13,11 @@
 			background: #ddd;
 			}
 		.canvasloth-hud {
-			font: 11px sans-serif;
+			font: 11px/14px sans-serif;
 			}
 			.canvasloth-hud .console {
 				position: absolute;
-				overflow: auto;
+				overflow: hidden;
 				width: 210px;
 				left: 0;
 				top: 0;
@@ -37,6 +37,17 @@
 			this.name = 'Game';
 		}
 		Game.prototype = {
+			// Game methodes
+			around: function(n) { return Math.round(n * 1000) / 1000; },
+			consoleWrite: function(msg) {
+				var div = document.createElement('div');
+				div.innerHTML = msg;
+				this.el_console.appendChild(div);
+				if (this.el_console.children.length > 34)
+					this.el_console.removeChild(this.el_console.children[0]);
+				this.el_console.scrollTop = 1000000;
+			},
+			// Callbacks
 			ready: function(cnv, ctx) {
 				this.cnv = cnv;
 				this.el_console = document.querySelector('.console');
@@ -45,21 +56,17 @@
 				lg(img)
 			},
 			loop: function() {
-				this.consoleWrite('loop... frameTime: ' + (Math.round(this.cnv.frameTime() * 1000) / 1000) + ' (sec)');
+				this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
 			},
-			consoleWrite: function(msg) {
-				var div = document.createElement('div');
-				div.innerHTML = msg;
-				this.el_console.appendChild(div);
-				this.el_console.scrollTop = 1000000;
-			},
-			focus:     function(e)         { this.consoleWrite('<b>focus</b>     ( )'); },
-			blur:      function(e)         { this.consoleWrite('<b>blur</b>      ( )'); },
-			keyUp:     function(key)       { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
-			keyDown:   function(key)       { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
-			mouseMove: function(x, y)      { this.consoleWrite('mouse<b>Move</b> ( x <b>'+x+'</b>, y <b>'+y+'</b> )'); },
-			mouseUp:   function(x, y, btn) { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); },
-			mouseDown: function(x, y, btn) { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); }
+			// Events
+			focus:     function(e)            { this.consoleWrite('<b>focus</b>     ( )'); },
+			blur:      function(e)            { this.consoleWrite('<b>blur</b>      ( )'); },
+			keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
+			keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
+			mouseMove: function(x, y)         { this.consoleWrite('mouse<b>Move</b> ( x <b>'+x+'</b>, y <b>'+y+'</b> )'); },
+			wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
+			mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); },
+			mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); }
 		};
 
 		// Game instance
@@ -80,6 +87,7 @@
 				focus:     game.focus,
 				blur:      game.blur,
 				// mouseMove: game.mouseMove,
+				wheel:     game.wheel,
 				mouseUp:   game.mouseUp,
 				mouseDown: game.mouseDown
 			}

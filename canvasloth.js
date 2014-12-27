@@ -98,6 +98,7 @@ function Canvasloth(p) {
 		that.events('mousedown', function() {});
 		that.events('mouseup',   function() {});
 		that.events('mousemove', function() {});
+		that.events('wheel',     function() {});
 
 		for (var ev in p.events)
 			that.events(ev, p.events[ev]);
@@ -162,6 +163,16 @@ function Canvasloth(p) {
 		attachEvent(el_evt, 'mousemove', function(e) {
 			if (isFocused)
 				fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
+		});
+
+		attachEvent(el_evt, 'wheel', function(e) {
+			if (isFocused) {
+				fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
+					e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
+					e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
+				);
+				e.preventDefault();
+			}
 		});
 	}
 
