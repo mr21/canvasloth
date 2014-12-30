@@ -15,10 +15,10 @@
 		canvas {
 			background: rgb(175,175,255);
 			}
-		.canvasloth-hud {
+		.canvasloth-hud-below {
 			font: 11px/14px sans-serif;
 			}
-			.canvasloth-hud .console {
+			.canvasloth-hud-below .console {
 				position: absolute;
 				overflow: hidden;
 				width: 200px;
@@ -27,84 +27,77 @@
 				bottom: 0;
 				border-right: 1px dashed rgba(255,255,255,.5);
 				padding: .2em .3em;
-				color: rgba(255,255,255,.7);
+				color: rgba(44,44,44,.8);
 				background: rgba(175,175,255,.92);
 				}
-				.canvasloth-hud .console b {
-					color: rgb(255,255,255);
+				.canvasloth-hud-below .console b {
+					color: rgb(44,44,44);
 					}
+		.canvasloth-hud-above {
+			}
+			.canvasloth-hud-above .clear {
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+				font-weight: bold;
+				box-shadow: 0 0 10px rgba(255,255,255,.8);
+				}
 	</style>
 	<script>
 	function lg(s) { console.log(s); }
 
-	function Game() {
-		this.name = 'Game';
-	}
-	Game.prototype = {
-		// Game methodes
-		around: function(n) { return Math.round(n * 1000) / 1000; },
-		consoleWrite: function(msg) {
-			var div = document.createElement('div');
-			div.innerHTML = msg;
-			this.el_console.appendChild(div);
-			if (this.el_console.children.length > 34)
-				this.el_console.removeChild(this.el_console.children[0]);
-			this.el_console.scrollTop = 1000000;
-		},
-		putImage: function(x, y) {
-			var	w = this.img.width,
-				h = this.img.height,
-				sc = .2 + Math.random() * .5;
-			this.ctx.save();
-				this.ctx.translate(x, y);
-					this.ctx.scale(sc, sc);
-						this.ctx.rotate(Math.random() * Math.PI);
-							this.ctx.globalAlpha = .9;
-							this.ctx.drawImage(this.img, 0, 0, w, h, w / -2, h / -2, w, h);
-			this.ctx.restore();
-		},
-		// Callbacks
-		ready: function(cnv, ctx) {
-			this.cnv = cnv;
-			this.ctx = ctx;
-			this.isClicked = false;
-			this.el_console = document.querySelector('.console');
-			this.consoleWrite('<b>ready</b> ( )');
-			this.img = cnv.image('5.png');
-		},
-		loop: function() {
-			this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
-		},
-		// Events
-		focus:     function()             { this.consoleWrite('<b>focus</b>     ( )'); },
-		blur:      function()             { this.consoleWrite('<b>blur</b>      ( )'); },
-		keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
-		keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
-		wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
-		mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
-		mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
-		mouseMove: function(x, y)         { if (this.isClicked) this.putImage(x, y); }
-	};
-
 	function main() {
-		var game = new Game();
 		new Canvasloth({
 			container: document.querySelector('.canvasloth'),
 			context: '2d',
 			autoFocus: true,
 			fps: 1,
-			thisApp: game,
-			ready: game.ready,
-			loop: game.loop,
+			thisApp: {
+				around: function(n) { return Math.round(n * 1000) / 1000; },
+				consoleWrite: function(msg) {
+					var div = document.createElement('div');
+					div.innerHTML = msg;
+					this.el_console.appendChild(div);
+					if (this.el_console.children.length > 34)
+						this.el_console.removeChild(this.el_console.children[0]);
+					this.el_console.scrollTop = 1000000;
+				},
+				putImage: function(x, y) {
+					var	w = this.img.width,
+						h = this.img.height,
+						sc = .2 + Math.random() * .5;
+					this.ctx.save();
+						this.ctx.translate(x, y);
+							this.ctx.scale(sc, sc);
+								this.ctx.rotate(Math.random() * Math.PI);
+									this.ctx.globalAlpha = .9;
+									this.ctx.drawImage(this.img, 0, 0, w, h, w / -2, h / -2, w, h);
+					this.ctx.restore();
+				}
+			},
+			ready: function(cnv, ctx) {
+				this.cnv = cnv;
+				this.ctx = ctx;
+				this.isClicked = false;
+				this.el_console = cnv.container.querySelector('.console');
+				this.consoleWrite('<b>ready</b> ( )');
+				this.img = cnv.image('5.png');
+				cnv.container.querySelector('.clear').onclick = function(e) {
+					ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+				};
+			},
+			loop: function() {
+				this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
+			},
 			events: {
-				keyUp:     game.keyUp,
-				keyDown:   game.keyDown,
-				focus:     game.focus,
-				blur:      game.blur,
-				mouseMove: game.mouseMove,
-				wheel:     game.wheel,
-				mouseUp:   game.mouseUp,
-				mouseDown: game.mouseDown
+				focus:     function()             { this.consoleWrite('<b>focus</b>     ( )'); },
+				blur:      function()             { this.consoleWrite('<b>blur</b>      ( )'); },
+				keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
+				keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
+				wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
+				mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
+				mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
+				mouseMove: function(x, y)         { if (this.isClicked) this.putImage(x, y); }
 			}
 		});
 	}
@@ -118,8 +111,11 @@
 		<div class="canvasloth-assets">
 			<img src="5.png"/>
 		</div>
-		<div class="canvasloth-hud">
+		<div class="canvasloth-hud-below">
 			<div class="console"></div>
+		</div>
+		<div class="canvasloth-hud-above">
+			<button class="clear">Clear</button>
 		</div>
 	</div>
 </body>
