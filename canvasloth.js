@@ -83,7 +83,7 @@ function Canvasloth(p) {
 		el_evt.tabIndex = 0;
 		el_evt.className = 'canvasloth-events';
 		el_ctn.appendChild(el_cnv);
-		el_hudA.insertBefore(el_evt, el_hudA.firstChild); // check IE
+		el_hudA.insertBefore(el_evt, el_hudA.firstChild);
 		ctx = p.context === '2d'
 			? el_cnv.getContext('2d')
 			: (
