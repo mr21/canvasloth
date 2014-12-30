@@ -4,13 +4,16 @@
 	<meta charset="UTF-8"/>
 	<title>Canvasloth - demo</title>
 	<link rel="stylesheet" href="canvasloth.css"/>
+	<!--<script src="../jquery.js"></script>-->
+	<script src="canvasloth.js"></script>
 	<style>
 	.canvasloth {
 		width: 640px;
 		height: 480px;
+		margin: auto;
 		}
 		canvas {
-			background: #ddd;
+			background: rgb(175,175,255);
 			}
 		.canvasloth-hud {
 			font: 11px/14px sans-serif;
@@ -18,78 +21,75 @@
 			.canvasloth-hud .console {
 				position: absolute;
 				overflow: hidden;
-				width: 210px;
+				width: 200px;
 				left: 0;
 				top: 0;
 				bottom: 0;
+				border-right: 1px dashed rgba(255,255,255,.5);
 				padding: .2em .3em;
-				background: rgba(0,0,0,.2);
+				color: rgba(255,255,255,.7);
+				background: rgba(175,175,255,.92);
 				}
+				.canvasloth-hud .console b {
+					color: rgb(255,255,255);
+					}
 	</style>
-	<!--<script src="../jquery.js"></script>-->
-	<script src="canvasloth.js"></script>
 	<script>
 	function lg(s) { console.log(s); }
+
+	function Game() {
+		this.name = 'Game';
+	}
+	Game.prototype = {
+		// Game methodes
+		around: function(n) { return Math.round(n * 1000) / 1000; },
+		consoleWrite: function(msg) {
+			var div = document.createElement('div');
+			div.innerHTML = msg;
+			this.el_console.appendChild(div);
+			if (this.el_console.children.length > 34)
+				this.el_console.removeChild(this.el_console.children[0]);
+			this.el_console.scrollTop = 1000000;
+		},
+		putImage: function(x, y) {
+			var	w = this.img.width,
+				h = this.img.height,
+				sc = .2 + Math.random() * .5;
+			this.ctx.save();
+				this.ctx.translate(x, y);
+					this.ctx.scale(sc, sc);
+						this.ctx.rotate(Math.random() * Math.PI);
+							this.ctx.globalAlpha = .9;
+							this.ctx.drawImage(this.img, 0, 0, w, h, w / -2, h / -2, w, h);
+			this.ctx.restore();
+		},
+		// Callbacks
+		ready: function(cnv, ctx) {
+			this.cnv = cnv;
+			this.ctx = ctx;
+			this.isClicked = false;
+			this.el_console = document.querySelector('.console');
+			this.consoleWrite('<b>ready</b> ( )');
+			this.img = cnv.image('5.png');
+		},
+		loop: function() {
+			this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
+		},
+		// Events
+		focus:     function()             { this.consoleWrite('<b>focus</b>     ( )'); },
+		blur:      function()             { this.consoleWrite('<b>blur</b>      ( )'); },
+		keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
+		keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
+		wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
+		mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
+		mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
+		mouseMove: function(x, y)         { if (this.isClicked) this.putImage(x, y); }
+	};
+
 	function main() {
-
-		// Game class
-		function Game() {
-			this.name = 'Game';
-		}
-		Game.prototype = {
-			// Game methodes
-			around: function(n) { return Math.round(n * 1000) / 1000; },
-			consoleWrite: function(msg) {
-				var div = document.createElement('div');
-				div.innerHTML = msg;
-				this.el_console.appendChild(div);
-				if (this.el_console.children.length > 34)
-					this.el_console.removeChild(this.el_console.children[0]);
-				this.el_console.scrollTop = 1000000;
-			},
-			putImage: function(x, y) {
-				var	w = this.img.width,
-					h = this.img.height;
-				this.ctx.globalAlpha = 0.5;
-				this.ctx.drawImage(
-					this.img,
-					0, 0,
-					w, h,
-					x - w * 2,
-					y - h * 2,
-					w * 4,
-					h * 4
-				);
-			},
-			// Callbacks
-			ready: function(cnv, ctx) {
-				this.cnv = cnv;
-				this.ctx = ctx;
-				this.isClicked = false;
-				this.el_console = document.querySelector('.console');
-				this.consoleWrite('<b>ready</b> ( )');
-				this.img = cnv.image('dot.png');
-			},
-			loop: function() {
-				this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
-			},
-			// Events
-			focus:     function(e)            { this.consoleWrite('<b>focus</b>     ( )'); },
-			blur:      function(e)            { this.consoleWrite('<b>blur</b>      ( )'); },
-			keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
-			keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
-			wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
-			mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
-			mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
-			mouseMove: function(x, y)         { if (this.isClicked) this.putImage(x, y); }
-		};
-
-		// Game instance
 		var game = new Game();
-
-		// Creation of an instance of Canvasloth
 		new Canvasloth({
-			container: document.querySelectorAll('.canvasloth'),
+			container: document.querySelector('.canvasloth'),
 			context: '2d',
 			autoFocus: true,
 			fps: 1,
@@ -114,19 +114,13 @@
 	</script>
 </head>
 <body>
-
-<div style="height:500px"></div>
-
-<div class="canvasloth">
-	<div class="canvasloth-assets">
-		<img src="dot.png"/>
+	<div class="canvasloth">
+		<div class="canvasloth-assets">
+			<img src="5.png"/>
+		</div>
+		<div class="canvasloth-hud">
+			<div class="console"></div>
+		</div>
 	</div>
-	<div class="canvasloth-hud">
-		<div class="console"></div>
-	</div>
-</div>
-
-<div style="height:500px"></div>
-
 </body>
 </html>
