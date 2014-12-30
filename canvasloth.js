@@ -1,5 +1,5 @@
 /*
-	Canvasloth - beta
+	Canvasloth - 1.0
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -11,18 +11,24 @@ function Canvasloth(p) {
 		el_ctn,
 		el_ast,
 		el_cnv,
-		el_hud,
+		el_hudB,
+		el_hudA,
 		el_evt,
 		nl_img,
 		keys = [],
 		isFocused = false,
 		fn_events = [],
+		fn_loop = p.loop || function() {},
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
 		fps = p.fps
 			? 1000 / p.fps
 			: 1000 / 60;
+
+	this.container = p.container.nodeType === Node.ELEMENT_NODE
+		? p.container
+		: p.container[0];
 
 	this.resetTime = function() { startTime = currentTime; };
 	this.totalTime = function() { return currentTime - startTime; };
@@ -64,20 +70,20 @@ function Canvasloth(p) {
 	}
 
 	function createDom() {
-		el_ctn = p.container.nodeType === Node.ELEMENT_NODE
-			? p.container : p.container[0];
+		el_ctn = that.container;
 		el_ast = el_ctn.querySelector('.canvasloth-assets');
-		if (el_ast)
-			nl_img = el_ast.getElementsByTagName('img');
-		el_hud = el_ctn.querySelector('.canvasloth-hud');
+		el_hudB = el_ctn.querySelector('.canvasloth-hud-below');
+		el_hudA = el_ctn.querySelector('.canvasloth-hud-above');
 		el_cnv = document.createElement('canvas');
 		el_evt = document.createElement('div');
+		if (el_ast)
+			nl_img = el_ast.getElementsByTagName('img');
 		if (el_ctn.className.indexOf('canvasloth') === -1)
 			el_ctn.className += ' canvasloth';
 		el_evt.tabIndex = 0;
 		el_evt.className = 'canvasloth-events';
 		el_ctn.appendChild(el_cnv);
-		el_ctn.appendChild(el_evt);
+		el_hudA.insertBefore(el_evt, el_hudA.firstChild); // check IE
 		ctx = p.context === '2d'
 			? el_cnv.getContext('2d')
 			: (
@@ -108,6 +114,10 @@ function Canvasloth(p) {
 				mouseButtonsStatus[e.button] = 0;
 				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
 			}
+		});
+
+		attachEvent(el_hudA, 'mousedown', function(e) {
+			e.preventDefault();
 		});
 
 		attachEvent(el_evt, 'focus', function() {
@@ -161,18 +171,15 @@ function Canvasloth(p) {
 		});
 
 		attachEvent(el_evt, 'mousemove', function(e) {
-			if (isFocused)
-				fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
+			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
 		});
 
 		attachEvent(el_evt, 'wheel', function(e) {
-			if (isFocused) {
-				fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
-					e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
-					e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
-				);
-				e.preventDefault();
-			}
+			fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
+				e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
+				e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
+			);
+			e.preventDefault();
 		});
 	}
 
@@ -180,8 +187,7 @@ function Canvasloth(p) {
 		setInterval(function() {
 			currentOldTime = currentTime;
 			currentTime = new Date().getTime() / 1000;
-			if (isFocused)
-				p.loop.call(p.thisApp);
+			fn_loop.call(p.thisApp);
 		}, fps);
 	}
 
@@ -191,7 +197,8 @@ function Canvasloth(p) {
 			if (!--nbElementsToLoad) {
 				currentTime =
 				startTime = new Date().getTime() / 1000;
-				p.ready.call(p.thisApp, that, ctx);
+				if (p.ready)
+					p.ready.call(p.thisApp, that, ctx);
 				if (p.autoFocus)
 					el_evt.focus();
 				currentTime = new Date().getTime() / 1000;
