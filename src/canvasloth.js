@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.0
+	Canvasloth - 1.1
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -15,7 +15,7 @@ function Canvasloth(p) {
 		el_hudA,
 		el_evt,
 		nl_img,
-		keys = [],
+		ar_keys = [],
 		isFocused = false,
 		fn_events = [],
 		fn_loop = p.loop || function() {},
@@ -30,6 +30,7 @@ function Canvasloth(p) {
 		? p.container
 		: p.container[0];
 
+	this.key = function(k) { return ar_keys[k]; };
 	this.resetTime = function() { startTime = currentTime; };
 	this.totalTime = function() { return currentTime - startTime; };
 	this.frameTime = function() { return currentTime - currentOldTime; };
@@ -130,10 +131,10 @@ function Canvasloth(p) {
 			if (isFocused) {
 				isFocused = false;
 				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, '');
-				for (var i in keys)
-					if (keys[i = parseInt(i)]) {
+				for (var i in ar_keys)
+					if (ar_keys[i = parseInt(i)]) {
 						fn_events.keyup.call(p.thisApp, i);
-						keys[i] = false;
+						ar_keys[i] = false;
 					}
 				if (!p.autoFocus)
 					el_evt.blur();
@@ -142,17 +143,17 @@ function Canvasloth(p) {
 		});
 
 		attachEvent(el_evt, 'keydown', function(e) {
-			if (!keys[e.keyCode]) {
+			if (!ar_keys[e.keyCode]) {
 				fn_events.keydown.call(p.thisApp, e.keyCode);
-				keys[e.keyCode] = true;
+				ar_keys[e.keyCode] = true;
 			}
 			e.preventDefault();
 		});
 
 		attachEvent(el_evt, 'keyup', function(e) {
-			if (keys[e.keyCode]) {
+			if (ar_keys[e.keyCode]) {
 				fn_events.keyup.call(p.thisApp, e.keyCode);
-				keys[e.keyCode] = false;
+				ar_keys[e.keyCode] = false;
 			}
 		});
 
