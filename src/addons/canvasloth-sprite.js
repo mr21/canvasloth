@@ -3,14 +3,18 @@
 	https://github.com/Mr21/Canvasloth
 */
 
+'use strict';
+
 function canvaslothSprite(ctx, img) {
 	this.ctx = ctx;
 	this.img = img;
+	this.dstSizeCalled = -1;
 	this
 		.opacity(1)
 		.pivotX("left", 0)
 		.pivotY("top", 0)
-		.srcRect(0, 0, img.width, img.height)
+		.srcPos(0, 0)
+		.srcSize(img.width, img.height)
 		.dstSize(img.width, img.height);
 }
 
@@ -19,18 +23,24 @@ canvaslothSprite.prototype = {
 		this.op = o;
 		return this;
 	},
-	srcRect: function(x, y, w, h) {
+	srcPos: function(x, y) {
 		this.sx = x;
 		this.sy = y;
+		return this;
+	},
+	srcSize: function(w, h) {
 		this.sw = w;
 		this.sh = h;
-		if (this.dstSize_w !== undefined)
+		if (!this.dstSizeCalled)
+			this.dstSize(w, h);
+		else if (this.dstSize_w !== undefined)
 			this.dstSize(this.dstSize_w, this.dstSize_h);
 		else if (this.dstSizeNorm_w !== undefined)
 			this.dstSizeNorm(this.dstSizeNorm_w, this.dstSizeNorm_h);
 		return this;
 	},
 	dstSize: function(w, h) {
+		++this.dstSizeCalled;
 		if (h === undefined)
 			h = w;
 		this.dstSizeNorm_w = undefined;
