@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.1
+	Canvasloth - 1.2
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -11,8 +11,8 @@ function Canvasloth(p) {
 		el_ctn,
 		el_ast,
 		el_cnv,
-		el_hudB,
-		el_hudA,
+		el_hudBelow,
+		el_hudAbove,
 		el_evt,
 		nl_img,
 		ar_keys = [],
@@ -65,16 +65,16 @@ function Canvasloth(p) {
 
 	function attachEvent(el, ev, fn) {
 		if (el.addEventListener)
-		  el.addEventListener(ev, fn, false);
+			el.addEventListener(ev, fn, false);
 		else
-		  el.attachEvent('on'+ev, fn);
+			el.attachEvent('on'+ev, fn);
 	}
 
 	function createDom() {
 		el_ctn = that.container;
 		el_ast = el_ctn.querySelector('.canvasloth-assets');
-		el_hudB = el_ctn.querySelector('.canvasloth-hud-below');
-		el_hudA = el_ctn.querySelector('.canvasloth-hud-above');
+		el_hudBelow = el_ctn.querySelector('.canvasloth-hud-below');
+		el_hudAbove = el_ctn.querySelector('.canvasloth-hud-above');
 		el_cnv = document.createElement('canvas');
 		el_evt = document.createElement('div');
 		if (el_ast)
@@ -84,7 +84,7 @@ function Canvasloth(p) {
 		el_evt.tabIndex = 0;
 		el_evt.className = 'canvasloth-events';
 		el_ctn.appendChild(el_cnv);
-		el_hudA.insertBefore(el_evt, el_hudA.firstChild);
+		el_hudAbove.insertBefore(el_evt, el_hudAbove.firstChild);
 		ctx = p.context === '2d'
 			? el_cnv.getContext('2d')
 			: (
@@ -117,7 +117,9 @@ function Canvasloth(p) {
 			}
 		});
 
-		attachEvent(el_hudA, 'mousedown', function(e) {
+		attachEvent(el_hudAbove, 'mousedown', function(e) {
+			if (!isFocused)
+				el_evt.focus();
 			e.preventDefault();
 		});
 
