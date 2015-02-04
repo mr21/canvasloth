@@ -1,5 +1,5 @@
 /*
-	Canvasloth Animation - 1.0
+	Canvasloth Animation - 1.1
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -10,10 +10,9 @@ function canvaslothAnim(sprite) {
 	this.timer = 0;
 	this.currFrame = 0;
 	this
-		.play()
 		.nbFrames(1)
 		.duration(1)
-		.frame(0)
+		.stop()
 		.loopAt(0)
 		.looping(false)
 }
@@ -25,6 +24,10 @@ canvaslothAnim.prototype = {
 	},
 	pause: function() {
 		this.isPlaying = false;
+		return this;
+	},
+	stop: function() {
+		this.pause().frame(0);
 		return this;
 	},
 	looping: function(l) {
