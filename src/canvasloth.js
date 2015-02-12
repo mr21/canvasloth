@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.3
+	Canvasloth - 1.4
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -11,7 +11,6 @@ function Canvasloth(p) {
 		el_ctn,
 		el_ast,
 		el_cnv,
-		el_hudBelow,
 		el_hudAbove,
 		el_evt,
 		nl_img,
@@ -77,19 +76,26 @@ function Canvasloth(p) {
 	function createDom() {
 		el_ctn = that.container;
 		el_ast = el_ctn.querySelector('.canvasloth-assets');
-		el_hudBelow = el_ctn.querySelector('.canvasloth-hud-below');
 		el_hudAbove = el_ctn.querySelector('.canvasloth-hud-above');
 		el_cnv = document.createElement('canvas');
 		el_evt = document.createElement('div');
-		if (el_ast) {
-			nl_img = el_ast.getElementsByTagName('img');
-			nl_audio = el_ast.getElementsByTagName('audio');
+		if (!el_ast) {
+			el_ast = document.createElement('div');
+			el_ast.className = 'canvasloth-assets';
+			el_ctn.appendChild(el_ast);
 		}
+		nl_img = el_ast.getElementsByTagName('img');
+		nl_audio = el_ast.getElementsByTagName('audio');
 		if (el_ctn.className.indexOf('canvasloth') === -1)
 			el_ctn.className += ' canvasloth';
 		el_evt.tabIndex = 0;
 		el_evt.className = 'canvasloth-events';
 		el_ctn.appendChild(el_cnv);
+		if (!el_hudAbove) {
+			el_hudAbove = document.createElement('div');
+			el_hudAbove.className = 'canvasloth-hud-above';
+			el_ctn.appendChild(el_hudAbove);
+		}
 		el_hudAbove.insertBefore(el_evt, el_hudAbove.firstChild);
 		ctx = p.context === '2d'
 			? el_cnv.getContext('2d')
