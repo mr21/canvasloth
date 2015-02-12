@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.2
+	Canvasloth - 1.3
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -15,6 +15,7 @@ function Canvasloth(p) {
 		el_hudAbove,
 		el_evt,
 		nl_img,
+		nl_audio,
 		ar_keys = [],
 		isFocused = false,
 		fn_events = [],
@@ -41,12 +42,15 @@ function Canvasloth(p) {
 		return that;
 	};
 
-	this.image = function(name) {
-		for (var i = 0, e; e = nl_img[i]; ++i)
+	function getAsset(arr, name) {
+		for (var i = 0, e; e = arr[i]; ++i)
 			if (e.src.lastIndexOf(name) === e.src.length - name.length)
 				return e;
-		console.error('Canvasloth: image "'+name+'" not found.');
-	};
+		console.error('Canvasloth: "'+name+'" not found.');
+	}
+	this.image = function(name) { return getAsset(nl_img, name); };
+	this.audio = function(name) { return getAsset(nl_audio, name); };
+	this.file = function(name) { return this.image(name) || this.audio(name); };
 
 	this.events = function(ev, fn) {
 		ev = ev.toLowerCase();
@@ -77,8 +81,10 @@ function Canvasloth(p) {
 		el_hudAbove = el_ctn.querySelector('.canvasloth-hud-above');
 		el_cnv = document.createElement('canvas');
 		el_evt = document.createElement('div');
-		if (el_ast)
+		if (el_ast) {
 			nl_img = el_ast.getElementsByTagName('img');
+			nl_audio = el_ast.getElementsByTagName('audio');
+		}
 		if (el_ctn.className.indexOf('canvasloth') === -1)
 			el_ctn.className += ' canvasloth';
 		el_evt.tabIndex = 0;
@@ -208,7 +214,7 @@ function Canvasloth(p) {
 				startLooping();
 			}
 		}
-		if (p.ready)
+		if (p.ready) {
 			for (var i = 0, img; img = nl_img[i]; ++i)
 				if (!img.complete) {
 					++nbElementsToLoad;
@@ -216,6 +222,14 @@ function Canvasloth(p) {
 						loaded();
 					};
 				}
+			for (var i = 0, audio; audio = nl_audio[i]; ++i)
+				if (audio.readyState !== audio.HAVE_ENOUGH_DATA) {
+					++nbElementsToLoad;
+					audio.oncanplaythrough = function() {
+						loaded();
+					};
+				}
+		}
 		loaded();
 	}
 }
