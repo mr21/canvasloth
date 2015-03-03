@@ -1,0 +1,1 @@
+Canvasloth.Math = function() {};
