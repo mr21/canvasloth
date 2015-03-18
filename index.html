@@ -53,23 +53,30 @@
 				}
 	</style>
 	<script>
-	function lg(s) { console.log(s); }
-
 	function main() {
 		new Canvasloth({
-			container: document.querySelector('.canvasloth'),
-			context: '2d',
+			container: document.querySelector(".canvasloth"),
+			context: "2d",
 			autoFocus: true,
 			fps: 1,
 			thisApp: {
-				around: function(n) { return Math.round(n * 1000) / 1000; },
+				round: function(n) { return Math.round(n * 1000) / 1000; },
 				consoleWrite: function(msg) {
-					var div = document.createElement('div');
+					var div = document.createElement("div");
 					div.innerHTML = msg;
 					this.el_console.appendChild(div);
 					if (this.el_console.children.length > 34)
 						this.el_console.removeChild(this.el_console.children[0]);
 					this.el_console.scrollTop = 1000000;
+				},
+				concatTouchesIds: function(touches) {
+					var s = "";
+					for (var id in touches) {
+						if (s)
+							s += ", ";
+						s += "<b>" + id + "</b>";
+					}
+					return s;
 				},
 				putImage: function(x, y) {
 					var	w = this.img.width,
@@ -88,27 +95,50 @@
 				this.cnv = cnv;
 				this.ctx = ctx;
 				this.isClicked = false;
-				this.el_console = cnv.container.querySelector('.console');
-				this.consoleWrite('<b>ready</b> ( )');
-				this.img = cnv.image('5.png');
-				cnv.container.querySelector('.clear').onclick = function(e) {
+				this.el_console = cnv.container.querySelector(".console");
+				this.consoleWrite("<b>ready</b> ( )");
+				this.img = cnv.image("5.png");
+				cnv.container.querySelector(".clear").onclick = function(e) {
 					ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 				};
 			},
 			loop: function() {
-				this.consoleWrite('loop... frameTime: ' + this.around(this.cnv.frameTime()) + ' (sec)');
+				this.consoleWrite("loop... frameTime: " + this.round(this.cnv.frameTime()) + " (sec)");
 			},
 			events: {
-				focus:     function()             { this.consoleWrite('<b>focus</b>     ( )'); },
-				blur:      function()             { this.consoleWrite('<b>blur</b>      ( )'); },
-				keyDown:   function(key)          { this.consoleWrite('key<b>Down</b>   ( key <b>'+key+'</b> )'); },
-				keyUp:     function(key)          { this.consoleWrite('key<b>Up</b>     ( key <b>'+key+'</b> )'); },
-				wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
-				mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
-				mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
+				focus: function() {
+					this.consoleWrite("<b>focus</b> ( )");
+				},
+				blur: function() {
+					this.consoleWrite("<b>blur</b> ( )");
+				},
+				keyDown: function(key) {
+					this.consoleWrite("key<b>Down</b> ( key <b>"+key+"</b> )");
+				},
+				keyUp: function(key) {
+					this.consoleWrite("key<b>Up</b> ( key <b>"+key+"</b> )");
+				},
+				wheel: function(x, y, dx, dy) {
+					this.consoleWrite("<b>wheel</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, dx <b>"+this.round(dx)+"</b>, dy <b>"+this.round(dy)+"</b> )");
+				},
+				mouseDown: function(x, y, btn) {
+					this.consoleWrite("mouse<b>Down</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, btn <b>"+btn+"</b> )");
+					this.isClicked = true;
+					this.putImage(x, y);
+				},
+				mouseUp: function(x, y, btn) {
+					this.consoleWrite("mouse<b>Up</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, btn <b>"+btn+"</b> )");
+					this.isClicked = false;
+				},
 				mouseMove: function(x, y) {
 					if (this.isClicked)
 						this.putImage(x, y);
+				},
+				touchStart: function(touches) {
+					this.consoleWrite("touch<b>Start</b> : " + this.concatTouchesIds(touches));
+				},
+				touchEnd: function(touches) {
+					this.consoleWrite("touch<b>End</b> : " + this.concatTouchesIds(touches));
 				},
 				touchMove: function(touches) {
 					for (var id in touches)
