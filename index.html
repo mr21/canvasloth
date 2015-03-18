@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Canvasloth - 1.4</title>
+	<title>Canvasloth</title>
 	<meta charset="UTF-8"/>
 	<meta property="og:title"       content="Canvasloth"/>
 	<meta property="og:url"         content="https://mr21.github.io/canvasloth/"/>
@@ -78,7 +78,7 @@
 					this.ctx.save();
 						this.ctx.translate(x, y);
 							this.ctx.scale(sc, sc);
-								this.ctx.rotate(Math.random() * Math.PI);
+								this.ctx.rotate(Math.random() * Math.PI * 2);
 									this.ctx.globalAlpha = .9;
 									this.ctx.drawImage(this.img, 0, 0, w, h, w / -2, h / -2, w, h);
 					this.ctx.restore();
@@ -106,7 +106,17 @@
 				wheel:     function(x, y, dx, dy) { this.consoleWrite('<b>wheel</b>     ( x <b>'+x+'</b>, y <b>'+y+'</b>, dx <b>'+this.around(dx)+'</b>, dy <b>'+this.around(dy)+'</b> )'); },
 				mouseDown: function(x, y, btn)    { this.consoleWrite('mouse<b>Down</b> ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = true; this.putImage(x, y); },
 				mouseUp:   function(x, y, btn)    { this.consoleWrite('mouse<b>Up</b>   ( x <b>'+x+'</b>, y <b>'+y+'</b>, btn <b>'+btn+'</b> )'); this.isClicked = false; },
-				mouseMove: function(x, y)         { if (this.isClicked) this.putImage(x, y); }
+				mouseMove: function(x, y) {
+					if (this.isClicked)
+						this.putImage(x, y);
+				},
+				touchMove: function(touches) {
+					for (var id in touches)
+						this.putImage(
+							touches[id].x,
+							touches[id].y
+						);
+				}
 			}
 		});
 	}
@@ -118,7 +128,7 @@
 <body>
 	<div id="header">
 		<i class="fa fa-fw fa-html5"></i>
-		<h1>Canvasloth - 1.4</h1>
+		<h1>Canvasloth - 1.5</h1>
 	</div>
 
 	<div class="canvasloth">

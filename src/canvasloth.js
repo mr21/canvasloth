@@ -1,12 +1,14 @@
 /*
-	Canvasloth - 1.4
+	Canvasloth - 1.5
 	https://github.com/Mr21/Canvasloth
 */
 
 'use strict';
 
 function Canvasloth(p) {
-	var	that = this,
+	var
+		noop = function() {},
+		that = this,
 		ctx,
 		el_ctn,
 		el_ast,
@@ -18,7 +20,8 @@ function Canvasloth(p) {
 		ar_keys = [],
 		isFocused = false,
 		fn_events = [],
-		fn_loop = p.loop || function() {},
+		fn_loop = p.loop || noop,
+		touches = {},
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -66,11 +69,11 @@ function Canvasloth(p) {
 	setEvents();
 	loadAssetsAndGo();
 
-	function attachEvent(el, ev, fn) {
-		if (el.addEventListener)
-			el.addEventListener(ev, fn, false);
+	function attachEvent(e, v, f) {
+		if (e.addEventListener)
+			e.addEventListener(v, f, false);
 		else
-			el.attachEvent('on'+ev, fn);
+			e.attachEvent("on" + v, f);
 	}
 
 	function createDom() {
@@ -106,45 +109,89 @@ function Canvasloth(p) {
 	}
 
 	function setEvents() {
-		var	mouseButtonsStatus = [];
+		var mouseButtonsStatus = [];
 
 		el_ctn.oncontextmenu = function() { return false; };
 
-		that.events('focus',     function() {});
-		that.events('blur',      function() {});
-		that.events('keydown',   function() {});
-		that.events('keyup',     function() {});
-		that.events('mousedown', function() {});
-		that.events('mouseup',   function() {});
-		that.events('mousemove', function() {});
-		that.events('wheel',     function() {});
+		that.events("focus",      noop);
+		that.events("blur",       noop);
+		that.events("keydown",    noop);
+		that.events("keyup",      noop);
+		that.events("mousedown",  noop);
+		that.events("mouseup",    noop);
+		that.events("mousemove",  noop);
+		that.events("wheel",      noop);
+		that.events("touchstart", noop);
+		that.events("touchend",   noop);
+		that.events("touchmove",  noop);
 
 		for (var ev in p.events)
 			that.events(ev, p.events[ev]);
 
-		attachEvent(window, 'mouseup', function(e) {
+		function setTouches(e) {
+			e.preventDefault();
+			e = e.changedTouches;
+			for (var t, i = 0; t = e[i]; ++i) {
+				var	id = t.identifier,
+					to = touches[id],
+					rect = el_evt.getBoundingClientRect();
+				if (!to)
+					touches[id] = to = {};
+				to.x = t.pageX - rect.left - window.scrollX;
+				to.y = t.pageY - rect.top  - window.scrollY;
+			}
+		}
+
+		attachEvent(el_evt, "touchstart", function(e) {
+			setTouches(e);
+			fn_events.touchstart.call(p.thisApp, touches);
+		});
+
+		attachEvent(el_evt, "touchmove", function(e) {
+			setTouches(e);
+			fn_events.touchmove.call(p.thisApp, touches);
+		});
+
+		attachEvent(window, "touchend", function(e) {
+			e = e.changedTouches;
+			var touchesDeleted = {};
+			for (var t, i = 0; t = e[i]; ++i) {
+				var	id = t.identifier,
+					to = touches[id];
+				if (to) {
+					touchesDeleted[id] = {
+						x: to.x,
+						y: to.y
+					};
+					delete touches[id];
+				}
+			}
+			fn_events.touchend.call(p.thisApp, touchesDeleted);
+		});
+
+		attachEvent(window, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 0;
 				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
 			}
 		});
 
-		attachEvent(el_hudAbove, 'mousedown', function(e) {
+		attachEvent(el_hudAbove, "mousedown", function(e) {
 			if (!isFocused)
 				el_evt.focus();
 			e.preventDefault();
 		});
 
-		attachEvent(el_evt, 'focus', function() {
+		attachEvent(el_evt, "focus", function() {
 			isFocused = true;
-			el_ctn.className += ' canvasloth-focus';
+			el_ctn.className += " canvasloth-focus";
 			fn_events.focus.call(p.thisApp);
 		});
 		
-		attachEvent(el_evt, 'blur', function() {
+		attachEvent(el_evt, "blur", function() {
 			if (isFocused) {
 				isFocused = false;
-				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, '');
+				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, "");
 				for (var i in ar_keys)
 					if (ar_keys[i = parseInt(i)]) {
 						fn_events.keyup.call(p.thisApp, i);
@@ -156,7 +203,7 @@ function Canvasloth(p) {
 			}
 		});
 
-		attachEvent(el_evt, 'keydown', function(e) {
+		attachEvent(el_evt, "keydown", function(e) {
 			if (!ar_keys[e.keyCode]) {
 				fn_events.keydown.call(p.thisApp, e.keyCode);
 				ar_keys[e.keyCode] = true;
@@ -164,32 +211,32 @@ function Canvasloth(p) {
 			e.preventDefault();
 		});
 
-		attachEvent(el_evt, 'keyup', function(e) {
+		attachEvent(el_evt, "keyup", function(e) {
 			if (ar_keys[e.keyCode]) {
 				fn_events.keyup.call(p.thisApp, e.keyCode);
 				ar_keys[e.keyCode] = false;
 			}
 		});
 
-		attachEvent(el_evt, 'mousedown', function(e) {
+		attachEvent(el_evt, "mousedown", function(e) {
 			mouseButtonsStatus[e.button] = 1;
 			if (!isFocused)
 				el_evt.focus();
 			fn_events.mousedown.call(p.thisApp, e.layerX, e.layerY, e.button);
 		});
 
-		attachEvent(el_evt, 'mouseup', function(e) {
+		attachEvent(el_evt, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 2;
 				fn_events.mouseup.call(p.thisApp, e.layerX, e.layerY, e.button);
 			}
 		});
 
-		attachEvent(el_evt, 'mousemove', function(e) {
+		attachEvent(el_evt, "mousemove", function(e) {
 			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
 		});
 
-		attachEvent(el_evt, 'wheel', function(e) {
+		attachEvent(el_evt, "wheel", function(e) {
 			fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
 				e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
 				e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
