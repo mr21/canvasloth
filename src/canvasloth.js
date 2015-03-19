@@ -3,12 +3,20 @@
 	https://github.com/Mr21/Canvasloth
 */
 
-'use strict';
+"use strict";
 
 function Canvasloth(p) {
 	var
-		noop = function() {},
 		that = this,
+		// utils
+		noop = function() {},
+		attachEvent = function(e, v, f) {
+			if (e.addEventListener)
+				e.addEventListener(v, f, false);
+			else
+				e.attachEvent("on" + v, f);
+		},
+		// attr
 		ctx,
 		el_ctn,
 		el_ast,
@@ -57,7 +65,7 @@ function Canvasloth(p) {
 	this.refreshViewportSize();
 	setEvents();
 
-	// events
+	// callbacks
 	(function() {
 
 		el_ctn.oncontextmenu = function() { return false; };
@@ -132,13 +140,6 @@ function Canvasloth(p) {
 	})();
 
 	loadAssetsAndGo();
-
-	function attachEvent(e, v, f) {
-		if (e.addEventListener)
-			e.addEventListener(v, f, false);
-		else
-			e.attachEvent("on" + v, f);
-	}
 
 	function createDom() {
 		el_ctn = that.container;
