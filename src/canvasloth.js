@@ -153,6 +153,9 @@ function Canvasloth(p) {
 						y: t.pageY - rc.top  - window.scrollY
 					};
 					fn_events.touchstart.call(p.thisApp, id, to.x, to.y);
+					to = {};
+					to[id] = touches[id];
+					fn_events.touchmove.call(p.thisApp, to);
 				}
 		});
 
