@@ -21,7 +21,6 @@ function Canvasloth(p) {
 		isFocused = false,
 		fn_events = [],
 		fn_loop = p.loop || noop,
-		touches = {},
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -67,6 +66,49 @@ function Canvasloth(p) {
 	createDom();
 	this.refreshViewportSize();
 	setEvents();
+
+	// touchscreen
+	(function() {
+
+		var touches = {};
+
+		attachEvent(el_evt, "touchstart", function(e) {
+			var	id, t, to, i = 0,
+				rc = el_evt.getBoundingClientRect();
+			e.preventDefault();
+			for (; t = e.changedTouches[i]; ++i)
+				if (!touches[id = t.identifier]) {
+					to = touches[id] = {
+						x: t.pageX - rc.left - window.scrollX,
+						y: t.pageY - rc.top  - window.scrollY
+					};
+					fn_events.touchstart.call(p.thisApp, id, to.x, to.y);
+				}
+		});
+
+		attachEvent(el_evt, "touchmove", function(e) {
+			var	t, to, i = 0,
+				rc = el_evt.getBoundingClientRect();
+			e.preventDefault();
+			for (; t = e.changedTouches[i]; ++i) {
+				to = touches[t.identifier];
+				to.x = t.pageX - rc.left - window.scrollX;
+				to.y = t.pageY - rc.top  - window.scrollY;
+			}
+			fn_events.touchmove.call(p.thisApp, touches);
+		});
+
+		attachEvent(window, "touchend", function(e) {
+			var	id, t, to, i = 0;
+			for (; t = e.changedTouches[i]; ++i)
+				if (to = touches[id = t.identifier]) {
+					fn_events.touchend.call(p.thisApp, id, to.x, to.y);
+					delete touches[id];
+				}
+		});
+
+	})();
+
 	loadAssetsAndGo();
 
 	function attachEvent(e, v, f) {
@@ -127,41 +169,6 @@ function Canvasloth(p) {
 
 		for (var ev in p.events)
 			that.events(ev, p.events[ev]);
-
-		attachEvent(el_evt, "touchstart", function(e) {
-			var	id, t, to, i = 0,
-				rc = el_evt.getBoundingClientRect();
-			e.preventDefault();
-			for (; t = e.changedTouches[i]; ++i)
-				if (!touches[id = t.identifier]) {
-					to = touches[id] = {
-						x: t.pageX - rc.left - window.scrollX,
-						y: t.pageY - rc.top  - window.scrollY
-					};
-					fn_events.touchstart.call(p.thisApp, id, to.x, to.y);
-				}
-		});
-
-		attachEvent(el_evt, "touchmove", function(e) {
-			var	t, to, i = 0,
-				rc = el_evt.getBoundingClientRect();
-			e.preventDefault();
-			for (; t = e.changedTouches[i]; ++i) {
-				to = touches[t.identifier];
-				to.x = t.pageX - rc.left - window.scrollX;
-				to.y = t.pageY - rc.top  - window.scrollY;
-			}
-			fn_events.touchmove.call(p.thisApp, touches);
-		});
-
-		attachEvent(window, "touchend", function(e) {
-			var	id, t, to, i = 0;
-			for (; t = e.changedTouches[i]; ++i)
-				if (to = touches[id = t.identifier]) {
-					fn_events.touchend.call(p.thisApp, id, to.x, to.y);
-					delete touches[id];
-				}
-		});
 
 		attachEvent(window, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
