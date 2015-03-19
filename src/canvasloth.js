@@ -24,7 +24,6 @@ function Canvasloth(p) {
 		el_evt,
 		nl_img,
 		nl_audio,
-		ar_keys = [],
 		isFocused = false,
 		fn_events = [],
 		fn_loop = p.loop || noop,
@@ -39,7 +38,6 @@ function Canvasloth(p) {
 		? p.container
 		: p.container[0];
 
-	this.key = function(k) { return ar_keys[k]; };
 	this.resetTime = function() { startTime = currentTime; };
 	this.totalTime = function() { return currentTime - startTime; };
 	this.frameTime = function() { return currentTime - currentOldTime; };
@@ -175,6 +173,28 @@ function Canvasloth(p) {
 	})();
 
 	loadAssetsAndGo();
+	// keyboard
+	var ar_keys = [];
+	(function () {
+
+		that.key = function(k) { return ar_keys[k]; };
+
+		attachEvent(el_evt, "keydown", function(e) {
+			e.preventDefault();
+			if (!ar_keys[e.keyCode]) {
+				fn_events.keydown.call(p.thisApp, e.keyCode);
+				ar_keys[e.keyCode] = true;
+			}
+		});
+
+		attachEvent(el_evt, "keyup", function(e) {
+			if (ar_keys[e.keyCode]) {
+				fn_events.keyup.call(p.thisApp, e.keyCode);
+				ar_keys[e.keyCode] = false;
+			}
+		});
+
+	})();
 
 	function setEvents() {
 		var mouseButtonsStatus = [];
@@ -210,21 +230,6 @@ function Canvasloth(p) {
 				if (!p.autoFocus)
 					el_evt.blur();
 				fn_events.blur.call(p.thisApp);
-			}
-		});
-
-		attachEvent(el_evt, "keydown", function(e) {
-			if (!ar_keys[e.keyCode]) {
-				fn_events.keydown.call(p.thisApp, e.keyCode);
-				ar_keys[e.keyCode] = true;
-			}
-			e.preventDefault();
-		});
-
-		attachEvent(el_evt, "keyup", function(e) {
-			if (ar_keys[e.keyCode]) {
-				fn_events.keyup.call(p.thisApp, e.keyCode);
-				ar_keys[e.keyCode] = false;
 			}
 		});
 
