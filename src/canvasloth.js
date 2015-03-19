@@ -272,17 +272,19 @@ function Canvasloth(p) {
 
 	})();
 
-	function startLooping() {
-		setInterval(function() {
-			currentOldTime = currentTime;
-			currentTime = new Date().getTime() / 1000;
-			fn_loop.call(p.thisApp);
-		}, fps);
-	}
+	// load & go
+	(function() {
 
-	loadAssetsAndGo();
-	function loadAssetsAndGo() {
 		var	nbElementsToLoad = 1;
+
+		function startLooping() {
+			setInterval(function() {
+				currentOldTime = currentTime;
+				currentTime = new Date().getTime() / 1000;
+				fn_loop.call(p.thisApp);
+			}, fps);
+		}
+
 		function loaded() {
 			if (!--nbElementsToLoad) {
 				currentTime =
@@ -295,6 +297,7 @@ function Canvasloth(p) {
 				startLooping();
 			}
 		}
+
 		if (p.ready) {
 			for (var i = 0, img; img = nl_img[i]; ++i)
 				if (!img.complete) {
@@ -311,6 +314,9 @@ function Canvasloth(p) {
 					};
 				}
 		}
+
 		loaded();
-	}
+
+	})();
+
 }
