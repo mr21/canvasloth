@@ -92,6 +92,7 @@
 				}
 			},
 			ready: function(cnv, ctx) {
+				var that = this;
 				this.cnv = cnv;
 				this.ctx = ctx;
 				this.isClicked = false;
@@ -100,6 +101,7 @@
 				this.img = cnv.image("5.png");
 				cnv.container.querySelector(".clear").onclick = function(e) {
 					ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+					that.el_console.innerHTML = "";
 				};
 			},
 			loop: function() {
