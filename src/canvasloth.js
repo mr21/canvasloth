@@ -9,7 +9,6 @@ function Canvasloth(p) {
 	var
 		that = this,
 		// utils
-		noop = function() {},
 		attachEvent = function(e, v, f) {
 			if (e.addEventListener)
 				e.addEventListener(v, f, false);
@@ -25,8 +24,6 @@ function Canvasloth(p) {
 		nl_img,
 		nl_audio,
 		isFocused = false,
-		fn_events = [],
-		fn_loop = p.loop || noop,
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -99,6 +96,8 @@ function Canvasloth(p) {
 	setEvents();
 
 	// callbacks
+	var	fn_events = [],
+		fn_loop;
 	(function() {
 
 		el_ctn.oncontextmenu = function() { return false; };
@@ -112,6 +111,10 @@ function Canvasloth(p) {
 			fn_events[ev] = fn;
 			return that;
 		};
+
+		var noop = function() {};
+
+		fn_loop = p.loop || noop;
 
 		that.events("focus",      noop);
 		that.events("blur",       noop);
