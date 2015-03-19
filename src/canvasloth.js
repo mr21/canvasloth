@@ -21,8 +21,6 @@ function Canvasloth(p) {
 		el_cnv,
 		el_hudAbove,
 		el_evt,
-		nl_img,
-		nl_audio,
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -44,15 +42,23 @@ function Canvasloth(p) {
 		return that;
 	};
 
-	function getAsset(arr, name) {
-		for (var i = 0, e; e = arr[i]; ++i)
-			if (e.src.lastIndexOf(name) === e.src.length - name.length)
-				return e;
-		console.error('Canvasloth: "'+name+'" not found.');
-	}
-	this.image = function(name) { return getAsset(nl_img, name); };
-	this.audio = function(name) { return getAsset(nl_audio, name); };
-	this.file = function(name) { return this.image(name) || this.audio(name); };
+	// assets
+	var	nl_img,
+		nl_audio;
+	(function() {
+
+		function getAsset(arr, name) {
+			for (var i = 0, e; e = arr[i]; ++i)
+				if (e.src.lastIndexOf(name) === e.src.length - name.length)
+					return e;
+			console.error('Canvasloth: "'+name+'" not found.');
+		}
+
+		that.image = function(name) { return getAsset(nl_img, name); };
+		that.audio = function(name) { return getAsset(nl_audio, name); };
+		that.file = function(name) { return that.image(name) || that.audio(name); };
+
+	})();
 
 	// dom
 	(function () {
