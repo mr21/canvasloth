@@ -23,7 +23,6 @@ function Canvasloth(p) {
 		el_evt,
 		nl_img,
 		nl_audio,
-		isFocused = false,
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -93,7 +92,6 @@ function Canvasloth(p) {
 	})();
 
 	this.refreshViewportSize();
-	setEvents();
 
 	// callbacks
 	var	fn_events = [],
@@ -175,10 +173,9 @@ function Canvasloth(p) {
 
 	})();
 
-	loadAssetsAndGo();
 	// keyboard
 	var ar_keys = [];
-	(function () {
+	(function() {
 
 		that.key = function(k) { return ar_keys[k]; };
 
@@ -199,21 +196,9 @@ function Canvasloth(p) {
 
 	})();
 
-	function setEvents() {
-		var mouseButtonsStatus = [];
-
-		attachEvent(window, "mouseup", function(e) {
-			if (mouseButtonsStatus[e.button] === 1) {
-				mouseButtonsStatus[e.button] = 0;
-				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
-			}
-		});
-
-		attachEvent(el_hudAbove, "mousedown", function(e) {
-			if (!isFocused)
-				el_evt.focus();
-			e.preventDefault();
-		});
+	// focus / blur
+	var isFocused = false;
+	(function() {
 
 		attachEvent(el_evt, "focus", function() {
 			isFocused = true;
@@ -234,6 +219,25 @@ function Canvasloth(p) {
 					el_evt.blur();
 				fn_events.blur.call(p.thisApp);
 			}
+		});
+
+	})();
+
+	setEvents();
+	function setEvents() {
+		var mouseButtonsStatus = [];
+
+		attachEvent(window, "mouseup", function(e) {
+			if (mouseButtonsStatus[e.button] === 1) {
+				mouseButtonsStatus[e.button] = 0;
+				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
+			}
+		});
+
+		attachEvent(el_hudAbove, "mousedown", function(e) {
+			if (!isFocused)
+				el_evt.focus();
+			e.preventDefault();
 		});
 
 		attachEvent(el_evt, "mousedown", function(e) {
@@ -274,6 +278,7 @@ function Canvasloth(p) {
 		}, fps);
 	}
 
+	loadAssetsAndGo();
 	function loadAssetsAndGo() {
 		var	nbElementsToLoad = 1;
 		function loaded() {
