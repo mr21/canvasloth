@@ -53,19 +53,41 @@ function Canvasloth(p) {
 	this.audio = function(name) { return getAsset(nl_audio, name); };
 	this.file = function(name) { return this.image(name) || this.audio(name); };
 
-	this.events = function(ev, fn) {
-		ev = ev.toLowerCase();
-		if (ev === 'click')
-			return console.error('Canvasloth: use the event "mouseup" instead of "click".');
-		else if (ev === 'keypress')
-			return console.error('Canvasloth: use the event "keyup" instead of "keypress".');
-		fn_events[ev] = fn;
-		return that;
-	};
-
 	createDom();
 	this.refreshViewportSize();
 	setEvents();
+
+	// events
+	(function() {
+
+		el_ctn.oncontextmenu = function() { return false; };
+
+		that.events = function(ev, fn) {
+			ev = ev.toLowerCase();
+			if (ev === "click")
+				return console.error('Canvasloth: use the event "mouseup" instead of "click".');
+			else if (ev === "keypress")
+				return console.error('Canvasloth: use the event "keyup" instead of "keypress".');
+			fn_events[ev] = fn;
+			return that;
+		};
+
+		that.events("focus",      noop);
+		that.events("blur",       noop);
+		that.events("keydown",    noop);
+		that.events("keyup",      noop);
+		that.events("mousedown",  noop);
+		that.events("mouseup",    noop);
+		that.events("mousemove",  noop);
+		that.events("wheel",      noop);
+		that.events("touchstart", noop);
+		that.events("touchend",   noop);
+		that.events("touchmove",  noop);
+
+		for (var ev in p.events)
+			that.events(ev, p.events[ev]);
+
+	})();
 
 	// touchscreen
 	(function() {
@@ -152,23 +174,6 @@ function Canvasloth(p) {
 
 	function setEvents() {
 		var mouseButtonsStatus = [];
-
-		el_ctn.oncontextmenu = function() { return false; };
-
-		that.events("focus",      noop);
-		that.events("blur",       noop);
-		that.events("keydown",    noop);
-		that.events("keyup",      noop);
-		that.events("mousedown",  noop);
-		that.events("mouseup",    noop);
-		that.events("mousemove",  noop);
-		that.events("wheel",      noop);
-		that.events("touchstart", noop);
-		that.events("touchend",   noop);
-		that.events("touchmove",  noop);
-
-		for (var ev in p.events)
-			that.events(ev, p.events[ev]);
 
 		attachEvent(window, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
