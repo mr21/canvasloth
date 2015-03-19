@@ -134,11 +134,15 @@
 					if (this.isClicked)
 						this.putImage(x, y);
 				},
-				touchStart: function(touches) {
-					this.consoleWrite("touch<b>Start</b> : " + this.concatTouchesIds(touches));
+				touchStart: function(id, x, y) {
+					x = Math.round(x);
+					y = Math.round(y);
+					this.consoleWrite("touch<b>Start</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
 				},
-				touchEnd: function(touches) {
-					this.consoleWrite("touch<b>End</b> : " + this.concatTouchesIds(touches));
+				touchEnd: function(id, x, y) {
+					x = Math.round(x);
+					y = Math.round(y);
+					this.consoleWrite("touch<b>End</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
 				},
 				touchMove: function(touches) {
 					for (var id in touches)
