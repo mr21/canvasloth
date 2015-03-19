@@ -229,6 +229,7 @@ function Canvasloth(p) {
 			if (!isFocused)
 				el_evt.focus();
 			fn_events.mousedown.call(p.thisApp, e.layerX, e.layerY, e.button);
+			event_mousemove(e);
 		});
 
 		attachEvent(el_evt, "mouseup", function(e) {
@@ -238,9 +239,11 @@ function Canvasloth(p) {
 			}
 		});
 
-		attachEvent(el_evt, "mousemove", function(e) {
+		function event_mousemove(e) {
 			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
-		});
+		}
+
+		attachEvent(el_evt, "mousemove", event_mousemove);
 
 		attachEvent(el_evt, "wheel", function(e) {
 			fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
