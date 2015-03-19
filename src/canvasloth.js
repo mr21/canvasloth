@@ -223,22 +223,16 @@ function Canvasloth(p) {
 
 	})();
 
-	setEvents();
-	function setEvents() {
+	// mouse
+	(function() {
+
 		var mouseButtonsStatus = [];
 
-		attachEvent(window, "mouseup", function(e) {
-			if (mouseButtonsStatus[e.button] === 1) {
-				mouseButtonsStatus[e.button] = 0;
-				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
-			}
-		});
+		function event_mousemove(e) {
+			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
+		}
 
-		attachEvent(el_hudAbove, "mousedown", function(e) {
-			if (!isFocused)
-				el_evt.focus();
-			e.preventDefault();
-		});
+		attachEvent(el_evt, "mousemove", event_mousemove);
 
 		attachEvent(el_evt, "mousedown", function(e) {
 			mouseButtonsStatus[e.button] = 1;
@@ -255,12 +249,6 @@ function Canvasloth(p) {
 			}
 		});
 
-		function event_mousemove(e) {
-			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
-		}
-
-		attachEvent(el_evt, "mousemove", event_mousemove);
-
 		attachEvent(el_evt, "wheel", function(e) {
 			fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
 				e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
@@ -268,7 +256,21 @@ function Canvasloth(p) {
 			);
 			e.preventDefault();
 		});
-	}
+
+		attachEvent(window, "mouseup", function(e) {
+			if (mouseButtonsStatus[e.button] === 1) {
+				mouseButtonsStatus[e.button] = 0;
+				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
+			}
+		});
+
+		attachEvent(el_hudAbove, "mousedown", function(e) {
+			if (!isFocused)
+				el_evt.focus();
+			e.preventDefault();
+		});
+
+	})();
 
 	function startLooping() {
 		setInterval(function() {
