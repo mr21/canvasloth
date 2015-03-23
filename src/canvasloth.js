@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.6
+	Canvasloth - 1.7
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -154,8 +154,24 @@ function Canvasloth(p) {
 					to = touches[id] = {};
 					to.x = to.xold = calcX(t, rc);
 					to.y = to.yold = calcY(t, rc);
-					fn_events.touchstart.call(p.thisApp, id, to.x, to.y, t.force);
-					fn_events.touchmove.call(p.thisApp, id, to.x, to.y, 0, 0, t.force);
+					fn_events.touchstart.call(p.thisApp, {
+						id: id,
+						x: to.x,
+						y: to.y,
+						force: t.force,
+						radiusX: t.radiusX,
+						radiusY: t.radiusY
+					});
+					fn_events.touchmove.call(p.thisApp, {
+						id: id,
+						x: to.x,
+						y: to.y,
+						rx: 0,
+						ry: 0,
+						force: t.force,
+						radiusX: t.radiusX,
+						radiusY: t.radiusY
+					});
 				}
 		});
 
@@ -167,7 +183,16 @@ function Canvasloth(p) {
 				to = touches[id = t.identifier];
 				x = calcX(t, rc);
 				y = calcY(t, rc);
-				fn_events.touchmove.call(p.thisApp, id, x, y, x - to.xold, y - to.yold, t.force);
+				fn_events.touchmove.call(p.thisApp, {
+					id: id,
+					x: x,
+					y: y,
+					rx: x - to.xold,
+					ry: y - to.yold,
+					force: t.force,
+					radiusX: t.radiusX,
+					radiusY: t.radiusY
+				});
 				to.x = to.xold = x;
 				to.y = to.yold = y;
 			}
@@ -177,7 +202,11 @@ function Canvasloth(p) {
 			var	id, t, to, i = 0;
 			for (; t = e.changedTouches[i]; ++i)
 				if (to = touches[id = t.identifier]) {
-					fn_events.touchend.call(p.thisApp, id, to.x, to.y);
+					fn_events.touchend.call(p.thisApp, {
+						id: id,
+						x: to.x,
+						y: to.y
+					});
 					delete touches[id];
 				}
 		});
@@ -193,15 +222,19 @@ function Canvasloth(p) {
 		attachEvent(el_evt, "keydown", function(e) {
 			e.preventDefault();
 			if (!ar_keys[e.keyCode]) {
-				fn_events.keydown.call(p.thisApp, e.keyCode);
 				ar_keys[e.keyCode] = true;
+				fn_events.keydown.call(p.thisApp, {
+					key: e.keyCode
+				});
 			}
 		});
 
 		attachEvent(el_evt, "keyup", function(e) {
 			if (ar_keys[e.keyCode]) {
-				fn_events.keyup.call(p.thisApp, e.keyCode);
 				ar_keys[e.keyCode] = false;
+				fn_events.keyup.call(p.thisApp, {
+					key: e.keyCode
+				});
 			}
 		});
 
@@ -223,7 +256,9 @@ function Canvasloth(p) {
 				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, "");
 				for (var i in ar_keys)
 					if (ar_keys[i = parseInt(i)]) {
-						fn_events.keyup.call(p.thisApp, i);
+						fn_events.keyup.call(p.thisApp, {
+							key: i
+						});
 						ar_keys[i] = false;
 					}
 				if (!p.autoFocus)
@@ -243,7 +278,12 @@ function Canvasloth(p) {
 		function event_mousemove(e) {
 			var	x = e.layerX,
 				y = e.layerY;
-			fn_events.mousemove.call(p.thisApp, x, y, x - xold, y - yold);
+			fn_events.mousemove.call(p.thisApp, {
+				x: x,
+				y: y,
+				rx: x - xold,
+				ry: y - yold
+			});
 			xold = x;
 			yold = y;
 		}
@@ -259,29 +299,43 @@ function Canvasloth(p) {
 			mouseButtonsStatus[e.button] = 1;
 			if (!isFocused)
 				el_evt.focus();
-			fn_events.mousedown.call(p.thisApp, e.layerX, e.layerY, e.button);
+			fn_events.mousedown.call(p.thisApp, {
+				x: e.layerX,
+				y: e.layerY,
+				button: e.button
+			});
 			event_mousemove(e);
 		});
 
 		attachEvent(el_evt, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 2;
-				fn_events.mouseup.call(p.thisApp, e.layerX, e.layerY, e.button);
+				fn_events.mouseup.call(p.thisApp, {
+					x: e.layerX,
+					y: e.layerY,
+					button: e.button
+				});
 			}
 		});
 
 		attachEvent(el_evt, "wheel", function(e) {
 			e.preventDefault();
-			fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
-				e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
-				e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
-			);
+			fn_events.wheel.call(p.thisApp, {
+				x: e.layerX,
+				y: e.layerY,
+				rx: e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
+				ry: e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
+			});
 		});
 
 		attachEvent(window, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 0;
-				fn_events.mouseup.call(p.thisApp, 0, 0, e.button);
+				fn_events.mouseup.call(p.thisApp, {
+					x: 0,
+					y: 0,
+					button: e.button
+				});
 			}
 		});
 
@@ -311,7 +365,10 @@ function Canvasloth(p) {
 				currentTime =
 				startTime = new Date().getTime() / 1000;
 				if (p.ready)
-					p.ready.call(p.thisApp, that, ctx);
+					p.ready.call(p.thisApp, {
+						canvasloth: that,
+						ctx: ctx
+					});
 				if (p.autoFocus)
 					el_evt.focus();
 				currentTime = new Date().getTime() / 1000;

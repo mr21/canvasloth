@@ -87,16 +87,16 @@
 					this.ctx.restore();
 				}
 			},
-			ready: function(cnv, ctx) {
+			ready: function(o) {
 				var that = this;
-				this.cnv = cnv;
-				this.ctx = ctx;
+				this.cnv = o.canvasloth;
+				this.ctx = o.ctx;
 				this.isClicked = false;
-				this.el_console = cnv.container.querySelector(".console");
+				this.el_console = this.cnv.container.querySelector(".console");
 				this.consoleWrite("<b>ready</b> ( )");
-				this.img = cnv.image("5.png");
-				cnv.container.querySelector(".clear").onclick = function(e) {
-					ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+				this.img = this.cnv.image("5.png");
+				this.cnv.container.querySelector(".clear").onclick = function(e) {
+					o.ctx.clearRect(0, 0, o.ctx.canvas.width, o.ctx.canvas.height);
 					that.el_console.innerHTML = "";
 				};
 			},
@@ -110,44 +110,44 @@
 				blur: function() {
 					this.consoleWrite("<b>blur</b> ( )");
 				},
-				keyDown: function(key) {
-					this.consoleWrite("key<b>Down</b> ( key <b>"+key+"</b> )");
+				keyDown: function(e) {
+					this.consoleWrite("key<b>Down</b> ( key <b>"+e.key+"</b> )");
 				},
-				keyUp: function(key) {
-					this.consoleWrite("key<b>Up</b> ( key <b>"+key+"</b> )");
+				keyUp: function(e) {
+					this.consoleWrite("key<b>Up</b> ( key <b>"+e.key+"</b> )");
 				},
-				wheel: function(x, y, dx, dy) {
-					this.consoleWrite("<b>wheel</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, dx <b>"+this.round(dx)+"</b>, dy <b>"+this.round(dy)+"</b> )");
+				wheel: function(e) {
+					this.consoleWrite("<b>wheel</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, rx <b>"+this.round(e.rx)+"</b>, ry <b>"+this.round(e.ry)+"</b> )");
 				},
-				mouseDown: function(x, y, btn) {
-					this.consoleWrite("mouse<b>Down</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, btn <b>"+btn+"</b> )");
+				mouseDown: function(e) {
+					this.consoleWrite("mouse<b>Down</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, button <b>"+e.button+"</b> )");
 					this.isClicked = true;
 				},
-				mouseUp: function(x, y, btn) {
-					this.consoleWrite("mouse<b>Up</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, btn <b>"+btn+"</b> )");
+				mouseUp: function(e) {
+					this.consoleWrite("mouse<b>Up</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, button <b>"+e.button+"</b> )");
 					this.isClicked = false;
 				},
-				mouseMove: function(x, y, rx, ry) {
-					this.consoleWrite("mouse<b>Move</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, rx <b>"+rx+"</b>, ry <b>"+ry+"</b> )");
+				mouseMove: function(e) {
+					this.consoleWrite("mouse<b>Move</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, rx <b>"+e.rx+"</b>, ry <b>"+e.ry+"</b> )");
 					if (this.isClicked)
-						this.putImage(x, y);
+						this.putImage(e.x, e.y);
 				},
-				touchStart: function(id, x, y) {
-					x = Math.round(x);
-					y = Math.round(y);
-					this.consoleWrite("touch<b>Start</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
+				touchStart: function(e) {
+					var	x = Math.round(e.x),
+						y = Math.round(e.y);
+					this.consoleWrite("touch<b>Start</b> ( id <b>"+e.id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
 				},
-				touchEnd: function(id, x, y) {
-					x = Math.round(x);
-					y = Math.round(y);
-					this.consoleWrite("touch<b>End</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
+				touchEnd: function(e) {
+					var	x = Math.round(e.x),
+						y = Math.round(e.y);
+					this.consoleWrite("touch<b>End</b> ( id <b>"+e.id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
 				},
-				touchMove: function(id, x, y, rx, ry) {
-					x = Math.round(x);
-					y = Math.round(y);
-					rx = Math.round(rx);
-					ry = Math.round(ry);
-					this.consoleWrite("touch<b>Move</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b>, rx <b>"+rx+"</b>, ry <b>"+ry+"</b> )");
+				touchMove: function(e) {
+					var	x = Math.round(e.x),
+						y = Math.round(e.y),
+						rx = Math.round(e.rx),
+						ry = Math.round(e.ry);
+					this.consoleWrite("touch<b>Move</b> ( id <b>"+e.id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b>, rx <b>"+rx+"</b>, ry <b>"+ry+"</b> )");
 					this.putImage(x, y);
 				}
 			}
