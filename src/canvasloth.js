@@ -154,8 +154,8 @@ function Canvasloth(p) {
 					to = touches[id] = {};
 					to.x = to.xold = calcX(t, rc);
 					to.y = to.yold = calcY(t, rc);
-					fn_events.touchstart.call(p.thisApp, id, to.x, to.y);
-					fn_events.touchmove.call(p.thisApp, id, to.x, to.y, 0, 0);
+					fn_events.touchstart.call(p.thisApp, id, to.x, to.y, t.force);
+					fn_events.touchmove.call(p.thisApp, id, to.x, to.y, 0, 0, t.force);
 				}
 		});
 
@@ -167,7 +167,7 @@ function Canvasloth(p) {
 				to = touches[id = t.identifier];
 				x = calcX(t, rc);
 				y = calcY(t, rc);
-				fn_events.touchmove.call(p.thisApp, id, x, y, x - to.xold, y - to.yold);
+				fn_events.touchmove.call(p.thisApp, id, x, y, x - to.xold, y - to.yold, t.force);
 				to.x = to.xold = x;
 				to.y = to.yold = y;
 			}
