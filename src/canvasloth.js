@@ -235,11 +235,21 @@ function Canvasloth(p) {
 	// mouse
 	(function() {
 
-		var mouseButtonsStatus = [];
+		var	xold, yold,
+			mouseButtonsStatus = [];
 
 		function event_mousemove(e) {
-			fn_events.mousemove.call(p.thisApp, e.layerX, e.layerY);
+			var	x = e.layerX,
+				y = e.layerY;
+			fn_events.mousemove.call(p.thisApp, x, y, x - xold, y - yold);
+			xold = x;
+			yold = y;
 		}
+
+		attachEvent(el_evt, "mouseover", function(e) {
+			xold = e.layerX;
+			yold = e.layerY;
+		});
 
 		attachEvent(el_evt, "mousemove", event_mousemove);
 
@@ -259,11 +269,11 @@ function Canvasloth(p) {
 		});
 
 		attachEvent(el_evt, "wheel", function(e) {
+			e.preventDefault();
 			fn_events.wheel.call(p.thisApp, e.layerX, e.layerY,
 				e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
 				e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
 			);
-			e.preventDefault();
 		});
 
 		attachEvent(window, "mouseup", function(e) {
@@ -274,9 +284,9 @@ function Canvasloth(p) {
 		});
 
 		attachEvent(el_hudAbove, "mousedown", function(e) {
+			e.preventDefault();
 			if (!isFocused)
 				el_evt.focus();
-			e.preventDefault();
 		});
 
 	})();
