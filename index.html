@@ -13,10 +13,6 @@
 	<script src="../_/header.js"></script>
 	<script src="src/canvasloth.js"></script>
 	<style>
-	body {
-		margin: 0;
-		background: #444;
-		}
 	.canvasloth {
 		width: 640px;
 		height: 480px;
@@ -31,7 +27,7 @@
 			.canvasloth-hud-below .console {
 				position: absolute;
 				overflow: hidden;
-				width: 200px;
+				width: 210px;
 				left: 0;
 				top: 0;
 				bottom: 0;
@@ -131,7 +127,8 @@
 					this.consoleWrite("mouse<b>Up</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, btn <b>"+btn+"</b> )");
 					this.isClicked = false;
 				},
-				mouseMove: function(x, y) {
+				mouseMove: function(x, y, rx, ry) {
+					this.consoleWrite("mouse<b>Move</b> ( x <b>"+x+"</b>, y <b>"+y+"</b>, rx <b>"+rx+"</b>, ry <b>"+ry+"</b> )");
 					if (this.isClicked)
 						this.putImage(x, y);
 				},
