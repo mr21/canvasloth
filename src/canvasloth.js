@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.5
+	Canvasloth - 1.6
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -142,33 +142,35 @@ function Canvasloth(p) {
 
 		var touches = {};
 
+		function calcX(t, rc) { return t.pageX - rc.left - window.scrollX; }
+		function calcY(t, rc) { return t.pageY - rc.top  - window.scrollY; }
+
 		attachEvent(el_evt, "touchstart", function(e) {
 			var	id, t, to, i = 0,
 				rc = el_evt.getBoundingClientRect();
 			e.preventDefault();
 			for (; t = e.changedTouches[i]; ++i)
 				if (!touches[id = t.identifier]) {
-					to = touches[id] = {
-						x: t.pageX - rc.left - window.scrollX,
-						y: t.pageY - rc.top  - window.scrollY
-					};
+					to = touches[id] = {};
+					to.x = to.xold = calcX(t, rc);
+					to.y = to.yold = calcY(t, rc);
 					fn_events.touchstart.call(p.thisApp, id, to.x, to.y);
-					to = {};
-					to[id] = touches[id];
-					fn_events.touchmove.call(p.thisApp, to);
+					fn_events.touchmove.call(p.thisApp, id, to.x, to.y, 0, 0);
 				}
 		});
 
 		attachEvent(el_evt, "touchmove", function(e) {
-			var	t, to, i = 0,
+			var	id, t, to, i = 0, x, y,
 				rc = el_evt.getBoundingClientRect();
 			e.preventDefault();
 			for (; t = e.changedTouches[i]; ++i) {
-				to = touches[t.identifier];
-				to.x = t.pageX - rc.left - window.scrollX;
-				to.y = t.pageY - rc.top  - window.scrollY;
+				to = touches[id = t.identifier];
+				x = calcX(t, rc);
+				y = calcY(t, rc);
+				fn_events.touchmove.call(p.thisApp, id, x, y, x - to.xold, y - to.yold);
+				to.x = to.xold = x;
+				to.y = to.yold = y;
 			}
-			fn_events.touchmove.call(p.thisApp, touches);
 		});
 
 		attachEvent(window, "touchend", function(e) {

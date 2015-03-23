@@ -27,7 +27,7 @@
 			.canvasloth-hud-below .console {
 				position: absolute;
 				overflow: hidden;
-				width: 210px;
+				width: 230px;
 				left: 0;
 				top: 0;
 				bottom: 0;
@@ -142,12 +142,13 @@
 					y = Math.round(y);
 					this.consoleWrite("touch<b>End</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
 				},
-				touchMove: function(touches) {
-					for (var id in touches)
-						this.putImage(
-							touches[id].x,
-							touches[id].y
-						);
+				touchMove: function(id, x, y, rx, ry) {
+					x = Math.round(x);
+					y = Math.round(y);
+					rx = Math.round(rx);
+					ry = Math.round(ry);
+					this.consoleWrite("touch<b>Move</b> ( id <b>"+id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b>, rx <b>"+rx+"</b>, ry <b>"+ry+"</b> )");
+					this.putImage(x, y);
 				}
 			}
 		});
@@ -160,7 +161,7 @@
 <body>
 	<div id="header">
 		<i class="fa fa-fw fa-html5"></i>
-		<h1>Canvasloth - 1.5</h1>
+		<h1>Canvasloth - 1.6</h1>
 	</div>
 
 	<div class="canvasloth">
