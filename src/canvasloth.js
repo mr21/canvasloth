@@ -28,7 +28,8 @@ function Canvasloth(p) {
 		currentTime = 0,
 		fps = p.fps
 			? 1000 / p.fps
-			: 1000 / 60;
+			: 1000 / 60
+	;
 
 	this.container = p.container.nodeType === Node.ELEMENT_NODE
 		? p.container
@@ -131,9 +132,9 @@ function Canvasloth(p) {
 					h = nH,
 					screenRatio = nW / nH;
 				if (initRatio < screenRatio)
-					w = nH;
+					w = width * nH / height;
 				else
-					h = nW;
+					h = height * nW / width;
 				el_ctn.style.left = (nW - w) / 2 + "px";
 				el_ctn.style.top  = (nH - h) / 2 + "px";
 				zoom = w / width;
