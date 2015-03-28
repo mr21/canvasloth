@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.7
+	Canvasloth - 1.8
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -19,8 +19,10 @@ function Canvasloth(p) {
 		ctx,
 		el_ctn,
 		el_cnv,
+		el_hudBelow,
 		el_hudAbove,
 		el_evt,
+		el_bgFull,
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -35,12 +37,6 @@ function Canvasloth(p) {
 	this.resetTime = function() { startTime = currentTime; };
 	this.totalTime = function() { return currentTime - startTime; };
 	this.frameTime = function() { return currentTime - currentOldTime; };
-
-	this.refreshViewportSize = function() {
-		el_cnv.width  = el_cnv.clientWidth;
-		el_cnv.height = el_cnv.clientHeight;
-		return that;
-	};
 
 	// assets
 	var	nl_img,
@@ -67,9 +63,13 @@ function Canvasloth(p) {
 
 		el_ctn = that.container;
 		el_ast = el_ctn.querySelector(".canvasloth-assets");
+		el_hudBelow = el_ctn.querySelector(".canvasloth-hud-below");
 		el_hudAbove = el_ctn.querySelector(".canvasloth-hud-above");
 		el_cnv = document.createElement("canvas");
 		el_evt = document.createElement("div");
+		el_bgFull = document.createElement("div");
+		el_bgFull.className = "canvasloth-fullscreen-background";
+		el_ctn.parentNode.insertBefore(el_bgFull, el_ctn.nextSibling);
 		if (!el_ast) {
 			el_ast = document.createElement("div");
 			el_ast.className = "canvasloth-assets";
@@ -82,6 +82,11 @@ function Canvasloth(p) {
 		el_evt.tabIndex = 0;
 		el_evt.className = "canvasloth-events";
 		el_ctn.appendChild(el_cnv);
+		if (!el_hudBelow) {
+			el_hudBelow = document.createElement("div");
+			el_hudBelow.className = "canvasloth-hud-below";
+			el_ctn.appendChild(el_hudBelow);
+		}
 		if (!el_hudAbove) {
 			el_hudAbove = document.createElement("div");
 			el_hudAbove.className = "canvasloth-hud-above";
@@ -97,7 +102,84 @@ function Canvasloth(p) {
 
 	})();
 
-	this.refreshViewportSize();
+	// viewport
+	var zoom = 1;
+	(function() {
+
+		var	isFullscreen = false,
+			initRatio = el_ctn.clientWidth / el_ctn.clientHeight,
+			top, left, width, height,
+			el_initialParent = el_ctn.parentNode;
+
+		el_cnv.width  = el_ctn.clientWidth;
+		el_cnv.height = el_ctn.clientHeight;
+
+		function setViewport(fscr) {
+			var img = new Image(),
+				w, h;
+			img.src = ctx.canvas.toDataURL();
+			if (!fscr) {
+				el_ctn.style.left = left;
+				el_ctn.style.top  = top;
+				w = width;
+				h = height;
+				zoom = 1;
+			} else {
+				var	nW = document.body.clientWidth,
+					nH = document.body.clientHeight,
+					w = nW,
+					h = nH,
+					screenRatio = nW / nH;
+				if (initRatio < screenRatio)
+					w = nH;
+				else
+					h = nW;
+				el_ctn.style.left = (nW - w) / 2 + "px";
+				el_ctn.style.top  = (nH - h) / 2 + "px";
+				zoom = w / width;
+			}
+			el_ctn.style.width  = w + "px";
+			el_ctn.style.height = h + "px";
+			el_cnv.width  = w;
+			el_cnv.height = h;
+			el_hudBelow.style.zoom =
+			el_hudAbove.style.zoom = zoom;
+			ctx.drawImage(img, 0, 0, w, h);
+			ctx.scale(zoom, zoom);
+		}
+
+		attachEvent(window, "resize", function() {
+			if (isFullscreen)
+				setViewport(true);
+		});
+
+		that.getWidth  = function() { return el_cnv.width  / zoom; }
+		that.getHeight = function() { return el_cnv.height / zoom; }
+
+		that.fullscreen = function(b) {
+			var el_newParent;
+			if (!(isFullscreen = b)) {
+				el_ctn.className = el_ctn.className.replace(/ canvasloth-fullscreen/g, "");
+				el_newParent = el_initialParent;
+				setViewport(false);
+			} else {
+				el_ctn.className += " canvasloth-fullscreen";
+				el_newParent = document.body;
+				top    = el_ctn.style.top;
+				left   = el_ctn.style.left;
+				width  = el_ctn.clientWidth;
+				height = el_ctn.clientHeight;
+				setViewport(true);
+			}
+			if (el_initialParent !== document.body) {
+				el_newParent.appendChild(el_ctn);
+				el_newParent.appendChild(el_bgFull);
+			}
+			el_evt.focus();
+			return that;
+		};
+
+	})();
 
 	// callbacks
 	var	fn_events = [],
@@ -137,78 +219,31 @@ function Canvasloth(p) {
 
 	})();
 
-	// touchscreen
+	// focus / blur
+	var isFocused = false;
 	(function() {
 
-		var touches = {};
-
-		function calcX(t, rc) { return t.pageX - rc.left - window.scrollX; }
-		function calcY(t, rc) { return t.pageY - rc.top  - window.scrollY; }
-
-		attachEvent(el_evt, "touchstart", function(e) {
-			var	id, t, to, i = 0,
-				rc = el_evt.getBoundingClientRect();
-			e.preventDefault();
-			for (; t = e.changedTouches[i]; ++i)
-				if (!touches[id = t.identifier]) {
-					to = touches[id] = {};
-					to.x = to.xold = calcX(t, rc);
-					to.y = to.yold = calcY(t, rc);
-					fn_events.touchstart.call(p.thisApp, {
-						id: id,
-						x: to.x,
-						y: to.y,
-						force: t.force,
-						radiusX: t.radiusX,
-						radiusY: t.radiusY
-					});
-					fn_events.touchmove.call(p.thisApp, {
-						id: id,
-						x: to.x,
-						y: to.y,
-						rx: 0,
-						ry: 0,
-						force: t.force,
-						radiusX: t.radiusX,
-						radiusY: t.radiusY
-					});
-				}
+		attachEvent(el_evt, "focus", function() {
+			isFocused = true;
+			el_ctn.className += " canvasloth-focus";
+			fn_events.focus.call(p.thisApp);
 		});
-
-		attachEvent(el_evt, "touchmove", function(e) {
-			var	id, t, to, i = 0, x, y,
-				rc = el_evt.getBoundingClientRect();
-			e.preventDefault();
-			for (; t = e.changedTouches[i]; ++i) {
-				to = touches[id = t.identifier];
-				x = calcX(t, rc);
-				y = calcY(t, rc);
-				fn_events.touchmove.call(p.thisApp, {
-					id: id,
-					x: x,
-					y: y,
-					rx: x - to.xold,
-					ry: y - to.yold,
-					force: t.force,
-					radiusX: t.radiusX,
-					radiusY: t.radiusY
-				});
-				to.x = to.xold = x;
-				to.y = to.yold = y;
+		
+		attachEvent(el_evt, "blur", function() {
+			if (isFocused) {
+				isFocused = false;
+				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, "");
+				for (var i in ar_keys)
+					if (ar_keys[i = parseInt(i)]) {
+						fn_events.keyup.call(p.thisApp, {
+							key: i
+						});
+						ar_keys[i] = false;
+					}
+				if (!p.autoFocus)
+					el_evt.blur();
+				fn_events.blur.call(p.thisApp);
 			}
-		});
-
-		attachEvent(window, "touchend", function(e) {
-			var	id, t, to, i = 0;
-			for (; t = e.changedTouches[i]; ++i)
-				if (to = touches[id = t.identifier]) {
-					fn_events.touchend.call(p.thisApp, {
-						id: id,
-						x: to.x,
-						y: to.y
-					});
-					delete touches[id];
-				}
 		});
 
 	})();
@@ -240,44 +275,18 @@ function Canvasloth(p) {
 
 	})();
 
-	// focus / blur
-	var isFocused = false;
-	(function() {
-
-		attachEvent(el_evt, "focus", function() {
-			isFocused = true;
-			el_ctn.className += " canvasloth-focus";
-			fn_events.focus.call(p.thisApp);
-		});
-		
-		attachEvent(el_evt, "blur", function() {
-			if (isFocused) {
-				isFocused = false;
-				el_ctn.className = el_ctn.className.replace(/ canvasloth-focus/g, "");
-				for (var i in ar_keys)
-					if (ar_keys[i = parseInt(i)]) {
-						fn_events.keyup.call(p.thisApp, {
-							key: i
-						});
-						ar_keys[i] = false;
-					}
-				if (!p.autoFocus)
-					el_evt.blur();
-				fn_events.blur.call(p.thisApp);
-			}
-		});
-
-	})();
-
 	// mouse
 	(function() {
 
 		var	xold, yold,
 			mouseButtonsStatus = [];
 
+		function getX(e) { return Math.round(e.layerX / zoom); }
+		function getY(e) { return Math.round(e.layerY / zoom); }
+
 		function event_mousemove(e) {
-			var	x = e.layerX,
-				y = e.layerY;
+			var	x = getX(e),
+				y = getY(e);
 			fn_events.mousemove.call(p.thisApp, {
 				x: x,
 				y: y,
@@ -289,8 +298,8 @@ function Canvasloth(p) {
 		}
 
 		attachEvent(el_evt, "mouseover", function(e) {
-			xold = e.layerX;
-			yold = e.layerY;
+			xold = getX(e);
+			yold = getY(e);
 		});
 
 		attachEvent(el_evt, "mousemove", event_mousemove);
@@ -300,8 +309,8 @@ function Canvasloth(p) {
 			if (!isFocused)
 				el_evt.focus();
 			fn_events.mousedown.call(p.thisApp, {
-				x: e.layerX,
-				y: e.layerY,
+				x: getX(e),
+				y: getY(e),
 				button: e.button
 			});
 			event_mousemove(e);
@@ -311,8 +320,8 @@ function Canvasloth(p) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 2;
 				fn_events.mouseup.call(p.thisApp, {
-					x: e.layerX,
-					y: e.layerY,
+					x: getX(e),
+					y: getY(e),
 					button: e.button
 				});
 			}
@@ -321,10 +330,10 @@ function Canvasloth(p) {
 		attachEvent(el_evt, "wheel", function(e) {
 			e.preventDefault();
 			fn_events.wheel.call(p.thisApp, {
-				x: e.layerX,
-				y: e.layerY,
-				rx: e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX,
-				ry: e.webkitMovementX !== undefined ? e.deltaY / 100 : e.deltaY
+				x: getX(e),
+				y: getY(e),
+				rx: (e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX) / zoom,
+				ry: (e.webkitMovementY !== undefined ? e.deltaY / 100 : e.deltaY) / zoom
 			});
 		});
 
@@ -343,6 +352,82 @@ function Canvasloth(p) {
 			e.preventDefault();
 			if (!isFocused)
 				el_evt.focus();
+		});
+
+	})();
+
+	// touchscreen
+	(function() {
+
+		var touches = {};
+
+		function calcX(t, rc) { return Math.round((t.pageX - rc.left - window.scrollX) / zoom); }
+		function calcY(t, rc) { return Math.round((t.pageY - rc.top  - window.scrollY) / zoom); }
+
+		attachEvent(el_evt, "touchstart", function(e) {
+			var	id, t, to, i = 0,
+				rc = el_ctn.getBoundingClientRect();
+			e.preventDefault();
+			for (; t = e.changedTouches[i]; ++i)
+				if (!touches[id = t.identifier]) {
+					to = touches[id] = {};
+					to.x = to.xold = calcX(t, rc);
+					to.y = to.yold = calcY(t, rc);
+					fn_events.touchstart.call(p.thisApp, {
+						id: id,
+						x: to.x,
+						y: to.y,
+						force: t.force,
+						radiusX: t.radiusX,
+						radiusY: t.radiusY
+					});
+					fn_events.touchmove.call(p.thisApp, {
+						id: id,
+						x: to.x,
+						y: to.y,
+						rx: 0,
+						ry: 0,
+						force: t.force,
+						radiusX: t.radiusX,
+						radiusY: t.radiusY
+					});
+				}
+		});
+
+		attachEvent(el_evt, "touchmove", function(e) {
+			var	id, t, to, i = 0, x, y,
+				rc = el_ctn.getBoundingClientRect();
+			e.preventDefault();
+			for (; t = e.changedTouches[i]; ++i) {
+				to = touches[id = t.identifier];
+				x = calcX(t, rc);
+				y = calcY(t, rc);
+				fn_events.touchmove.call(p.thisApp, {
+					id: id,
+					x: x,
+					y: y,
+					rx: x - to.xold,
+					ry: y - to.yold,
+					force: t.force,
+					radiusX: t.radiusX,
+					radiusY: t.radiusY
+				});
+				to.x = to.xold = x;
+				to.y = to.yold = y;
+			}
+		});
+
+		attachEvent(window, "touchend", function(e) {
+			var	id, t, to, i = 0;
+			for (; t = e.changedTouches[i]; ++i)
+				if (to = touches[id = t.identifier]) {
+					fn_events.touchend.call(p.thisApp, {
+						id: id,
+						x: to.x,
+						y: to.y
+					});
+					delete touches[id];
+				}
 		});
 
 	})();

@@ -1,7 +1,11 @@
 /*
-	Canvasloth - 1.7
+	Canvasloth - 1.8
 	https://github.com/Mr21/Canvasloth
 */
+
+html, body {
+	height: 100%;
+	}
 
 .canvasloth {
 	position: relative;
@@ -14,6 +18,13 @@
 	}
 	.canvasloth-focus {
 		outline: solid 2px rgba(77, 144, 254, .75);
+		}
+	.canvasloth-fullscreen {
+		position: absolute !important;
+		z-index: 2147483647 !important;
+		margin: 0 !important;
+		bottom: auto !important;
+		right: auto !important;
 		}
 	.canvasloth > *,
 	.canvasloth-events {
@@ -53,3 +64,17 @@
 				position: relative;
 				z-index: 1;
 				}
+
+.canvasloth-fullscreen-background {
+	display: none;
+	position: absolute;
+	z-index: 2147483646;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #000;
+	}
+	.canvasloth-fullscreen + .canvasloth-fullscreen-background {
+		display: block;
+		}

@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Canvasloth</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1"/>
 	<meta charset="UTF-8"/>
 	<meta property="og:title"       content="Canvasloth"/>
 	<meta property="og:url"         content="https://mr21.github.io/canvasloth/"/>
@@ -13,13 +14,20 @@
 	<script src="../_/header.js"></script>
 	<script src="src/canvasloth.js"></script>
 	<style>
+	.wrapper-absolute-fullscreen-test {
+		position: absolute;
+		padding: 10px;
+		margin: 10px;
+		background: #777;
+		}
+
 	.canvasloth {
-		width: 640px;
-		height: 480px;
+		width: 500px;
+		height: 500px;
 		margin: 25px auto;
 		}
-		canvas {
-			background: #222;
+		.canvasloth canvas {
+			background: #555;
 			}
 		.canvasloth-hud-below {
 			font: 11px/14px sans-serif;
@@ -33,18 +41,20 @@
 				bottom: 0;
 				border-right: 1px dashed rgba(255,255,255,.5);
 				padding: .2em .3em;
-				color: #888;
-				background: rgba(0,0,0,.5);
+				color: #444;
+				background: rgba(255,255,255,.66);
 				}
 				.canvasloth-hud-below .console b {
-					color: #ddd;
+					color: #222;
 					}
 		.canvasloth-hud-above {
 			}
-			.canvasloth-hud-above .clear {
+			.canvasloth-hud-above .btns {
 				position: absolute;
 				right: 10px;
 				bottom: 10px;
+				}
+			.canvasloth-hud-above .btns * {
 				font-weight: bold;
 				}
 	</style>
@@ -60,10 +70,9 @@
 				consoleWrite: function(msg) {
 					var div = document.createElement("div");
 					div.innerHTML = msg;
-					this.el_console.appendChild(div);
-					if (this.el_console.children.length > 34)
-						this.el_console.removeChild(this.el_console.children[0]);
-					this.el_console.scrollTop = 1000000;
+					this.el_console.insertBefore(div, this.el_console.firstChild);
+					if (this.el_console.children.length > 36)
+						this.el_console.removeChild(this.el_console.lastChild);
 				},
 				concatTouchesIds: function(touches) {
 					var s = "";
@@ -80,24 +89,32 @@
 						sc = .2 + Math.random() * .5;
 					this.ctx.save();
 						this.ctx.translate(x, y);
-							this.ctx.scale(sc, sc);
+							this.ctx.scale(.4, .4);
 								this.ctx.rotate(Math.random() * Math.PI * 2);
 									this.ctx.globalAlpha = .9;
-									this.ctx.drawImage(this.img, 0, 0, w, h, w / -2, h / -2, w, h);
+									this.ctx.drawImage(this.img, -w/2, -h/2);
 					this.ctx.restore();
 				}
 			},
 			ready: function(o) {
-				var that = this;
-				this.cnv = o.canvasloth;
-				this.ctx = o.ctx;
+				var
+					cnv = o.canvasloth,
+					ctx = o.ctx,
+					that = this,
+					isFullscreen = false
+				;
+				this.cnv = cnv;
+				this.ctx = ctx;
 				this.isClicked = false;
-				this.el_console = this.cnv.container.querySelector(".console");
+				this.el_console = cnv.container.querySelector(".console");
 				this.consoleWrite("<b>ready</b> ( )");
-				this.img = this.cnv.image("5.png");
-				this.cnv.container.querySelector(".clear").onclick = function(e) {
-					o.ctx.clearRect(0, 0, o.ctx.canvas.width, o.ctx.canvas.height);
+				this.img = cnv.image("5.png");
+				cnv.container.querySelector(".clear").onclick = function(e) {
+					o.ctx.clearRect(0, 0, cnv.getWidth(), cnv.getHeight());
 					that.el_console.innerHTML = "";
+				};
+				cnv.container.querySelector(".fullscreen").onclick = function(e) {
+					cnv.fullscreen(isFullscreen = !isFullscreen);
 				};
 			},
 			loop: function() {
@@ -122,10 +139,12 @@
 				mouseDown: function(e) {
 					this.consoleWrite("mouse<b>Down</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, button <b>"+e.button+"</b> )");
 					this.isClicked = true;
+					this.putImage(e.x, e.y);
 				},
 				mouseUp: function(e) {
 					this.consoleWrite("mouse<b>Up</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, button <b>"+e.button+"</b> )");
 					this.isClicked = false;
+					this.putImage(e.x, e.y);
 				},
 				mouseMove: function(e) {
 					this.consoleWrite("mouse<b>Move</b> ( x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, rx <b>"+e.rx+"</b>, ry <b>"+e.ry+"</b> )");
@@ -133,22 +152,14 @@
 						this.putImage(e.x, e.y);
 				},
 				touchStart: function(e) {
-					var	x = Math.round(e.x),
-						y = Math.round(e.y);
-					this.consoleWrite("touch<b>Start</b> ( id <b>"+e.id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
+					this.consoleWrite("touch<b>Start</b> ( id <b>"+e.id+"</b>, x <b>"+e.x+"</b>, y <b>"+e.y+"</b> )");
 				},
 				touchEnd: function(e) {
-					var	x = Math.round(e.x),
-						y = Math.round(e.y);
-					this.consoleWrite("touch<b>End</b> ( id <b>"+e.id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b> )");
+					this.consoleWrite("touch<b>End</b> ( id <b>"+e.id+"</b>, x <b>"+e.x+"</b>, y <b>"+e.y+"</b> )");
 				},
 				touchMove: function(e) {
-					var	x = Math.round(e.x),
-						y = Math.round(e.y),
-						rx = Math.round(e.rx),
-						ry = Math.round(e.ry);
-					this.consoleWrite("touch<b>Move</b> ( id <b>"+e.id+"</b>, x <b>"+x+"</b>, y <b>"+y+"</b>, rx <b>"+rx+"</b>, ry <b>"+ry+"</b> )");
-					this.putImage(x, y);
+					this.consoleWrite("touch<b>Move</b> ( id <b>"+e.id+"</b>, x <b>"+e.x+"</b>, y <b>"+e.y+"</b>, rx <b>"+e.rx+"</b>, ry <b>"+e.ry+"</b> )");
+					this.putImage(e.x, e.y);
 				}
 			}
 		});
@@ -161,19 +172,26 @@
 <body>
 	<div id="header">
 		<i class="fa fa-fw fa-html5"></i>
-		<h1>Canvasloth - 1.6</h1>
+		<h1>Canvasloth - 1.8</h1>
 	</div>
 
-	<div class="canvasloth">
-		<div class="canvasloth-assets">
-			<img src="5.png"/>
+	<div class="wrapper-absolute-fullscreen-test">
+
+		<div class="canvasloth">
+			<div class="canvasloth-assets">
+				<img src="5.png"/>
+			</div>
+			<div class="canvasloth-hud-below">
+				<div class="console"></div>
+			</div>
+			<div class="canvasloth-hud-above">
+				<div class="btns">
+					<button class="fullscreen">Toggle fullscreen</button>
+					<button class="clear">Clear</button>
+				</div>
+			</div>
 		</div>
-		<div class="canvasloth-hud-below">
-			<div class="console"></div>
-		</div>
-		<div class="canvasloth-hud-above">
-			<button class="clear">Clear</button>
-		</div>
+
 	</div>
 </body>
 </html>
