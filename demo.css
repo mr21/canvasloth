@@ -1,0 +1,43 @@
+.wrapper-absolute-fullscreen-test {
+	position: absolute;
+	padding: 10px;
+	margin: 10px;
+	background: #777;
+	}
+
+.canvasloth {
+	width: 500px;
+	height: 500px;
+	margin: 25px auto;
+	}
+	.canvasloth canvas {
+		background: #111;
+		}
+	.canvasloth-hud-below {
+		font: 11px/14px sans-serif;
+		}
+		.canvasloth-hud-below .console {
+			position: absolute;
+			overflow: hidden;
+			right: 10px;
+			bottom: 10px;
+			width: 230px;
+			height: 145px;
+			padding: .2em .3em;
+			color: #888;
+			border-radius: 4px;
+			background: rgba(50,50,50,.9);
+			}
+			.canvasloth-hud-below .console b {
+				color: #ddd;
+				}
+	.canvasloth-hud-above {
+		}
+		.canvasloth-hud-above .btns {
+			position: absolute;
+			right: 10px;
+			bottom: 165px;
+			}
+		.canvasloth-hud-above .btns * {
+			font-weight: bold;
+			}
