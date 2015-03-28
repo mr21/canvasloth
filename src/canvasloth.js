@@ -156,6 +156,7 @@ function Canvasloth(p) {
 
 		that.getWidth  = function() { return el_cnv.width  / zoom; }
 		that.getHeight = function() { return el_cnv.height / zoom; }
+		that.getZoom   = function() { return zoom; }
 
 		that.fullscreen = function(b) {
 			var el_newParent;
