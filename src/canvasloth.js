@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.10
+	Canvasloth - 1.11
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -216,11 +216,14 @@ function Canvasloth(p) {
 			return that.fullscreen(!isFullscreen);
 		};
 
-		// catch the escape to exit the fullscreen mode
 		function fsChange() {
 			if (fullscreen())
 				that.fullscreen(false);
+			fn_events.fullscreenchange.call(p.thisApp, {
+				isFullscreen: isFullscreen
+			});
 		}
+
 		attachEvent(d,       "fullscreenchange", fsChange);
 		attachEvent(d,    "mozfullscreenchange", fsChange);
 		attachEvent(d, "webkitfullscreenchange", fsChange);
@@ -248,17 +251,18 @@ function Canvasloth(p) {
 
 		fn_loop = p.loop || noop;
 
-		that.events("focus",      noop);
-		that.events("blur",       noop);
-		that.events("keydown",    noop);
-		that.events("keyup",      noop);
-		that.events("mousedown",  noop);
-		that.events("mouseup",    noop);
-		that.events("mousemove",  noop);
-		that.events("wheel",      noop);
-		that.events("touchstart", noop);
-		that.events("touchend",   noop);
-		that.events("touchmove",  noop);
+		that.events("focus",            noop);
+		that.events("blur",             noop);
+		that.events("keydown",          noop);
+		that.events("keyup",            noop);
+		that.events("mousedown",        noop);
+		that.events("mouseup",          noop);
+		that.events("mousemove",        noop);
+		that.events("wheel",            noop);
+		that.events("touchstart",       noop);
+		that.events("touchend",         noop);
+		that.events("touchmove",        noop);
+		that.events("fullscreenchange", noop);
 
 		for (var ev in p.events)
 			that.events(ev, p.events[ev]);
