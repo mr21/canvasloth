@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.9
+	Canvasloth - 1.10
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -402,7 +402,7 @@ function Canvasloth(p) {
 
 	})();
 
-	// touchscreen
+	// multi-touch
 	(function() {
 
 		var touches = {};
@@ -412,7 +412,7 @@ function Canvasloth(p) {
 
 		attachEvent(el_evt, "touchstart", function(e) {
 			var	id, t, to, i = 0,
-				rc = el_ctn.getBoundingClientRect();
+				rc = el_vp.getBoundingClientRect();
 			e.preventDefault();
 			for (; t = e.changedTouches[i]; ++i)
 				if (!touches[id = t.identifier]) {
@@ -442,7 +442,7 @@ function Canvasloth(p) {
 
 		attachEvent(el_evt, "touchmove", function(e) {
 			var	id, t, to, i = 0, x, y,
-				rc = el_ctn.getBoundingClientRect();
+				rc = el_vp.getBoundingClientRect();
 			e.preventDefault();
 			for (; t = e.changedTouches[i]; ++i) {
 				to = touches[id = t.identifier];
