@@ -1,11 +1,7 @@
 /*
-	Canvasloth - 1.8
+	Canvasloth - 1.9
 	https://github.com/Mr21/Canvasloth
 */
-
-html, body {
-	height: 100%;
-	}
 
 .canvasloth {
 	position: relative;
@@ -16,65 +12,45 @@ html, body {
 	    -ms-user-select: none;
 	        user-select: none;
 	}
+	:-webkit-full-screen {
+		margin: 0    !important;
+		width: 100%  !important;
+		height: 100% !important;
+		background: #000;
+		}
 	.canvasloth-focus {
 		outline: solid 2px rgba(77, 144, 254, .75);
 		}
-	.canvasloth-fullscreen {
-		position: absolute !important;
-		z-index: 2147483647 !important;
-		margin: 0 !important;
-		bottom: auto !important;
-		right: auto !important;
-		}
 	.canvasloth > *,
+	.canvasloth > * > *,
 	.canvasloth-events {
 		position: absolute;
 		left: 0;
 		top: 0;
-		}
-	.canvasloth-assets {
-		z-index: 0;
-		width: 0;
-		height: 0;
-		overflow: hidden;
-		}
-	.canvasloth canvas {
-		z-index: 1;
 		width: 100%;
 		height: 100%;
 		}
-	.canvasloth-hud-below,
-	.canvasloth-hud-above,
-	.canvasloth-events {
-		right: 0;
-		bottom: 0;
-		}
-	.canvasloth-hud-below {
-		z-index: 2;
-		}
-	.canvasloth-hud-above {
-		z-index: 3;
-		}
-		.canvasloth-events {
+		.canvasloth-assets {
 			z-index: 0;
-			outline: 0;
-			cursor: default;
+			width: 0;
+			height: 0;
+			overflow: hidden;
 			}
-			.canvasloth-events ~ * {
-				position: relative;
-				z-index: 1;
+		.canvasloth canvas {
+			z-index: 1;
+			}
+		.canvasloth-hud-below {
+			z-index: 2;
+			}
+		.canvasloth-hud-above {
+			z-index: 3;
+			}
+			.canvasloth-events {
+				z-index: 0;
+				outline: 0;
+				cursor: default;
 				}
-
-.canvasloth-fullscreen-background {
-	display: none;
-	position: absolute;
-	z-index: 2147483646;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background: #000;
-	}
-	.canvasloth-fullscreen + .canvasloth-fullscreen-background {
-		display: block;
-		}
+				.canvasloth-events ~ * {
+					position: relative;
+					z-index: 1;
+					}

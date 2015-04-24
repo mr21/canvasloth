@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.8
+	Canvasloth - 1.9
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -7,6 +7,7 @@
 
 function Canvasloth(p) {
 	var
+		d = document,
 		that = this,
 		// utils
 		attachEvent = function(e, v, f) {
@@ -16,13 +17,6 @@ function Canvasloth(p) {
 				e.attachEvent("on" + v, f);
 		},
 		// attr
-		ctx,
-		el_ctn,
-		el_cnv,
-		el_hudBelow,
-		el_hudAbove,
-		el_evt,
-		el_bgFull,
 		startTime = 0,
 		currentOldTime = 0,
 		currentTime = 0,
@@ -58,42 +52,63 @@ function Canvasloth(p) {
 	})();
 
 	// dom
+	var	el_ctn,
+		el_vp,
+		el_cnv,
+		el_hudBelow,
+		el_hudAbove,
+		el_evt;
 	(function () {
 
-		var el_ast;
-
+		// container
 		el_ctn = that.container;
-		el_ast = el_ctn.querySelector(".canvasloth-assets");
-		el_hudBelow = el_ctn.querySelector(".canvasloth-hud-below");
-		el_hudAbove = el_ctn.querySelector(".canvasloth-hud-above");
-		el_cnv = document.createElement("canvas");
-		el_evt = document.createElement("div");
-		el_bgFull = document.createElement("div");
-		el_bgFull.className = "canvasloth-fullscreen-background";
-		el_ctn.parentNode.insertBefore(el_bgFull, el_ctn.nextSibling);
-		if (!el_ast) {
-			el_ast = document.createElement("div");
-			el_ast.className = "canvasloth-assets";
-			el_ctn.appendChild(el_ast);
-		}
-		nl_img = el_ast.getElementsByTagName("img");
-		nl_audio = el_ast.getElementsByTagName("audio");
 		if (el_ctn.className.indexOf("canvasloth") === -1)
 			el_ctn.className += " canvasloth";
-		el_evt.tabIndex = 0;
-		el_evt.className = "canvasloth-events";
-		el_ctn.appendChild(el_cnv);
+
+		// viewport
+		el_vp = d.createElement("div");
+		el_ctn.appendChild(el_vp);
+
+		// assets
+		var el_ast = el_ctn.querySelector(".canvasloth-assets");
+		if (!el_ast) {
+			el_ast = d.createElement("div");
+			el_ast.className = "canvasloth-assets";
+		}
+		el_vp.appendChild(el_ast);
+		nl_img = el_ast.getElementsByTagName("img");
+		nl_audio = el_ast.getElementsByTagName("audio");
+
+		// canvas
+		el_cnv = d.createElement("canvas");
+		el_vp.appendChild(el_cnv);
+
+		// huds
+		el_hudBelow = el_ctn.querySelector(".canvasloth-hud-below");
+		el_hudAbove = el_ctn.querySelector(".canvasloth-hud-above");
 		if (!el_hudBelow) {
-			el_hudBelow = document.createElement("div");
+			el_hudBelow = d.createElement("div");
 			el_hudBelow.className = "canvasloth-hud-below";
-			el_ctn.appendChild(el_hudBelow);
 		}
 		if (!el_hudAbove) {
-			el_hudAbove = document.createElement("div");
+			el_hudAbove = d.createElement("div");
 			el_hudAbove.className = "canvasloth-hud-above";
-			el_ctn.appendChild(el_hudAbove);
 		}
+		el_vp.appendChild(el_hudBelow);
+		el_vp.appendChild(el_hudAbove);
+
+		// events
+		el_evt = d.createElement("div");
+		el_evt.tabIndex = 0;
+		el_evt.className = "canvasloth-events";
 		el_hudAbove.insertBefore(el_evt, el_hudAbove.firstChild);
+
+	})();
+
+	// context
+	var	ctx;
+	(function () {
+
 		ctx = p.context === "2d"
 			? el_cnv.getContext("2d")
 			: (
@@ -107,46 +122,72 @@ function Canvasloth(p) {
 	var zoom = 1;
 	(function() {
 
-		var	isFullscreen = false,
-			initRatio = el_ctn.clientWidth / el_ctn.clientHeight,
-			top, left, width, height,
+		var	ratio, width, height,
+			isFullscreen = false,
 			el_initialParent = el_ctn.parentNode;
 
 		el_cnv.width  = el_ctn.clientWidth;
 		el_cnv.height = el_ctn.clientHeight;
 
 		function setViewport(fscr) {
-			var img = new Image(),
+			var	img = new Image(),
+				top, left,
+				bw, bh,
+				vw, vh,
 				w, h;
-			img.src = ctx.canvas.toDataURL();
 			if (!fscr) {
-				el_ctn.style.left = left;
-				el_ctn.style.top  = top;
-				w = width;
-				h = height;
+				vw = width;
+				vh = height;
+				top = left = 0;
 				zoom = 1;
 			} else {
-				var	nW = document.body.clientWidth,
-					nH = document.body.clientHeight,
-					w = nW,
-					h = nH,
-					screenRatio = nW / nH;
-				if (initRatio < screenRatio)
-					w = width * nH / height;
-				else
-					h = height * nW / width;
-				el_ctn.style.left = (nW - w) / 2 + "px";
-				el_ctn.style.top  = (nH - h) / 2 + "px";
-				zoom = w / width;
+				bw = d.body.clientWidth;
+				bh = d.body.clientHeight;
+				if (ratio < bw / bh) { // screen larger
+					vw = bh / height * width;
+					vh = bh;
+				} else {
+					vw = bw;
+					vh = bw / width * height;
+				}
+				top  = (bh - vh) / 2 + "px";
+				left = (bw - vw) / 2 + "px";
+				zoom = vw / width;
 			}
-			el_ctn.style.width  = w + "px";
-			el_ctn.style.height = h + "px";
-			el_cnv.width  = w;
-			el_cnv.height = h;
+			el_vp.style.top  = top;
+			el_vp.style.left = left;
+			el_vp.style.width  = vw + "px";
+			el_vp.style.height = vh + "px";
+			// el_hudBelow.style.transform =
+			// el_hudAbove.style.transform = "scale(" + zoom + ")";
 			el_hudBelow.style.zoom =
 			el_hudAbove.style.zoom = zoom;
-			ctx.drawImage(img, 0, 0, w, h);
+			img.src = ctx.canvas.toDataURL();
+			el_cnv.width  = vw;
+			el_cnv.height = vh;
+			ctx.drawImage(img, 0, 0, vw, vh);
 			ctx.scale(zoom, zoom);
+		}
+
+		function fullscreen(e, b) {
+			switch (b) {
+				case true:
+					     if (e      .requestFullscreen) e      .requestFullscreen();
+					else if (e   .mozRequestFullScreen) e   .mozRequestFullScreen();
+					else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
+				break;
+				case false:
+					     if (d.      cancelFullscreen) d.      cancelFullscreen();
+					else if (d.   mozCancelFullScreen) d.   mozCancelFullScreen();
+					else if (d.webkitCancelFullScreen) d.webkitCancelFullScreen();
+				break;
+				default:
+					return (
+						d      .msFullscreenElement === null ||
+						d     .mozFullScreen === false ||
+						d.webkitIsFullScreen === false
+					);
+			}
 		}
 
 		attachEvent(window, "resize", function() {
@@ -159,27 +200,30 @@ function Canvasloth(p) {
 		that.getZoom   = function() { return zoom; }
 
 		that.fullscreen = function(b) {
-			var el_newParent;
-			if (!(isFullscreen = b)) {
-				el_ctn.className = el_ctn.className.replace(/ canvasloth-fullscreen/g, "");
-				el_newParent = el_initialParent;
-				setViewport(false);
-			} else {
-				el_ctn.className += " canvasloth-fullscreen";
-				el_newParent = document.body;
-				top    = el_ctn.style.top;
-				left   = el_ctn.style.left;
+			if (!isFullscreen && b) {
 				width  = el_ctn.clientWidth;
 				height = el_ctn.clientHeight;
-				setViewport(true);
+				ratio = width / height;
 			}
-			if (el_initialParent !== document.body) {
-				el_newParent.appendChild(el_ctn);
-				el_newParent.appendChild(el_bgFull);
-			}
+			isFullscreen = b = b || false;
+			fullscreen(el_ctn, b);
+			setViewport(b);
 			el_evt.focus();
 			return that;
 		};
+
+		that.toggleFullscreen = function() {
+			return that.fullscreen(!isFullscreen);
+		};
+
+		// catch the escape to exit the fullscreen mode
+		function fsChange() {
+			if (fullscreen())
+				that.fullscreen(false);
+		}
+		attachEvent(d,       "fullscreenchange", fsChange);
+		attachEvent(d,    "mozfullscreenchange", fsChange);
+		attachEvent(d, "webkitfullscreenchange", fsChange);
 
 	})();
 

@@ -39,8 +39,7 @@ function main() {
 			var
 				cnv = o.canvasloth,
 				ctx = o.ctx,
-				that = this,
-				isFullscreen = false
+				that = this
 			;
 			this.cnv = cnv;
 			this.ctx = ctx;
@@ -53,7 +52,7 @@ function main() {
 				that.el_console.innerHTML = "";
 			};
 			cnv.container.querySelector(".fullscreen").onclick = function(e) {
-				cnv.fullscreen(isFullscreen = !isFullscreen);
+				cnv.toggleFullscreen();
 			};
 		},
 		loop: function() {
