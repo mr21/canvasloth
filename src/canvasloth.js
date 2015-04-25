@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.11
+	Canvasloth - 1.12
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -119,10 +119,11 @@ function Canvasloth(p) {
 	})();
 
 	// viewport
-	var zoom = 1;
+	var mouseZoom = 1;
 	(function() {
 
 		var	ratio, width, height,
+			zoom = 1,
 			isFullscreen = false,
 			el_initialParent = el_ctn.parentNode;
 
@@ -158,10 +159,23 @@ function Canvasloth(p) {
 			el_vp.style.left = left;
 			el_vp.style.width  = vw + "px";
 			el_vp.style.height = vh + "px";
-			// el_hudBelow.style.transform =
-			// el_hudAbove.style.transform = "scale(" + zoom + ")";
-			el_hudBelow.style.zoom =
-			el_hudAbove.style.zoom = zoom;
+			if (el_hudBelow.style.zoom !== undefined) {
+				mouseZoom =
+				el_hudBelow.style.zoom =
+				el_hudAbove.style.zoom = zoom;
+			} else {
+				mouseZoom = 1;
+				el_hudBelow.style.transform =
+				el_hudAbove.style.transform = "scale(" + zoom + ")";
+				el_hudAbove.style.left =
+				el_hudBelow.style.left = (vw - width) / 2 + "px";
+				el_hudAbove.style.top =
+				el_hudBelow.style.top = (vh - height) / 2 + "px";
+				el_hudAbove.style.width  =
+				el_hudBelow.style.width  = width + "px";
+				el_hudAbove.style.height =
+				el_hudBelow.style.height = height + "px";
+			}
 			img.src = ctx.canvas.toDataURL();
 			el_cnv.width  = vw;
 			el_cnv.height = vh;
@@ -331,8 +345,8 @@ function Canvasloth(p) {
 		var	xold, yold,
 			mouseButtonsStatus = [];
 
-		function getX(e) { return Math.round(e.layerX / zoom); }
-		function getY(e) { return Math.round(e.layerY / zoom); }
+		function getX(e) { return Math.round(e.layerX / mouseZoom); }
+		function getY(e) { return Math.round(e.layerY / mouseZoom); }
 
 		function event_mousemove(e) {
 			var	x = getX(e),
@@ -382,8 +396,8 @@ function Canvasloth(p) {
 			fn_events.wheel.call(p.thisApp, {
 				x: getX(e),
 				y: getY(e),
-				rx: (e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX) / zoom,
-				ry: (e.webkitMovementY !== undefined ? e.deltaY / 100 : e.deltaY) / zoom
+				rx: (e.webkitMovementX !== undefined ? e.deltaX / 100 : e.deltaX) / mouseZoom,
+				ry: (e.webkitMovementY !== undefined ? e.deltaY / 100 : e.deltaY) / mouseZoom
 			});
 		});
 
@@ -411,8 +425,8 @@ function Canvasloth(p) {
 
 		var touches = {};
 
-		function calcX(t, rc) { return Math.round((t.pageX - rc.left - window.scrollX) / zoom); }
-		function calcY(t, rc) { return Math.round((t.pageY - rc.top  - window.scrollY) / zoom); }
+		function calcX(t, rc) { return Math.round((t.pageX - rc.left - window.scrollX) / mouseZoom); }
+		function calcY(t, rc) { return Math.round((t.pageY - rc.top  - window.scrollY) / mouseZoom); }
 
 		attachEvent(el_evt, "touchstart", function(e) {
 			var	id, t, to, i = 0,
