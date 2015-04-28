@@ -1,10 +1,11 @@
 /*
-	Canvasloth - 1.12
+	Canvasloth - 1.13
 	https://github.com/Mr21/Canvasloth
 */
 
 .canvasloth {
 	position: relative;
+	background: #000;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	 -khtml-user-select: none;
@@ -16,7 +17,6 @@
 		margin: 0    !important;
 		width: 100%  !important;
 		height: 100% !important;
-		background: #000;
 		}
 	.canvasloth-focus {
 		outline: solid 2px rgba(77, 144, 254, .75);

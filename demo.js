@@ -1,9 +1,12 @@
 function main() {
+
 	new Canvasloth({
 		container: document.querySelector(".canvasloth"),
 		context: "2d",
 		autoFocus: true,
 		fps: 1,
+		w: 480, // 16/9
+		h: 270,
 		thisApp: {
 			round: function(n) { return Math.round(n * 1000) / 1000; },
 			consoleWrite: function(msg) {
@@ -48,7 +51,8 @@ function main() {
 			this.consoleWrite("<b>ready</b> ( )");
 			this.img = cnv.image("5.png");
 			cnv.container.querySelector(".clear").onclick = function(e) {
-				o.ctx.clearRect(0, 0, cnv.getWidth(), cnv.getHeight());
+				var size = cnv.size();
+				o.ctx.clearRect(0, 0, size.w, size.h);
 				that.el_console.innerHTML = "";
 			};
 			cnv.container.querySelector(".fullscreen").onclick = function(e) {
@@ -64,6 +68,9 @@ function main() {
 			},
 			blur: function() {
 				this.consoleWrite("<b>blur</b> ( )");
+			},
+			fullscreenchange: function(e) {
+				this.consoleWrite("<b>fullscreen</b>change ( isFullscreen <b>"+e.isFullscreen+"</b> )");
 			},
 			keyDown: function(e) {
 				this.consoleWrite("key<b>Down</b> ( key <b>"+e.key+"</b> )");
@@ -101,6 +108,7 @@ function main() {
 			}
 		}
 	});
+
 }
 
 // $(main);

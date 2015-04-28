@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.12
+	Canvasloth - 1.13
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -122,65 +122,52 @@ function Canvasloth(p) {
 	var mouseZoom = 1;
 	(function() {
 
-		var	ratio, width, height,
+		var	width, height,
 			zoom = 1,
 			isFullscreen = false,
 			el_initialParent = el_ctn.parentNode;
 
-		el_cnv.width  = el_ctn.clientWidth;
-		el_cnv.height = el_ctn.clientHeight;
-
-		function setViewport(fscr) {
+		function setViewport() {
 			var	img = new Image(),
-				top, left,
-				bw, bh,
-				vw, vh,
-				w, h;
-			if (!fscr) {
-				vw = width;
-				vh = height;
-				top = left = 0;
-				zoom = 1;
+				bw = el_ctn.clientWidth,
+				bh = el_ctn.clientHeight,
+				vw = bw,
+				vh = bh;
+
+			if (width / height < bw / bh) { // the screen is larger
+				vw = bh / height * width;
 			} else {
-				bw = d.body.clientWidth;
-				bh = d.body.clientHeight;
-				if (ratio < bw / bh) { // screen larger
-					vw = bh / height * width;
-					vh = bh;
-				} else {
-					vw = bw;
-					vh = bw / width * height;
-				}
-				top  = (bh - vh) / 2 + "px";
-				left = (bw - vw) / 2 + "px";
-				zoom = vw / width;
+				vh = bw / width * height;
 			}
-			el_vp.style.top  = top;
-			el_vp.style.left = left;
+			el_vp.style.top  = (bh - vh) / 2 + "px";
+			el_vp.style.left = (bw - vw) / 2 + "px";
 			el_vp.style.width  = vw + "px";
 			el_vp.style.height = vh + "px";
-			if (el_hudBelow.style.zoom !== undefined) {
-				mouseZoom =
-				el_hudBelow.style.zoom =
-				el_hudAbove.style.zoom = zoom;
-			} else {
-				mouseZoom = 1;
-				el_hudBelow.style.transform =
-				el_hudAbove.style.transform = "scale(" + zoom + ")";
-				el_hudAbove.style.left =
-				el_hudBelow.style.left = (vw - width) / 2 + "px";
-				el_hudAbove.style.top =
-				el_hudBelow.style.top = (vh - height) / 2 + "px";
-				el_hudAbove.style.width  =
-				el_hudBelow.style.width  = width + "px";
-				el_hudAbove.style.height =
-				el_hudBelow.style.height = height + "px";
+			if (Math.abs(zoom - vw / width) > 0.001) {
+				zoom = vw / width;
+				if (el_hudBelow.style.zoom !== undefined) {
+					mouseZoom =
+					el_hudBelow.style.zoom =
+					el_hudAbove.style.zoom = zoom;
+				} else {
+					mouseZoom = 1;
+					el_hudBelow.style.transform =
+					el_hudAbove.style.transform = "scale(" + zoom + ")";
+					el_hudAbove.style.left =
+					el_hudBelow.style.left = (vw - width) / 2 + "px";
+					el_hudAbove.style.top =
+					el_hudBelow.style.top = (vh - height) / 2 + "px";
+					el_hudAbove.style.width  =
+					el_hudBelow.style.width  = width + "px";
+					el_hudAbove.style.height =
+					el_hudBelow.style.height = height + "px";
+				}
+				img.src = ctx.canvas.toDataURL();
+				el_cnv.width  = vw;
+				el_cnv.height = vh;
+				ctx.drawImage(img, 0, 0, vw, vh);
+				ctx.scale(zoom, zoom);
 			}
-			img.src = ctx.canvas.toDataURL();
-			el_cnv.width  = vw;
-			el_cnv.height = vh;
-			ctx.drawImage(img, 0, 0, vw, vh);
-			ctx.scale(zoom, zoom);
 		}
 
 		function fullscreen(e, b) {
@@ -204,28 +191,24 @@ function Canvasloth(p) {
 			}
 		}
 
-		attachEvent(window, "resize", function() {
-			if (isFullscreen)
-				setViewport(true);
-		});
-
-		that.getWidth  = function() { return el_cnv.width  / zoom; }
-		that.getHeight = function() { return el_cnv.height / zoom; }
-		that.getZoom   = function() { return zoom; }
-
+		that.zoom = function() { return zoom; };
+		that.size = function(o) {
+			if (!arguments.length)
+				return {
+					w: el_cnv.width  / zoom,
+					h: el_cnv.height / zoom
+				};
+			if (o.w) width  = o.w;
+			if (o.h) height = o.h;
+			setViewport();
+			return this;
+		};
 		that.fullscreen = function(b) {
-			if (!isFullscreen && b) {
-				width  = el_ctn.clientWidth;
-				height = el_ctn.clientHeight;
-				ratio = width / height;
-			}
-			isFullscreen = b = b || false;
-			fullscreen(el_ctn, b);
-			setViewport(b);
+			fullscreen(el_ctn, isFullscreen = b || false);
+			setViewport();
 			el_evt.focus();
 			return that;
 		};
-
 		that.toggleFullscreen = function() {
 			return that.fullscreen(!isFullscreen);
 		};
@@ -241,6 +224,16 @@ function Canvasloth(p) {
 		attachEvent(d,       "fullscreenchange", fsChange);
 		attachEvent(d,    "mozfullscreenchange", fsChange);
 		attachEvent(d, "webkitfullscreenchange", fsChange);
+
+		attachEvent(window, "resize", setViewport);
+
+		that.size({
+			w: p.w || el_ctn.clientWidth,
+			h: p.h || el_ctn.clientHeight
+		});
+		el_cnv.width  = width;
+		el_cnv.height = height;
+		setViewport();
 
 	})();
 
@@ -370,8 +363,6 @@ function Canvasloth(p) {
 
 		attachEvent(el_evt, "mousedown", function(e) {
 			mouseButtonsStatus[e.button] = 1;
-			if (!isFocused)
-				el_evt.focus();
 			fn_events.mousedown.call(p.thisApp, {
 				x: getX(e),
 				y: getY(e),
@@ -401,6 +392,12 @@ function Canvasloth(p) {
 			});
 		});
 
+		attachEvent(el_ctn, "mousedown", function(e) {
+			if (!isFocused)
+				el_evt.focus();
+			e.preventDefault();
+		});
+
 		attachEvent(window, "mouseup", function(e) {
 			if (mouseButtonsStatus[e.button] === 1) {
 				mouseButtonsStatus[e.button] = 0;
@@ -410,12 +407,6 @@ function Canvasloth(p) {
 					button: e.button
 				});
 			}
-		});
-
-		attachEvent(el_hudAbove, "mousedown", function(e) {
-			e.preventDefault();
-			if (!isFocused)
-				el_evt.focus();
 		});
 
 	})();
