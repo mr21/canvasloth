@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.13
+	Canvasloth - 1.14
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -122,8 +122,7 @@ function Canvasloth(p) {
 	var mouseZoom = 1;
 	(function() {
 
-		var	width, height,
-			zoom = 1,
+		var	width, height, zoom,
 			isFullscreen = false,
 			el_initialParent = el_ctn.parentNode;
 
@@ -143,7 +142,7 @@ function Canvasloth(p) {
 			el_vp.style.left = (bw - vw) / 2 + "px";
 			el_vp.style.width  = vw + "px";
 			el_vp.style.height = vh + "px";
-			if (Math.abs(zoom - vw / width) > 0.001) {
+			if (!zoom || Math.abs(zoom - vw / width) > 0.001) {
 				zoom = vw / width;
 				if (el_hudBelow.style.zoom !== undefined) {
 					mouseZoom =
@@ -231,9 +230,6 @@ function Canvasloth(p) {
 			w: p.w || el_ctn.clientWidth,
 			h: p.h || el_ctn.clientHeight
 		});
-		el_cnv.width  = width;
-		el_cnv.height = height;
-		setViewport();
 
 	})();
 
