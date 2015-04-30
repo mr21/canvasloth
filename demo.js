@@ -1,6 +1,6 @@
 function main() {
 
-	new Canvasloth({
+	window.cnv = new Canvasloth({
 		container: document.querySelector(".canvasloth"),
 		context: "2d",
 		autoFocus: true,

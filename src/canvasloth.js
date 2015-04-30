@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.14
+	Canvasloth - 1.15
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -122,7 +122,9 @@ function Canvasloth(p) {
 	var mouseZoom = 1;
 	(function() {
 
-		var	width, height, zoom,
+		var	width, height,
+			widthSave, heightSave,
+			zoom, keepRatio,
 			isFullscreen = false,
 			el_initialParent = el_ctn.parentNode;
 
@@ -133,21 +135,23 @@ function Canvasloth(p) {
 				vw = bw,
 				vh = bh;
 
-			if (width / height < bw / bh) { // the screen is larger
-				vw = bh / height * width;
-			} else {
-				vh = bw / width * height;
+			if (keepRatio) {
+				if (width / height < bw / bh) { // the screen is larger
+					vw = bh / height * width;
+				} else {
+					vh = bw / width * height;
+				}
 			}
 			el_vp.style.top  = (bh - vh) / 2 + "px";
 			el_vp.style.left = (bw - vw) / 2 + "px";
 			el_vp.style.width  = vw + "px";
 			el_vp.style.height = vh + "px";
-			if (!zoom || Math.abs(zoom - vw / width) > 0.001) {
-				zoom = vw / width;
+			if (!keepRatio || !zoom || Math.abs(zoom - vw / width) > 0.001) {
+				zoom = keepRatio ? vw / width : 1;
 				if (el_hudBelow.style.zoom !== undefined) {
-					mouseZoom =
 					el_hudBelow.style.zoom =
-					el_hudAbove.style.zoom = zoom;
+					el_hudAbove.style.zoom =
+					mouseZoom = zoom;
 				} else {
 					mouseZoom = 1;
 					el_hudBelow.style.transform =
@@ -191,6 +195,21 @@ function Canvasloth(p) {
 		}
 
 		that.zoom = function() { return zoom; };
+		that.keepRatio = function(b) {
+			b = !!b;
+			if (keepRatio !== b) {
+				if (keepRatio) {
+					widthSave  = width;
+					heightSave = height;
+				} else {
+					width  = widthSave;
+					height = heightSave;
+				}
+				keepRatio = b;
+				setViewport();
+			}
+			return that;
+		};
 		that.size = function(o) {
 			if (!arguments.length)
 				return {
@@ -200,7 +219,7 @@ function Canvasloth(p) {
 			if (o.w) width  = o.w;
 			if (o.h) height = o.h;
 			setViewport();
-			return this;
+			return that;
 		};
 		that.fullscreen = function(b) {
 			fullscreen(el_ctn, isFullscreen = b || false);
@@ -230,6 +249,9 @@ function Canvasloth(p) {
 			w: p.w || el_ctn.clientWidth,
 			h: p.h || el_ctn.clientHeight
 		});
+		widthSave  = width;
+		heightSave = height;
+		that.keepRatio(p.keepRatio !== undefined ? p.keepRatio : true);
 
 	})();
 
