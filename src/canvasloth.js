@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.16
+	Canvasloth - 1.17
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -169,10 +169,15 @@ function Canvasloth(p) {
 			if (resolutionVariable || force) {
 				var img = new Image();
 				img.src = ctx.canvas.toDataURL();
+				if (!resolutionVariable) {
+					vw = width;
+					vh = height;
+				}
 				el_cnv.width  = vw;
 				el_cnv.height = vh;
 				ctx.drawImage(img, 0, 0, vw, vh);
-				ctx.scale(zoom, zoom);
+				if (resolutionVariable)
+					ctx.scale(zoom, zoom);
 			}
 		}
 
