@@ -16,6 +16,16 @@
 	.canvasloth-hud-below {
 		font: 11px/14px sans-serif;
 		}
+		.canvasloth-hud-below .mark-debug {
+			position: absolute;
+			left: 33.33%;
+			top: 50%;
+			border-radius: 50%;
+			width: 10px;
+			height: 10px;
+			margin: -5px 0 0 -5px;
+			background: rgba(0,0,0,.7);
+			}
 		.canvasloth-hud-below .console {
 			position: absolute;
 			overflow: hidden;

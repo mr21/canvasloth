@@ -4,7 +4,9 @@ function main() {
 		container: document.querySelector(".canvasloth"),
 		context: "2d",
 		autoFocus: true,
-		fps: 1,
+		fps: 5,
+		// keepRatio: false,
+		// resolutionVariable: false,
 		w: 480, // 16/9
 		h: 270,
 		thisApp: {
@@ -52,7 +54,9 @@ function main() {
 			this.img = cnv.image("5.png");
 			cnv.container.querySelector(".clear").onclick = function(e) {
 				var size = cnv.size();
+				lg("clearRect(0, 0, "+size.w+", "+size.h+")");
 				o.ctx.clearRect(0, 0, size.w, size.h);
+				that.putImage(size.w, size.h);
 				that.el_console.innerHTML = "";
 			};
 			cnv.container.querySelector(".fullscreen").onclick = function(e) {
@@ -60,6 +64,10 @@ function main() {
 			};
 		},
 		loop: function() {
+			var size = this.cnv.size();
+			this.putImage(0, 0);
+			this.putImage(size.w, size.h);
+			this.putImage(size.w / 3, size.h / 2);
 			this.consoleWrite("loop... frameTime: " + this.round(this.cnv.frameTime()) + " (sec)");
 		},
 		events: {
