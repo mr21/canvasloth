@@ -1,5 +1,5 @@
 /*
-	Canvasloth - 1.17
+	Canvasloth - 1.18
 	https://github.com/Mr21/Canvasloth
 */
 
@@ -263,16 +263,15 @@ function Canvasloth(p) {
 
 		attachEvent(window, "resize", function() { setViewport(false); } );
 
-		keepRatio = p.keepRatio !== undefined
-			? !!p.keepRatio : true;
+		keepRatio = p.keepRatio !== undefined ? !!p.keepRatio : true;
+		that.resolutionVariable(p.resolutionVariable !== undefined
+			? p.resolutionVariable : true);
 		that.size({
 			w: p.w || el_ctn.clientWidth,
 			h: p.h || el_ctn.clientHeight
 		});
 		widthSave  = width;
 		heightSave = height;
-		that.resolutionVariable(p.resolutionVariable !== undefined
-			? p.resolutionVariable : true);
 
 	})();
 
